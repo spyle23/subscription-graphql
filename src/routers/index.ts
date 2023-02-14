@@ -1,5 +1,5 @@
-function MainRouter() {
-  return ;
-}
+import { Routes } from "react-router-dom";
 
-export default MainRouter;
+export const MainRouter = (): JSX.Element => {
+  return <Routes></Routes>;
+};

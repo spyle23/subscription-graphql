@@ -7,12 +7,13 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { HttpLink, split } from "@apollo/client/core";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
+import { AuthStorage } from "./utils/AuthStorage";
 
 export const apolloClient = (
   token?: string
 ): ApolloClient<NormalizedCacheObject> => {
-  const API_URI = process.env.REACT_APP_API_URI;
-  const API_URI_WS = process.env.REACT_APP_API_URI_WS;
+  const API_URI = import.meta.env.VITE_API_URI;
+  const API_URI_WS = import.meta.env.VITE_API_URI_WS;
 
   const user = AuthStorage.isAuth();
   const httpLink = new HttpLink({
