@@ -7,22 +7,43 @@ import { ApolloProvider } from "@apollo/client";
 import { MainRouter } from "./routers";
 import { theme } from "./theme";
 import { ContextProvider } from "./contexts/Providers";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useState,
+  useMemo,
+} from "react";
+
+export const TokenContext = createContext<{
+  token: string | undefined;
+  setToken: Dispatch<SetStateAction<string | undefined>>;
+}>({
+  token: undefined,
+  setToken: () => {},
+});
 
 function App() {
-  const token = AuthStorage.isAuth()?.token;
-  const client = apolloClient(token || undefined);
+  const [token, setToken] = useState<string>();
+  const tokenFromstorage = AuthStorage.isAuth()?.token;
+  const client = apolloClient(token || tokenFromstorage);
+
+  const memoizedContext = useMemo(() => ({ token, setToken }), [token]);
+
   return (
     <BrowserRouter>
-      <ApolloProvider client={client}>
-        <ContextProvider>
-          <ThemeProvider theme={theme}>
-            <StylesProvider injectFirst>
-              <CssBaseline />
-              <MainRouter />
-            </StylesProvider>
-          </ThemeProvider>
-        </ContextProvider>
-      </ApolloProvider>
+      <TokenContext.Provider value={memoizedContext}>
+        <ApolloProvider client={client}>
+          <ContextProvider>
+            <ThemeProvider theme={theme}>
+              <StylesProvider injectFirst>
+                <CssBaseline />
+                <MainRouter />
+              </StylesProvider>
+            </ThemeProvider>
+          </ContextProvider>
+        </ApolloProvider>
+      </TokenContext.Provider>
     </BrowserRouter>
   );
 }
