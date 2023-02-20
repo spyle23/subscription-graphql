@@ -8,6 +8,22 @@
 //==============================================================
 
 /**
+ * messgae inputs
+ */
+export interface MessageInput {
+  content: string;
+}
+
+/**
+ * inputs for post
+ */
+export interface PostInput {
+  title: string;
+  description: string;
+  image?: string | null;
+}
+
+/**
  * user inputs
  */
 export interface SignupInput {
