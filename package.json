@@ -2,11 +2,11 @@
   "name": "subscription-graphql",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "env-cmd -f .env.development vite",
+    "codegen": "graphql-codegen-esm --config codegen.ts",
     "generate:schema:dev": "npx apollo schema:download --endpoint=http://localhost:4200/graphql graphql-schema.json",
-    "generate:types": "npx apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --includes=./src/graphql/**/* --tagName=gql --addTypename --globalTypesFile=src/types/graphql-types.ts types",
+    "generate:types": "npx apollo client:codegen --localSchemaFile=graphql-schema.json --target=typescript  --includes=G:/Temporaire/spyle/subscription-graphql/src/graphql/**/*.ts --tagName=gql --addTypename --globalTypesFile=src/types/graphql-types.ts types",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
@@ -29,6 +29,10 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^3.0.0",
     "@graphql-codegen/client-preset": "^2.0.0",
+    "@graphql-codegen/import-types-preset": "^2.2.6",
+    "@graphql-codegen/near-operation-file-preset": "^2.5.0",
+    "@graphql-codegen/typescript-operations": "^3.0.0",
+    "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react": "^3.1.0",
