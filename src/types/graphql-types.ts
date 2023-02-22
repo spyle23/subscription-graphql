@@ -8,6 +8,14 @@
 //==============================================================
 
 /**
+ * user choose
+ */
+export interface DiscussGroupInput {
+  groupName: string;
+  coverPhoto?: string | null;
+}
+
+/**
  * messgae inputs
  */
 export interface MessageInput {
@@ -32,6 +40,13 @@ export interface SignupInput {
   lastname?: string | null;
   password: string;
   civilite?: string | null;
+}
+
+/**
+ * user id in the group discuss
+ */
+export interface UserChoose {
+  membresId: number[];
 }
 
 //==============================================================
