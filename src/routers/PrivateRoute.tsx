@@ -16,5 +16,5 @@ export const PrivateRoute = ({
   if (userAuthStatus === UserAuthStateEnum.AUTHENTICATED) {
     return children;
   }
-  return <Navigate to="/login" />;
+  return <Navigate to="/auth/login" />;
 };
