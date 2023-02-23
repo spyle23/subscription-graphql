@@ -19,7 +19,7 @@ export const apolloClient = (
   const httpLink = new HttpLink({
     uri: API_URI,
     headers: {
-      authorization: `${token || user?.token}`,
+      authorization: `Bearer ${token || user?.token}`,
     },
   });
 

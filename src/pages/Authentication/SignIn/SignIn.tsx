@@ -1,25 +1,47 @@
 import { Email, Visibility, VisibilityOff } from "@mui/icons-material";
-import { Button, CardContent, CardHeader, Divider, Grid } from "@mui/material";
+import {
+  Button,
+  CardContent,
+  CardHeader,
+  CircularProgress,
+  Divider,
+  Grid,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import { CustomCard } from "../../../components/card/CustomCard";
 import leftImage from "../../../assets/leftImage.png";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { loginVariables } from "../../../graphql/user";
+import { useApplicationContext } from "../../../hooks";
+import { GraphQLError } from "graphql";
+import { ApolloError } from "@apollo/client";
 
 export const SignIn = (): JSX.Element => {
   const [show, setShow] = useState<boolean>(false);
+  const { signin, dispatchSnack, signinLoading, signinError } =
+    useApplicationContext();
+  const navigate = useNavigate();
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<loginVariables>();
 
-  const onLogin = (data: loginVariables) => {
-    console.log(data);
+  const onLogin = async (data: loginVariables) => {
+    const { email, password } = data;
+    const response = await signin(email, password);
+    if (response.success) {
+      dispatchSnack({
+        open: true,
+        severity: "success",
+        message: response.message,
+      });
+      navigate("/landing");
+    }
   };
 
   return (
@@ -28,7 +50,7 @@ export const SignIn = (): JSX.Element => {
         <CardHeader
           title={
             <Typography variant="h4" sx={{ textAlign: "center" }}>
-              Connexion au plateforme 😆  
+              Connexion au plateforme 😆
             </Typography>
           }
         />
@@ -100,7 +122,23 @@ export const SignIn = (): JSX.Element => {
                     helperText={errors.password?.message}
                   />
                 </Box>
-                <Button type="submit" variant="contained">
+                <Box>
+                  {signinError && (
+                    <Typography sx={{ textAlign: "start" }} color="error">
+                      {signinError}
+                    </Typography>
+                  )}
+                </Box>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={signinLoading}
+                >
+                  {signinLoading && (
+                    <CircularProgress
+                      sx={{ color: "white", width: "16px", height: "16px" }}
+                    />
+                  )}
                   Connexion
                 </Button>
               </form>

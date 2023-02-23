@@ -1,10 +1,11 @@
-import { ApolloError } from "@apollo/client";
+import { login_login_data } from "../../graphql/user";
 import { ReducerActionType } from "../../contexts";
 import { UserAuthStateEnum } from "../../types/UserType";
 
-export type IRequest = {
-  success?: string;
-  error?: string;
+export type IRequest<T> = {
+  success?: boolean;
+  message?: string;
+  data?: T | null;
 };
 
 export type UseApplicationType = {
@@ -19,5 +20,5 @@ export type UseApplicationType = {
   // new application
   signinLoading?: boolean;
   signinError?: string;
-  signin: (email: string, password: string) => Promise<IRequest>;
+  signin(email: string, password: string): Promise<IRequest<login_login_data>>;
 };

@@ -4,14 +4,18 @@ import {
   SnackbarContext,
 } from "../../contexts";
 import { IApplicationContext } from "../../contexts/application/type";
-import { UseApplicationType } from "./type";
+import { IRequest, UseApplicationType } from "./type";
 import { useContext, useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserAuthStateEnum } from "../../types/UserType";
 import { AuthStorage, LocalStorage } from "../../utils/AuthStorage";
 import { TokenContext } from "../../App";
 import { useMutation } from "@apollo/client";
-import { login, loginVariables } from "../../graphql/user/types/login";
+import {
+  login,
+  loginVariables,
+  login_login_data,
+} from "../../graphql/user/types/login";
 import { LOGIN } from "../../graphql/user/mutation";
 
 export const useApplicationContext = (): UseApplicationType &
@@ -59,25 +63,28 @@ export const useApplicationContext = (): UseApplicationType &
     loginVariables
   >(LOGIN);
 
-  const signin = async (email: string, password: string) => {
-    try {
-      const res = await sign({
-        variables: {
-          email,
-          password,
-        },
-      });
-      const users = res.data?.login.data;
-      if (users?.id) {
-        LocalStorage.authenticate(users);
-        setUser(users);
-
-        return { success: "ok" };
-      }
-      return { error: "error" };
-    } catch (error) {
-      return { error: "error" };
+  const signin = async (
+    email: string,
+    password: string
+  ): Promise<IRequest<login_login_data>> => {
+    const res = await sign({
+      variables: {
+        email,
+        password,
+      },
+    });
+    const users = res.data?.login.data;
+    if (users?.id) {
+      LocalStorage.authenticate(users);
+      setToken(users.token);
+      setUser(users);
     }
+    const response: IRequest<login_login_data> = {
+      success: res.data?.login.success,
+      message: res.data?.login.message,
+      data: res.data?.login.data,
+    };
+    return response;
   };
 
   return {
