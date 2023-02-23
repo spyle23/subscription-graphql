@@ -38,6 +38,18 @@ export const theme = createTheme({
     },
   },
   components: {
+    MuiAutocomplete: {
+      styleOverrides: {
+        root: {
+          "& .MuiInputBase-root": {
+            ".MuiInputBase-input": {
+              padding: "0px !important",
+            },
+            height: 43,
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
