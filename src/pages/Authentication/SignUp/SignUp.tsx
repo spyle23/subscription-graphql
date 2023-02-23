@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Email, Visibility, VisibilityOff } from "@mui/icons-material";
 import {
+  Autocomplete,
   Button,
   CardContent,
   CardHeader,
@@ -8,9 +9,26 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { CustomCard } from "../../../components/card/CustomCard";
 import { SignupInput } from "../../../types/graphql-types";
+
+const civilites: string[] = [
+  "Malagasy",
+  "Français",
+  "Anglais",
+  "Américain",
+  "Chinois",
+  "Belge",
+  "Allemand",
+  "Congolais",
+  "Japonais",
+  "Russe",
+  "Corréen",
+  "Egyptien",
+  "Cameronais",
+  "Mongol",
+];
 
 export const SignUp = (): JSX.Element => {
   const [show, setShow] = useState<boolean>(false);
@@ -18,11 +36,12 @@ export const SignUp = (): JSX.Element => {
     register,
     formState: { errors },
     handleSubmit,
+    control,
   } = useForm<SignupInput>();
 
   const handleSignUp = (data: SignupInput) => {
-    console.log(data)
-  }
+    console.log(data);
+  };
 
   return (
     <Grid item xs={12} md={6}>
@@ -36,7 +55,7 @@ export const SignUp = (): JSX.Element => {
         />
         <CardContent>
           <Grid container sx={{ justifyContent: "center" }}>
-            <form onSubmit={handleSubmit(handleSignUp)} >
+            <form onSubmit={handleSubmit(handleSignUp)}>
               <Grid item xs={12}>
                 <Typography>Nom: </Typography>
                 <TextField fullWidth type="text" {...register("lastname")} />
@@ -44,6 +63,16 @@ export const SignUp = (): JSX.Element => {
               <Grid item xs={12}>
                 <Typography>Prénom: </Typography>
                 <TextField fullWidth type="text" {...register("firstname")} />
+              </Grid>
+              <Grid item xs={12}>
+                <Typography>Civilité: </Typography>
+                <Autocomplete
+                  disablePortal
+                  options={civilites}
+                  renderInput={(params) => (
+                    <TextField {...params} {...register("civilite")} />
+                  )}
+                />
               </Grid>
               <Grid item xs={12}>
                 <Typography>email: </Typography>
