@@ -28,7 +28,7 @@ export const SignIn = (): JSX.Element => {
         <CardHeader
           title={
             <Typography variant="h4" sx={{ textAlign: "center" }}>
-              Connexion au plateforme
+              Connexion au plateforme 😆  
             </Typography>
           }
         />
