@@ -18,12 +18,12 @@ export const SignIn = (): JSX.Element => {
     handleSubmit,
   } = useForm<loginVariables>();
 
-  const onLogin = (data: loginVariables)=> {
-    console.log(data)
-  }
+  const onLogin = (data: loginVariables) => {
+    console.log(data);
+  };
 
   return (
-    <Grid xs={12} md={4}>
+    <Grid item xs={12} md={4}>
       <CustomCard elevation={1}>
         <CardHeader
           title={
@@ -41,7 +41,7 @@ export const SignIn = (): JSX.Element => {
               <img src={leftImage} alt="image" width="100%" height="300" />
             </Grid>
             <Grid item xs={12} md={6} sx={{ p: 1 }}>
-              <form onSubmit={handleSubmit(onLogin)} >
+              <form onSubmit={handleSubmit(onLogin)}>
                 <Box>
                   <Typography>email: </Typography>
                   <TextField
@@ -61,8 +61,8 @@ export const SignIn = (): JSX.Element => {
                     })}
                     FormHelperTextProps={{
                       sx: {
-                        width: 300
-                      }
+                        width: 300,
+                      },
                     }}
                     helperText={errors.email?.message}
                   />
@@ -91,27 +91,18 @@ export const SignIn = (): JSX.Element => {
                         value: true,
                         message: "votre mot de passe est requis",
                       },
-                      minLength: {
-                        value: 8,
-                        message:
-                          "votre mot de passe doit au moins être à 8 charactère",
-                      },
-                      pattern: {
-                        value:
-                          /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])$/,
-                        message:
-                          "Votre mot de passe doit contenir au moins 1 lettre majuscule, 1 lettre minuscule, 1 chiffre, 1 charactère spécial",
-                      },
                     })}
                     FormHelperTextProps={{
                       sx: {
-                        width: 300
-                      }
+                        width: 300,
+                      },
                     }}
-                    helperText={ errors.password?.message }
+                    helperText={errors.password?.message}
                   />
                 </Box>
-                <Button type="submit" variant="contained">Connexion</Button>
+                <Button type="submit" variant="contained">
+                  Connexion
+                </Button>
               </form>
               <Divider sx={{ my: 1 }} />
               <NavLink to="/auth/signup">Pas encore de compte?</NavLink>
