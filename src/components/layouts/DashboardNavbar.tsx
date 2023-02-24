@@ -94,7 +94,7 @@ export const DashboardNavbar = (): JSX.Element => {
             size="large"
             aria-label="show 4 new mails"
             color="inherit"
-            onClick={()=> navigate("/landing/message")}
+            onClick={()=> navigate("/landing/messages")}
           >
             <Badge badgeContent={4} color="error">
               <MailIcon />
