@@ -12,7 +12,7 @@ type ContainerWithMenuProps = {
 const DashboardLayoutRoot = styled("div")(() => ({
   display: "flex",
   flex: "1 1 auto",
-  maxWidth: "100%",
+  width: "100vw",
   paddingTop: 64,
 }));
 

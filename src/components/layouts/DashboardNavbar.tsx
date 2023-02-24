@@ -13,6 +13,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import HomeIcon from "@mui/icons-material/Home";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -56,16 +57,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export const DashboardNavbar = (): JSX.Element => {
   return (
-    <AppBar
-      sx={{
-        left: {
-          lg: 280,
-        },
-        width: {
-          lg: "calc(100% - 280px)",
-        },
-      }}
-    >
+    <AppBar>
       <Toolbar
         disableGutters
         sx={{
@@ -74,7 +66,7 @@ export const DashboardNavbar = (): JSX.Element => {
           px: 2,
         }}
       >
-        <IconButton>
+        <IconButton size="large" aria-label="logo" color="inherit">
           <FacebookOutlinedIcon />
         </IconButton>
         <Search>
@@ -88,6 +80,13 @@ export const DashboardNavbar = (): JSX.Element => {
         </Search>
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: "flex" }}>
+          <IconButton
+            size="large"
+            aria-label="home icon"
+            color="inherit"
+          >
+            <HomeIcon />
+          </IconButton>
           <IconButton
             size="large"
             aria-label="show 4 new mails"
