@@ -16,7 +16,13 @@ import {
   loginVariables,
   login_login_data,
 } from "../../graphql/user/types/login";
-import { LOGIN } from "../../graphql/user/mutation";
+import { LOGIN, SIGNUP } from "../../graphql/user/mutation";
+import {
+  signup,
+  signupVariables,
+  signup_signup_data,
+} from "../../graphql/user";
+import { SignupInput } from "../../types/graphql-types";
 
 export const useApplicationContext = (): UseApplicationType &
   IApplicationContext &
@@ -86,12 +92,40 @@ export const useApplicationContext = (): UseApplicationType &
     };
     return response;
   };
+  const [signup, { loading: signupLoading, error: signupError }] = useMutation<
+    signup,
+    signupVariables
+  >(SIGNUP);
 
+  const signupUser = async (
+    userInput: SignupInput
+  ): Promise<IRequest<signup_signup_data>> => {
+    const res = await signup({
+      variables: {
+        userInput,
+      },
+    });
+    const users = res.data?.signup.data;
+    if (users?.id) {
+      LocalStorage.authenticate(users);
+      setToken(users.token);
+      setUser(users);
+    }
+    const response: IRequest<signup_signup_data> = {
+      success: res.data?.signup.success,
+      message: res.data?.signup.message,
+      data: res.data?.signup.data,
+    };
+    return response;
+  };
   return {
     user,
     userAuthStatus,
     signinError: signinError?.message,
     signin,
+    signupUser,
+    signupError: signinError?.message,
+    signupLoading,
     logout,
     signinLoading,
     ...snackbarContexts,

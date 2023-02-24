@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { CustomCard } from "../../../components/card/CustomCard";
 import { SignupInput } from "../../../types/graphql-types";
 
@@ -36,7 +36,6 @@ export const SignUp = (): JSX.Element => {
     register,
     formState: { errors },
     handleSubmit,
-    control,
   } = useForm<SignupInput>();
 
   const handleSignUp = (data: SignupInput) => {
