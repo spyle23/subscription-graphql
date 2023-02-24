@@ -5,6 +5,7 @@ import {
   Button,
   CardContent,
   CardHeader,
+  CircularProgress,
   Grid,
   TextField,
   Typography,
@@ -12,6 +13,8 @@ import {
 import { useForm } from "react-hook-form";
 import { CustomCard } from "../../../components/card/CustomCard";
 import { SignupInput } from "../../../types/graphql-types";
+import { useApplicationContext } from "../../../hooks";
+import { useNavigate } from "react-router-dom";
 
 const civilites: string[] = [
   "Malagasy",
@@ -37,9 +40,20 @@ export const SignUp = (): JSX.Element => {
     formState: { errors },
     handleSubmit,
   } = useForm<SignupInput>();
+  const { signupUser, signupLoading, signupError, dispatchSnack } =
+    useApplicationContext();
+  const navigate = useNavigate();
 
-  const handleSignUp = (data: SignupInput) => {
-    console.log(data);
+  const handleSignUp = async (data: SignupInput) => {
+    const result = await signupUser(data);
+    if (result.success) {
+      dispatchSnack({
+        open: true,
+        message: result.message,
+        severity: "success",
+      });
+      navigate("/landing");
+    }
   };
 
   return (
@@ -137,9 +151,25 @@ export const SignUp = (): JSX.Element => {
                 />
               </Grid>
               <Grid item xs={12} sx={{ my: 1 }}>
-                <Button type="submit" variant="contained">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={signupLoading}
+                >
+                  {signupLoading && (
+                    <CircularProgress
+                      sx={{ color: "white", width: "16px", height: "16px" }}
+                    />
+                  )}
                   S'inscrire
                 </Button>
+              </Grid>
+              <Grid item xs={12}>
+                {signupError && (
+                  <Typography sx={{ textAlign: "start" }} color="error">
+                    {signupError}
+                  </Typography>
+                )}
               </Grid>
             </form>
           </Grid>

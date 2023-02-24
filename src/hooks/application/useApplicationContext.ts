@@ -59,7 +59,7 @@ export const useApplicationContext = (): UseApplicationType &
     AuthStorage.clearToken(() => {
       setUser(undefined);
       setToken(undefined);
-      navigate("/login");
+      navigate("/auth/login");
       window.location.reload();
     });
   };
@@ -124,7 +124,7 @@ export const useApplicationContext = (): UseApplicationType &
     signinError: signinError?.message,
     signin,
     signupUser,
-    signupError: signinError?.message,
+    signupError: signupError?.message,
     signupLoading,
     logout,
     signinLoading,

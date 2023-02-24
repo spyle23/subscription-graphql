@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { ContainerWithMenu } from "../components/layouts/ContainerWithMenu";
 import { AuthenticationRoute } from "../pages/Authentication/AuthenticationRoute";
 import Landing from "../pages/Landing/Landing";
 import { PrivateRoute } from "./PrivateRoute";
@@ -20,7 +21,9 @@ export const MainRouter = (): JSX.Element => {
         path="landing/*"
         element={
           <PrivateRoute>
-            <PrivateRouter />
+            <ContainerWithMenu>
+              <PrivateRouter />
+            </ContainerWithMenu>
           </PrivateRoute>
         }
       />
