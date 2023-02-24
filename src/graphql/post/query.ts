@@ -5,7 +5,6 @@ export const POST_BY_USER = gql`
     postByUser(userId: $userId) {
       id
       userId
-      title
       description
       image
       createdAt

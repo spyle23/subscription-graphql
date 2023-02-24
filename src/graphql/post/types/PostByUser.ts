@@ -11,7 +11,6 @@ export interface PostByUser_postByUser {
   __typename: "Post";
   id: number;
   userId: number;
-  title: string;
   description: string;
   image: string | null;
   createdAt: any;

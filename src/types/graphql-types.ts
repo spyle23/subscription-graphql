@@ -26,7 +26,6 @@ export interface MessageInput {
  * inputs for post
  */
 export interface PostInput {
-  title: string;
   description: string;
   image?: string | null;
 }
