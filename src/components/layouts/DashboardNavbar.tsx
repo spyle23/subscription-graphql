@@ -14,6 +14,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
+import { useNavigate } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -56,6 +57,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export const DashboardNavbar = (): JSX.Element => {
+  const navigate = useNavigate()
   return (
     <AppBar>
       <Toolbar
@@ -84,6 +86,7 @@ export const DashboardNavbar = (): JSX.Element => {
             size="large"
             aria-label="home icon"
             color="inherit"
+            onClick={()=> navigate("/landing")}
           >
             <HomeIcon />
           </IconButton>
@@ -91,6 +94,7 @@ export const DashboardNavbar = (): JSX.Element => {
             size="large"
             aria-label="show 4 new mails"
             color="inherit"
+            onClick={()=> navigate("/landing/message")}
           >
             <Badge badgeContent={4} color="error">
               <MailIcon />

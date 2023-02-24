@@ -19,7 +19,6 @@ const DashboardLayoutRoot = styled("div")(() => ({
 export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
   children,
 }): JSX.Element => {
-  const { loadingApp } = useApplicationContext();
   return (
     <>
       <DashboardLayoutRoot>
@@ -33,21 +32,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
             minHeight: "92vh",
           }}
         >
-          {loadingApp ? (
-            <Box
-              sx={{
-                textAlign: "center",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "100%",
-              }}
-            >
-              <Loading />
-            </Box>
-          ) : (
-            children
-          )}
+          {children}
         </Box>
       </DashboardLayoutRoot>
       <DashboardNavbar />
