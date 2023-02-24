@@ -12,7 +12,6 @@ dist
 dist-ssr
 *.local
 .env.development
-apollo.config.cjs
 
 # Editor directories and files
 .vscode/*
