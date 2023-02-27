@@ -15,9 +15,11 @@ import { Dropzone } from "../../dropzone/Dropzone";
 import { useForm } from "react-hook-form";
 import { PostInput } from "../../../types/graphql-types";
 import { Delete } from "@mui/icons-material";
+import { usePost } from "../../../hooks/post/usePost";
 
 export const PostCreateForm = (): JSX.Element => {
   const { user } = useApplicationContext();
+  const { createPost } = usePost();
   const [uploadPicture, setUploadPicture] = useState<boolean>(false);
   const {
     register,
@@ -34,8 +36,13 @@ export const PostCreateForm = (): JSX.Element => {
       image: file,
     });
   };
-  const handlePost = (data: PostInput) => {
-    console.log(data);
+  const handlePost = async (data: PostInput) => {
+    try {
+      if (!user) return;
+      await createPost(data, user.id);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <Card elevation={1} sx={{ width: { xs: "100%", md: 500 }, p: 2 }}>
