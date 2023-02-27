@@ -42,6 +42,15 @@ export interface SignupInput {
 }
 
 /**
+ * input for the file
+ */
+export interface UploadInput {
+  name: string;
+  data: string;
+  type: string;
+}
+
+/**
  * user id in the group discuss
  */
 export interface UserChoose {

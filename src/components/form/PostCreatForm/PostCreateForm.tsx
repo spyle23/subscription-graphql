@@ -16,11 +16,13 @@ import { useForm } from "react-hook-form";
 import { PostInput } from "../../../types/graphql-types";
 import { Delete } from "@mui/icons-material";
 import { usePost } from "../../../hooks/post/usePost";
+import { useFileDeleter } from "../../../hooks/application/useFileDeleter";
 
 export const PostCreateForm = (): JSX.Element => {
   const { user } = useApplicationContext();
   const { createPost } = usePost();
   const [uploadPicture, setUploadPicture] = useState<boolean>(false);
+  const { deleteFile } = useFileDeleter();
   const {
     register,
     formState: { errors },
@@ -35,6 +37,19 @@ export const PostCreateForm = (): JSX.Element => {
       ...currentValues,
       image: file,
     });
+  };
+  const deletePicture = async () => {
+    try {
+      const currentValues = getValues();
+      if (!currentValues.image) return;
+      await deleteFile(currentValues.image);
+      reset({
+        ...currentValues,
+        image: undefined,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handlePost = async (data: PostInput) => {
     try {
@@ -100,12 +115,7 @@ export const PostCreateForm = (): JSX.Element => {
             }}
           >
             <IconButton
-              onClick={() => {
-                reset({
-                  ...getValues(),
-                  image: undefined,
-                });
-              }}
+              onClick={deletePicture}
               sx={{ position: "absolute", bottom: 5, right: 5 }}
             >
               <Delete color="error" />
