@@ -12,3 +12,24 @@ export const POST_BY_USER = gql`
     }
   }
 `;
+
+export const POST_ORDER = gql`
+  query GetOrderPost {
+    getOrderPost {
+      description
+      image
+      id
+      user {
+        firstname
+        lastname
+        id
+        photo
+      }
+      comments {
+        content
+        image
+        id
+      }
+    }
+  }
+`;

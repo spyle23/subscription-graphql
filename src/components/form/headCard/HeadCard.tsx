@@ -6,9 +6,11 @@ import { AccountCircle } from "@mui/icons-material";
 export const HeadCard = (): JSX.Element => {
   const { user } = useApplicationContext();
 
+  console.log(user?.firstname);
+
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ mr: 1 }} >
+      <Box sx={{ mr: 1 }}>
         {user?.photo ? (
           <img src={user?.photo} alt="profile" />
         ) : (

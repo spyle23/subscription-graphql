@@ -21,7 +21,7 @@ import { Dropzone } from "../../dropzone/Dropzone";
 import { useForm } from "react-hook-form";
 import { PostInput } from "../../../types/graphql-types";
 import { Delete } from "@mui/icons-material";
-import { usePost } from "../../../hooks/post/usePost";
+import { usePostUser } from "../../../hooks/post/usePostUser";
 import { useFileDeleter } from "../../../hooks/application/useFileDeleter";
 import { TransitionProps } from "@mui/material/transitions";
 import { HeadCard } from "../headCard/HeadCard";
@@ -37,7 +37,7 @@ const Transition = React.forwardRef(function Transition(
 
 export const PostCreateForm = (): JSX.Element => {
   const { user } = useApplicationContext();
-  const { createPost } = usePost();
+  const { createPost } = usePostUser();
   const [uploadPicture, setUploadPicture] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const { deleteFile } = useFileDeleter();
