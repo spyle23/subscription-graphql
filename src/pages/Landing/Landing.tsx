@@ -4,13 +4,19 @@ import { PostCreateForm } from "../../components/form/PostCreatForm/PostCreateFo
 import { usePost } from "../../hooks/post/usePost";
 import loading from "../../assets/loadingApp.svg";
 import { PostCard } from "../../components/card/PostCard";
+import { usePostUser } from "../../hooks/post/usePostUser";
+import { PostInput } from "../../types/graphql-types";
 
 export default function Landing() {
-  const { allPost, postLoading } = usePost();
-  console.log(allPost?.getOrderPost);
+  const { allPost, postLoading, refetch } = usePost();
+  const { createPost } = usePostUser();
+  const handleCreatePost = async (data: PostInput, id: number) => {
+    await createPost(data, id);
+    await refetch();
+  };
   return (
     <Container>
-      <PostCreateForm />
+      <PostCreateForm createPost={handleCreatePost} />
       {allPost &&
         allPost.getOrderPost.map((value) => (
           <PostCard

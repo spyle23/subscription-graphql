@@ -6,6 +6,7 @@ export const usePost = () => {
   const {
     data: allPost,
     loading: postLoading,
+    refetch,
     error: postError,
   } = useQuery<GetOrderPost>(POST_ORDER);
 
@@ -13,5 +14,6 @@ export const usePost = () => {
     allPost,
     postLoading,
     postError,
+    refetch
   };
 };

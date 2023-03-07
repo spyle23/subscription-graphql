@@ -16,12 +16,11 @@ import {
 import { useApplicationContext } from "../../../hooks";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import CollectionsIcon from "@mui/icons-material/Collections";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, FC } from "react";
 import { Dropzone } from "../../dropzone/Dropzone";
 import { useForm } from "react-hook-form";
 import { PostInput } from "../../../types/graphql-types";
 import { Delete } from "@mui/icons-material";
-import { usePostUser } from "../../../hooks/post/usePostUser";
 import { useFileDeleter } from "../../../hooks/application/useFileDeleter";
 import { TransitionProps } from "@mui/material/transitions";
 import { HeadCard } from "../headCard/HeadCard";
@@ -35,9 +34,12 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export const PostCreateForm = (): JSX.Element => {
+type PostCreateFormProps = {
+  createPost: (data: PostInput, id: number) => Promise<void>
+}
+
+export const PostCreateForm: FC<PostCreateFormProps> = ({ createPost }): JSX.Element => {
   const { user } = useApplicationContext();
-  const { createPost } = usePostUser();
   const [uploadPicture, setUploadPicture] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const { deleteFile } = useFileDeleter();
