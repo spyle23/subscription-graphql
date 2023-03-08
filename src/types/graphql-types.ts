@@ -8,6 +8,14 @@
 //==============================================================
 
 /**
+ * input for the comment
+ */
+export interface CommentInput {
+  content: string;
+  image?: string | null;
+}
+
+/**
  * user choose
  */
 export interface DiscussGroupInput {

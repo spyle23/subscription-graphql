@@ -58,7 +58,7 @@ export const PostCard: FC<PostCardProps> = ({ post, ...cardProps }) => {
           </Grid>
         </CardActions>
       </Card>
-      {showComment && <CommentContainer />}
+      {showComment && <CommentContainer idPost={post.id} />}
     </Box>
   );
 };
