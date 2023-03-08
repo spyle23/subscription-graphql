@@ -25,7 +25,7 @@ export const Dropzone: FC<DropzoneProps> = ({
     reader.readAsDataURL(acceptedFiles[0]);
     reader.onload = async () => {
       const file = await uploadFile({
-        data: reader.result?.toString(),
+        data: reader.result?.toString() || "",
         type: acceptedFiles[0].type,
         name: acceptedFiles[0].name,
       });

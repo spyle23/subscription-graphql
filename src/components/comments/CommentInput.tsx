@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useApplicationContext } from "../../hooks";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import { DynamicAvatar } from "../Avatar/DynamicAvatar";
+import CollectionsIcon from "@mui/icons-material/Collections";
 
 type CommentInputProps = {
   saveComment: (data: CommentInputData) => Promise<void>;
@@ -45,6 +46,11 @@ export const CommentInput: FC<CommentInputProps> = React.memo(
           </Box>
           <IconButton onClick={handleSubmit(createComment)}>
             <KeyboardDoubleArrowRightIcon />
+          </IconButton>
+        </Box>
+        <Box>
+          <IconButton>
+            <CollectionsIcon />
           </IconButton>
         </Box>
       </Box>
