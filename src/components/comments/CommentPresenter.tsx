@@ -3,6 +3,7 @@ import { Avatar, Box, Card, Typography } from "@mui/material";
 import moment from "moment";
 import { FC } from "react";
 import { GetCommentByPost_getCommentByPost_data as IComment } from "../../graphql/comment/types/GetCommentByPost";
+import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 
 export const CommentPresenter: FC<IComment> = ({
   createdAt,
@@ -13,13 +14,7 @@ export const CommentPresenter: FC<IComment> = ({
 }) => {
   return (
     <Box sx={{ display: "flex", p: 2 }}>
-      <Box sx={{ mr: 2 }}>
-        {User?.photo ? (
-          <Avatar alt={User?.firstname || "profile"} src={User?.photo} />
-        ) : (
-          <AccountCircle sx={{ fontSize: "2em" }} />
-        )}
-      </Box>
+      <DynamicAvatar user={User} sx={{ mr: 2 }} />
       <Card elevation={1} sx={{ px: 2, py: 1 }}>
         <Box>
           <Typography variant="h6" sx={{ fontSize: "1.2em" }}>

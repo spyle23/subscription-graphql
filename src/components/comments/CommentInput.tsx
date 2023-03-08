@@ -5,6 +5,7 @@ import { Avatar, Box, IconButton, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useApplicationContext } from "../../hooks";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 
 type CommentInputProps = {
   saveComment: (data: CommentInputData) => Promise<void>;
@@ -25,13 +26,7 @@ export const CommentInput: FC<CommentInputProps> = React.memo(
     return (
       <Box sx={{ position: "sticky", bottom: 0, background: "white", p: 2 }}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ mr: 1 }}>
-            {user?.photo ? (
-              <Avatar alt={user?.firstname || "profile"} src={user?.photo} />
-            ) : (
-              <AccountCircle sx={{ fontSize: "2em" }} />
-            )}
-          </Box>
+          <DynamicAvatar user={user} />
           <Box>
             <TextField
               {...register("content", { required: true })}
