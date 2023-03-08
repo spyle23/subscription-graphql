@@ -29,6 +29,8 @@ export interface GetOrderPost_getOrderPost {
   id: number;
   user: GetOrderPost_getOrderPost_user;
   comments: GetOrderPost_getOrderPost_comments[] | null;
+  createdAt: any;
+  updatedAt: any;
 }
 
 export interface GetOrderPost {

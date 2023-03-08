@@ -30,6 +30,8 @@ export const POST_ORDER = gql`
         image
         id
       }
+      createdAt
+      updatedAt
     }
   }
 `;

@@ -1,0 +1,58 @@
+import React, { FC, useEffect } from "react";
+import { CommentInput as CommentInputData } from "../../types/graphql-types";
+import { AccountCircle } from "@mui/icons-material";
+import { Avatar, Box, IconButton, TextField } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { useApplicationContext } from "../../hooks";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+
+type CommentInputProps = {
+  saveComment: (data: CommentInputData) => Promise<void>;
+};
+
+export const CommentInput: FC<CommentInputProps> = React.memo(
+  ({ saveComment }) => {
+    const { user } = useApplicationContext();
+    const {
+      register,
+      handleSubmit,
+      formState: { errors },
+    } = useForm<CommentInputData>();
+
+    const createComment = async (data: CommentInputData) => {
+      saveComment && (await saveComment(data));
+    };
+    return (
+      <Box sx={{ position: "sticky", bottom: 0, background: "white", p: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ mr: 1 }}>
+            {user?.photo ? (
+              <Avatar alt={user?.firstname || "profile"} src={user?.photo} />
+            ) : (
+              <AccountCircle sx={{ fontSize: "2em" }} />
+            )}
+          </Box>
+          <Box>
+            <TextField
+              {...register("content", { required: true })}
+              error={errors.content && true}
+              sx={{
+                width: { md: 350, xs: 200 },
+              }}
+              InputProps={{
+                sx: {
+                  borderRadius: "25px !important",
+                },
+              }}
+              placeholder="Votre commentaire"
+              helperText={errors.content && "Veuillez entrer votre commentaire"}
+            />
+          </Box>
+          <IconButton onClick={handleSubmit(createComment)}>
+            <KeyboardDoubleArrowRightIcon />
+          </IconButton>
+        </Box>
+      </Box>
+    );
+  }
+);

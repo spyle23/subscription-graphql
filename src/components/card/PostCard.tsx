@@ -11,10 +11,11 @@ import {
 } from "@mui/material";
 import { FC, useState } from "react";
 import { GetOrderPost_getOrderPost } from "../../graphql/post/types/GetOrderPost";
-import { HeadCard } from "../form/headCard/HeadCard";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CommentIcon from "@mui/icons-material/Comment";
 import { CommentContainer } from "../comments/CommentContainer";
+import { AccountCircle } from "@mui/icons-material";
+import moment from "moment";
 
 type PostCardProps = {
   post: GetOrderPost_getOrderPost;
@@ -28,7 +29,21 @@ export const PostCard: FC<PostCardProps> = ({ post, ...cardProps }) => {
   return (
     <Box>
       <Card elevation={1} {...cardProps}>
-        <CardHeader component={HeadCard}></CardHeader>
+        <CardHeader
+          avatar={post?.user?.photo || <AccountCircle />}
+          title={
+            <>
+              <Typography variant="h5">
+                {post?.user?.firstname + " " + post?.user?.lastname}
+              </Typography>
+              <Typography>
+                {moment(new Date(post?.updatedAt || post?.createdAt))
+                  .startOf("hour")
+                  .fromNow()}
+              </Typography>
+            </>
+          }
+        ></CardHeader>
         <CardContent>
           <Typography>{post.description}</Typography>
           {post.image && (

@@ -35,10 +35,12 @@ const Transition = React.forwardRef(function Transition(
 });
 
 type PostCreateFormProps = {
-  createPost: (data: PostInput, id: number) => Promise<void>
-}
+  createPost: (data: PostInput, id: number) => Promise<void>;
+};
 
-export const PostCreateForm: FC<PostCreateFormProps> = ({ createPost }): JSX.Element => {
+export const PostCreateForm: FC<PostCreateFormProps> = ({
+  createPost,
+}): JSX.Element => {
   const { user } = useApplicationContext();
   const [uploadPicture, setUploadPicture] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -146,7 +148,8 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({ createPost }): JSX.Ele
             }}
             placeholder="Exprimer vous"
             helperText={
-              errors.image && "La description est requise pour une publication"
+              errors.description &&
+              "La description est requise pour une publication"
             }
           />
           {uploadPicture && (
