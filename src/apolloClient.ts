@@ -28,7 +28,7 @@ export const apolloClient = (
       url: API_URI_WS as string,
       lazy: true,
       connectionParams: {
-        authentication: "",
+        authentication: `Bearer ${token || user?.token}`,
       },
     })
   );

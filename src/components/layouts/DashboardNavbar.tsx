@@ -1,3 +1,4 @@
+import React, { FC } from "react";
 import {
   AppBar,
   Box,
@@ -56,8 +57,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export const DashboardNavbar = (): JSX.Element => {
-  const navigate = useNavigate()
+type DashboardNavbarProps = {
+  notification: React.ReactNode;
+};
+
+export const DashboardNavbar: FC<DashboardNavbarProps> = ({
+  notification,
+}): JSX.Element => {
+  const navigate = useNavigate();
   return (
     <AppBar>
       <Toolbar
@@ -86,7 +93,7 @@ export const DashboardNavbar = (): JSX.Element => {
             size="large"
             aria-label="home icon"
             color="inherit"
-            onClick={()=> navigate("/landing")}
+            onClick={() => navigate("/landing")}
           >
             <HomeIcon />
           </IconButton>
@@ -94,13 +101,14 @@ export const DashboardNavbar = (): JSX.Element => {
             size="large"
             aria-label="show 4 new mails"
             color="inherit"
-            onClick={()=> navigate("/landing/messages")}
+            onClick={() => navigate("/landing/messages")}
           >
             <Badge badgeContent={4} color="error">
               <MailIcon />
             </Badge>
           </IconButton>
-          <IconButton
+          {notification}
+          {/* <IconButton
             size="large"
             aria-label="show 17 new notifications"
             color="inherit"
@@ -108,7 +116,7 @@ export const DashboardNavbar = (): JSX.Element => {
             <Badge badgeContent={17} color="error">
               <NotificationsIcon />
             </Badge>
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size="large"
             edge="end"

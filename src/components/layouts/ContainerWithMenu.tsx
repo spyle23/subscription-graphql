@@ -4,6 +4,7 @@ import { FC } from "react";
 import Loading from "../../assets/loadingApp.svg";
 import { useApplicationContext } from "../../hooks";
 import { DashboardNavbar } from "./DashboardNavbar";
+import { Notifications } from "./Notifications";
 
 type ContainerWithMenuProps = {
   children: React.ReactNode;
@@ -35,7 +36,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
           {children}
         </Box>
       </DashboardLayoutRoot>
-      <DashboardNavbar />
+      <DashboardNavbar notification={<Notifications />} />
     </>
   );
 };
