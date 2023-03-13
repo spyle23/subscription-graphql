@@ -39,3 +39,9 @@ export const SIGNUP = gql`
     }
   }
 `;
+
+export const UPDATE_INFO = gql`
+  mutation UpdateUser($updateUserInput: UpdateUserInput!, $userId: Float!) {
+    updateUser(updateUserInput: $updateUserInput, userId: $userId)
+  }
+`;

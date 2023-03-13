@@ -50,6 +50,18 @@ export interface SignupInput {
 }
 
 /**
+ * input for update user
+ */
+export interface UpdateUserInput {
+  email: string;
+  firstname?: string | null;
+  lastname?: string | null;
+  password: string;
+  civilite?: string | null;
+  photo?: string | null;
+}
+
+/**
  * input for the file
  */
 export interface UploadInput {
