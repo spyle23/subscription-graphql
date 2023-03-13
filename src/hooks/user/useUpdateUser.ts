@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { UPDATE_INFO } from "../../graphql/user";
 import {
@@ -24,8 +25,17 @@ export const useUpdateUser = () => {
     });
   };
 
+  useEffect(() => {
+    if (error?.message) {
+      dispatchSnack({
+        open: true,
+        severity: "error",
+        message: error?.message,
+      });
+    }
+  }, [error]);
+
   return {
     updateUser,
-    updateError: error?.message,
   };
 };
