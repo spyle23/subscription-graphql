@@ -16,15 +16,25 @@ import CommentIcon from "@mui/icons-material/Comment";
 import { CommentContainer } from "../comments/CommentContainer";
 import { AccountCircle } from "@mui/icons-material";
 import moment from "moment";
+import { ReactionInput, ReactionType } from "../../types/graphql-types";
 
 type PostCardProps = {
   post: GetOrderPost_getOrderPost;
+  addReact: (postId: number, reactionType: ReactionInput) => Promise<void>;
 } & CardProps;
 
-export const PostCard: FC<PostCardProps> = ({ post, ...cardProps }) => {
+export const PostCard: FC<PostCardProps> = ({
+  post,
+  addReact,
+  ...cardProps
+}) => {
   const [showComment, setShowComment] = useState<boolean>(false);
   const handleToggleComment = () => {
     setShowComment((curr) => !curr);
+  };
+
+  const handleReact = async () => {
+    await addReact(post?.id, { reactionType: ReactionType.LIKE });
   };
   return (
     <Box>
@@ -61,9 +71,10 @@ export const PostCard: FC<PostCardProps> = ({ post, ...cardProps }) => {
                 alignItems: "center",
               }}
             >
-              <IconButton>
+              <IconButton onClick={handleReact}>
                 <ThumbUpIcon />
               </IconButton>
+              <Typography>{post.reactions?.length}</Typography>
             </Grid>
             <Grid
               item

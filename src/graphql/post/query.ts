@@ -30,6 +30,9 @@ export const POST_ORDER = gql`
         image
         id
       }
+      reactions {
+        reactionType
+      }
       createdAt
       updatedAt
     }

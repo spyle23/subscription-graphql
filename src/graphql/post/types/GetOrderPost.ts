@@ -3,6 +3,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { ReactionType } from "./../../../types/graphql-types";
+
 // ====================================================
 // GraphQL query operation: GetOrderPost
 // ====================================================
@@ -22,6 +24,11 @@ export interface GetOrderPost_getOrderPost_comments {
   id: number;
 }
 
+export interface GetOrderPost_getOrderPost_reactions {
+  __typename: "Reaction";
+  reactionType: ReactionType;
+}
+
 export interface GetOrderPost_getOrderPost {
   __typename: "PostDisplay";
   description: string;
@@ -29,6 +36,7 @@ export interface GetOrderPost_getOrderPost {
   id: number;
   user: GetOrderPost_getOrderPost_user;
   comments: GetOrderPost_getOrderPost_comments[] | null;
+  reactions: GetOrderPost_getOrderPost_reactions[] | null;
   createdAt: any;
   updatedAt: any;
 }

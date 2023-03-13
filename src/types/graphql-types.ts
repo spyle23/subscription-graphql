@@ -7,6 +7,14 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum ReactionType {
+  GRR = "GRR",
+  HAHA = "HAHA",
+  LIKE = "LIKE",
+  LOVE = "LOVE",
+  WOAHOU = "WOAHOU",
+}
+
 /**
  * input for the comment
  */
@@ -36,6 +44,13 @@ export interface MessageInput {
 export interface PostInput {
   description: string;
   image?: string | null;
+}
+
+/**
+ * input of the reaction
+ */
+export interface ReactionInput {
+  reactionType: ReactionType;
 }
 
 /**
