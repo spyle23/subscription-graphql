@@ -27,7 +27,7 @@ export const Notifications = (): JSX.Element => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
-  const { user } = useApplicationContext();
+  const { user, dispatchSnack } = useApplicationContext();
   const { data: userProfile } = useCurrentUser(user?.id as number);
   const { data, loading, error } = useSubscription<
     CommentPost,
@@ -42,6 +42,11 @@ export const Notifications = (): JSX.Element => {
         nbrNotification: prev.nbrNotification + 1,
         notifications: [...prev.notifications, data.commentPost],
       }));
+      dispatchSnack({
+        open: true,
+        message: data.commentPost.name,
+        severity: "info",
+      });
     }
   }, [data]);
 
