@@ -17,13 +17,12 @@ export default function Landing() {
   return (
     <Container>
       <PostCreateForm createPost={handleCreatePost} />
-      {allPost &&
-        allPost.getOrderPost.map((value) => (
-          <PostCard
-            post={value}
-            sx={{ p: 2, width: { xs: "100%", md: 500 }, my: 1 }}
-          />
-        ))}
+      {allPost?.getOrderPost.map((value) => (
+        <PostCard
+          post={value}
+          sx={{ p: 2, width: { xs: "100%", md: 500 }, my: 1 }}
+        />
+      ))}
     </Container>
   );
 }

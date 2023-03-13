@@ -9,6 +9,16 @@ export const PROFILE = gql`
       lastname
       photo
       civilite
+      Post {
+        description
+        image
+      }
+      notifications {
+        name
+        description
+        createdAt
+        updatedAt
+      }
     }
   }
 `;

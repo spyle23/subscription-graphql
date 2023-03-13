@@ -2,7 +2,7 @@ import { useSubscription } from "@apollo/client";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Badge, IconButton, Popover, Typography, Box } from "@mui/material";
 import moment from "moment";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { POST_SUBSCRIPTION } from "../../graphql/notification/subscription";
 import {
   CommentPost,
@@ -10,55 +10,50 @@ import {
   CommentPost_commentPost,
 } from "../../graphql/notification/types/CommentPost";
 import { useApplicationContext } from "../../hooks";
+import { useCurrentUser } from "../../hooks/user/useCurrentUser";
 
 type NotificationType = {
   nbrNotification: number;
   notifications: CommentPost_commentPost[];
 };
 
+const initialValue: NotificationType = {
+  nbrNotification: 0,
+  notifications: [],
+};
+
 export const Notifications = (): JSX.Element => {
+  const [notifications, dispatch] = useState<NotificationType>(initialValue);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
   const { user } = useApplicationContext();
+  const { data: userProfile } = useCurrentUser(user?.id as number);
   const { data, loading, error } = useSubscription<
     CommentPost,
     CommentPostVariables
   >(POST_SUBSCRIPTION, {
-    variables: { userId: user?.id as number }
+    variables: { userId: user?.id as number },
   });
 
-  console.log(error?.message)
-
-  const notifications: NotificationType = useMemo(() => {
-    let notifications: CommentPost_commentPost[] = [];
-    let nbrNotification: number = 0;
+  useEffect(() => {
     if (data) {
-      nbrNotification += 1;
-      notifications.push(data.commentPost);
+      dispatch((prev) => ({
+        nbrNotification: prev.nbrNotification + 1,
+        notifications: [...prev.notifications, data.commentPost],
+      }));
     }
-    return {
-      notifications,
-      nbrNotification,
-    };
   }, [data]);
 
-  // useEffect(() => {
-  //   if (data) {
-  //     setNotifications((prev) => [...prev, data])
-  //     setNbrNewNotif((prev) => prev + 1)
-  //   }
-  // }, [data])
-
-  // useEffect(() => {
-  //   if (business?.Notification) {
-  //     const notificationsData =
-  //       business?.Notification && business?.Notification?.length > 5
-  //         ? business?.Notification?.slice(0,4)
-  //         : business?.Notification
-  //     setNotifications([...notificationsData])
-  //   }
-  // }, [business?.Notification])
+  useEffect(() => {
+    if (userProfile?.profile?.notifications) {
+      const notificationsData =
+        userProfile?.profile?.notifications.length > 5
+          ? userProfile?.profile?.notifications.slice(0, 4)
+          : userProfile?.profile?.notifications;
+      dispatch((prev) => ({ ...prev, notifications: notificationsData }));
+    }
+  }, [userProfile]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorEl(event.currentTarget);
@@ -66,6 +61,7 @@ export const Notifications = (): JSX.Element => {
 
   const handleClose = (): void => {
     setAnchorEl(null);
+    dispatch((prev) => ({ ...prev, nbrNotification: 0 }));
   };
 
   const open = Boolean(anchorEl);
