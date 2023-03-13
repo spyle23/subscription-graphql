@@ -1,10 +1,10 @@
 import { styled } from "@mui/material";
 import { Box } from "@mui/system";
 import { FC } from "react";
-import Loading from "../../assets/loadingApp.svg";
-import { useApplicationContext } from "../../hooks";
+import { UserMenu } from "./UserMenu";
 import { DashboardNavbar } from "./DashboardNavbar";
 import { Notifications } from "./Notifications";
+import { useApplicationContext } from "../../hooks";
 
 type ContainerWithMenuProps = {
   children: React.ReactNode;
@@ -20,6 +20,7 @@ const DashboardLayoutRoot = styled("div")(() => ({
 export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
   children,
 }): JSX.Element => {
+  const { logout } = useApplicationContext();
   return (
     <>
       <DashboardLayoutRoot>
@@ -36,7 +37,10 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
           {children}
         </Box>
       </DashboardLayoutRoot>
-      <DashboardNavbar notification={<Notifications />} />
+      <DashboardNavbar
+        notification={<Notifications />}
+        utilisateur={<UserMenu logout={logout} />}
+      />
     </>
   );
 };

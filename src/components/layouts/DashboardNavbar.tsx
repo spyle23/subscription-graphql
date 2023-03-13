@@ -59,10 +59,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 type DashboardNavbarProps = {
   notification: React.ReactNode;
+  utilisateur: React.ReactNode;
 };
 
 export const DashboardNavbar: FC<DashboardNavbarProps> = ({
   notification,
+  utilisateur,
 }): JSX.Element => {
   const navigate = useNavigate();
   return (
@@ -108,24 +110,7 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
             </Badge>
           </IconButton>
           {notification}
-          {/* <IconButton
-            size="large"
-            aria-label="show 17 new notifications"
-            color="inherit"
-          >
-            <Badge badgeContent={17} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton> */}
-          <IconButton
-            size="large"
-            edge="end"
-            aria-label="account of current user"
-            aria-haspopup="true"
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
+          {utilisateur}
         </Box>
       </Toolbar>
     </AppBar>

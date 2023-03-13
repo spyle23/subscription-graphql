@@ -55,7 +55,11 @@ export const PostCard: FC<PostCardProps> = ({ post, ...cardProps }) => {
             <Grid
               item
               xs={6}
-              sx={{ display: "flex", justifyContent: "center" }}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
               <IconButton>
                 <ThumbUpIcon />
@@ -64,11 +68,16 @@ export const PostCard: FC<PostCardProps> = ({ post, ...cardProps }) => {
             <Grid
               item
               xs={6}
-              sx={{ display: "flex", justifyContent: "center" }}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
               <IconButton onClick={handleToggleComment}>
                 <CommentIcon />
               </IconButton>
+              <Typography>{post.comments?.length}</Typography>
             </Grid>
           </Grid>
         </CardActions>
