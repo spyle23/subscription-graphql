@@ -1,4 +1,4 @@
-import { useCallback, FC, useMemo, useEffect } from "react";
+import { useCallback, FC, useMemo, useEffect, useContext } from "react";
 import { useQuery } from "@apollo/client";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import {
@@ -11,6 +11,7 @@ import { useComment } from "../../hooks/comment/useComment";
 import { CommentInput as CommentInputData } from "../../types/graphql-types";
 import { CommentInput } from "./CommentInput";
 import { CommentPresenter } from "./CommentPresenter";
+import { CommentContext } from "../../pages/Landing/Landing";
 
 type CommentContainerProps = {
   idPost: number;
@@ -18,6 +19,7 @@ type CommentContainerProps = {
 
 export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
   const { user, dispatchSnack } = useApplicationContext();
+  const { commentPost } = useContext(CommentContext);
   const { data, loading, error, refetch } = useQuery<
     GetCommentByPost,
     GetCommentByPostVariables
@@ -26,28 +28,22 @@ export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
       postId: idPost,
     },
   });
-  const { commentExec, loading: commentLoading, errorComment } = useComment();
+  // const { commentExec, loading: commentLoading, errorComment } = useComment();
 
-  const saveComment = useCallback(async (data: CommentInputData) => {
-    await commentExec({
-      variables: {
-        postId: idPost,
-        userId: user?.id as number,
-        commentInput: data,
-      },
-    });
+  const saveComment = async (data: CommentInputData) => {
+    commentPost && (await commentPost(idPost, data));
     await refetch({ postId: idPost });
-  }, []);
+  };
 
-  useEffect(() => {
-    if (errorComment) {
-      dispatchSnack({
-        open: true,
-        severity: "error",
-        message: errorComment,
-      });
-    }
-  }, [errorComment]);
+  // useEffect(() => {
+  //   if (errorComment) {
+  //     dispatchSnack({
+  //       open: true,
+  //       severity: "error",
+  //       message: errorComment,
+  //     });
+  //   }
+  // }, [errorComment]);
 
   const comments = useMemo(() => data?.getCommentByPost.data, [data]);
 
