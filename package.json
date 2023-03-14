@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "predeploy": "yarn build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d dist",
     "dev": "env-cmd -f .env.development vite",
     "codegen": "graphql-codegen-esm --config codegen.ts",
     "generate:schema:dev": "npx apollo schema:download  --endpoint=http://localhost:4200/graphql graphql-schema.json",
