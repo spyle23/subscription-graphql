@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "dev": "env-cmd -f .env.development vite",
     "codegen": "graphql-codegen-esm --config codegen.ts",
     "generate:schema:dev": "npx apollo schema:download  --endpoint=http://localhost:4200/graphql graphql-schema.json",
@@ -43,6 +45,7 @@
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react": "^3.1.0",
     "env-cmd": "^10.1.0",
+    "gh-pages": "^5.0.0",
     "react-error-overlay": "6.0.9",
     "typescript": "^4.9.3",
     "vite": "^4.1.0"
