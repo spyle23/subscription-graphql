@@ -143,7 +143,7 @@ export const SignIn = (): JSX.Element => {
                 </Button>
               </form>
               <Divider sx={{ my: 1 }} />
-              <NavLink to="/auth/signup">Pas encore de compte?</NavLink>
+              <NavLink to="/subscription-graphql/auth/signup">Pas encore de compte?</NavLink>
             </Grid>
           </Grid>
         </CardContent>
