@@ -52,7 +52,7 @@ export const SignUp = (): JSX.Element => {
         message: result.message,
         severity: "success",
       });
-      navigate("/landing");
+      navigate("/subscription-graphql/landing");
     }
   };
 

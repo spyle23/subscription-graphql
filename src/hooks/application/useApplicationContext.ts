@@ -59,7 +59,7 @@ export const useApplicationContext = (): UseApplicationType &
     AuthStorage.clearToken(() => {
       setUser(undefined);
       setToken(undefined);
-      navigate("/auth/login");
+      navigate("/subscription-graphql/auth/login");
       window.location.reload();
     });
   };

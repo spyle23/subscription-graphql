@@ -40,7 +40,7 @@ export const SignIn = (): JSX.Element => {
         severity: "success",
         message: response.message,
       });
-      navigate("/landing");
+      navigate("/subscription-graphql/landing");
     }
   };
 

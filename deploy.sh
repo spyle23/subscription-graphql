@@ -1,7 +1,6 @@
 set -e
 
 npm run build
-npm run preview
 
 cd dist
 

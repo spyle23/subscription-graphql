@@ -17,10 +17,10 @@ const PrivateRouter = (): JSX.Element => {
 export const MainRouter = (): JSX.Element => {
   return (
     <Routes>
-      <Route index element={<Navigate to="landing" />} />
-      <Route path="auth/*" element={<AuthenticationRoute />} />
+      <Route path="/subscription-graphql/" element={<Navigate to="landing" />} />
+      <Route path="/subscription-graphql/auth/*" element={<AuthenticationRoute />} />
       <Route
-        path="landing/*"
+        path="/subscription-graphql/landing/*"
         element={
           <PrivateRoute>
             <ContainerWithMenu>

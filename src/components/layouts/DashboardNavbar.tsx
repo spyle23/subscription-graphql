@@ -95,7 +95,7 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
             size="large"
             aria-label="home icon"
             color="inherit"
-            onClick={() => navigate("/landing")}
+            onClick={() => navigate("/subscription-graphql/landing")}
           >
             <HomeIcon />
           </IconButton>
@@ -103,7 +103,7 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
             size="large"
             aria-label="show 4 new mails"
             color="inherit"
-            onClick={() => navigate("/landing/messages")}
+            onClick={() => navigate("/subscription-graphql/landing/messages")}
           >
             <Badge badgeContent={4} color="error">
               <MailIcon />
