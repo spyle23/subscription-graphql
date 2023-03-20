@@ -32,6 +32,7 @@ export const POST_ORDER = gql`
       }
       reactions {
         reactionType
+        userId
       }
       createdAt
       updatedAt

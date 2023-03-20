@@ -8,34 +8,45 @@ import {
   Grid,
   IconButton,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { FC, useState } from "react";
 import { GetOrderPost_getOrderPost } from "../../graphql/post/types/GetOrderPost";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CommentIcon from "@mui/icons-material/Comment";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import { CommentContainer } from "../comments/CommentContainer";
 import { AccountCircle } from "@mui/icons-material";
 import moment from "moment";
 import { ReactionInput, ReactionType } from "../../types/graphql-types";
+import { login_login_data } from "../../graphql/user";
 
 type PostCardProps = {
   post: GetOrderPost_getOrderPost;
+  user?: login_login_data;
   addReact: (postId: number, reactionType: ReactionInput) => Promise<void>;
 } & CardProps;
 
 export const PostCard: FC<PostCardProps> = ({
   post,
+  user,
   addReact,
   ...cardProps
 }) => {
+  const theme = useTheme();
   const [showComment, setShowComment] = useState<boolean>(false);
+  const [reacted, setReacted] = useState<boolean>(
+    post?.reactions?.find((react) => react.userId === user?.id) ? true : false
+  );
   const handleToggleComment = () => {
     setShowComment((curr) => !curr);
   };
 
   const handleReact = async () => {
+    setReacted((prev) => !prev);
     await addReact(post?.id, { reactionType: ReactionType.LIKE });
   };
+
   return (
     <Box>
       <Card elevation={1} {...cardProps}>
@@ -61,7 +72,7 @@ export const PostCard: FC<PostCardProps> = ({
           )}
         </CardContent>
         <CardActions>
-          <Grid container>
+          <Grid container sx={{ position: "relative" }}>
             <Grid
               item
               xs={6}
@@ -72,7 +83,9 @@ export const PostCard: FC<PostCardProps> = ({
               }}
             >
               <IconButton onClick={handleReact}>
-                <ThumbUpIcon />
+                <ThumbUpIcon
+                  sx={{ fill: reacted ? "#512da8" : "currentcolor" }}
+                />
               </IconButton>
               <Typography>{post.reactions?.length}</Typography>
             </Grid>

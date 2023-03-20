@@ -14,6 +14,6 @@ export const usePost = () => {
     allPost,
     postLoading,
     postError,
-    refetch
+    refetch,
   };
 };

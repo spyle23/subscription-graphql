@@ -27,6 +27,7 @@ export interface GetOrderPost_getOrderPost_comments {
 export interface GetOrderPost_getOrderPost_reactions {
   __typename: "Reaction";
   reactionType: ReactionType;
+  userId: number;
 }
 
 export interface GetOrderPost_getOrderPost {

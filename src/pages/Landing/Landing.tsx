@@ -51,6 +51,8 @@ export default function Landing() {
       <CommentContext.Provider value={{ commentPost: commentPost }}>
         {allPost?.getOrderPost.map((value) => (
           <PostCard
+            key={value.id}
+            user={user}
             addReact={addReactToPost}
             post={value}
             sx={{ p: 2, width: { xs: "100%", md: 500 }, my: 1 }}
