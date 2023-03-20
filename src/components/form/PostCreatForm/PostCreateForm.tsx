@@ -87,6 +87,7 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
   };
 
   const handleClose = () => {
+    setUploadPicture(false);
     setOpen(false);
   };
   return (
