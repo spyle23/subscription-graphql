@@ -1,3 +1,4 @@
+import fetch from "cross-fetch";
 import {
   ApolloClient,
   NormalizedCacheObject,
@@ -18,6 +19,7 @@ export const apolloClient = (
   const user = AuthStorage.isAuth();
   const httpLink = new HttpLink({
     uri: API_URI,
+    fetch,
     headers: {
       authorization: `Bearer ${token || user?.token}`,
     },
