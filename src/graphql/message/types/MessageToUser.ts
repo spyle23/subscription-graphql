@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface MessageToUser_messageToUser {
-  __typename: "Message";
+  __typename: "MessageWithRecepter";
   id: number;
   userId: number;
   receiverId: number | null;

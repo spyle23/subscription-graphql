@@ -1,5 +1,6 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { useApplicationContext } from "../../hooks";
+import { ContainerMessage } from "./components/ContainerMessage";
 
 export const Message = (): JSX.Element => {
   const { dispatchSnack } = useApplicationContext();
@@ -11,8 +12,10 @@ export const Message = (): JSX.Element => {
             📧 Messages
           </Typography>
         </Box>
+        <ContainerMessage sx={{ my: 2 }} />
       </Grid>
-      <Grid item md={8}></Grid>
+      <Grid item md={8}>
+      </Grid>
     </Grid>
   );
 };
