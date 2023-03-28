@@ -1,12 +1,12 @@
 import { FC } from "react";
-import { Avatar, Box, Grid, Typography } from "@mui/material";
+import { Avatar, Box, Grid, GridProps, Typography } from "@mui/material";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
 import { MessagesOfCurrentUser_messagesOfCurrentUser } from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { login_login_data } from "../../../graphql/user";
 type PresenterMessageProps = {
   user?: login_login_data;
   message: MessagesOfCurrentUser_messagesOfCurrentUser;
-};
+} & GridProps;
 
 const determineUserOrGroup = (
   user: login_login_data,
@@ -21,11 +21,17 @@ const determineUserOrGroup = (
 export const PresenterMessage: FC<PresenterMessageProps> = ({
   message,
   user,
+  sx,
+  ...props
 }) => {
   if (!user) return <></>;
   const displayUserMessage = determineUserOrGroup(user, message);
   return (
-    <Grid container sx={{ p: 1 }}>
+    <Grid
+      container
+      sx={{ p: 1, cursor: "pointer", ":hover": { background: "grey" }, ...sx }}
+      {...props}
+    >
       <Grid item xs={1} sx={{ display: "flex", justifyContent: "center" }}>
         {displayUserMessage ? (
           <DynamicAvatar user={displayUserMessage} />

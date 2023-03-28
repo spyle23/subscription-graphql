@@ -1,16 +1,19 @@
 import { useQuery } from "@apollo/client";
 import { Box, BoxProps } from "@mui/material";
-import { FC } from "react";
+import React, { FC, useContext } from "react";
 import { MESSAGES_CURRENT_USER } from "../../../graphql/message";
 import {
   MessagesOfCurrentUser,
   MessagesOfCurrentUserVariables,
+  MessagesOfCurrentUser_messagesOfCurrentUser,
 } from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { useApplicationContext } from "../../../hooks";
+import { MessageContext } from "../Message";
 import { PresenterMessage } from "./PresenterMessage";
 
-export const ContainerMessage: FC<BoxProps> = ({ sx, ...props }) => {
+export const ContainerMessage: FC<BoxProps> = React.memo(({ sx, ...props }) => {
   const { user } = useApplicationContext();
+  const { dispatch } = useContext(MessageContext);
   const { data: messageData } = useQuery<
     MessagesOfCurrentUser,
     MessagesOfCurrentUserVariables
@@ -18,11 +21,23 @@ export const ContainerMessage: FC<BoxProps> = ({ sx, ...props }) => {
     variables: { userId: user?.id as number },
     skip: !user?.id,
   });
+
+  const handleClickMessage = (
+    value: MessagesOfCurrentUser_messagesOfCurrentUser
+  ) => {
+    dispatch({ type: "select message", value: value });
+  };
+
   return (
-    <Box sx={{ height: "80vh", overflowY: "auto", ...sx }} {...props}>
+    <Box sx={{ height: "80vh", overflowY: "auto", p: 2, ...sx }} {...props}>
       {messageData?.messagesOfCurrentUser?.map((value, index) => (
-        <PresenterMessage key={index} message={value} user={user} />
+        <PresenterMessage
+          key={index}
+          message={value}
+          user={user}
+          onClick={() => handleClickMessage(value)}
+        />
       ))}
     </Box>
   );
-};
+});
