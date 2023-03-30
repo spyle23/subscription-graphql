@@ -3,14 +3,20 @@ import { Avatar, Box, Grid, GridProps, Typography } from "@mui/material";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
 import { MessagesOfCurrentUser_messagesOfCurrentUser } from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { login_login_data } from "../../../graphql/user";
+import { MessageToUser_messageToUser } from "../../../graphql/message";
 type PresenterMessageProps = {
   user?: login_login_data;
-  message: MessagesOfCurrentUser_messagesOfCurrentUser;
+  isNewMessage: boolean;
+  message:
+    | MessagesOfCurrentUser_messagesOfCurrentUser
+    | MessageToUser_messageToUser;
 } & GridProps;
 
 export const determineUserOrGroup = (
   user: login_login_data,
-  message: MessagesOfCurrentUser_messagesOfCurrentUser
+  message:
+    | MessagesOfCurrentUser_messagesOfCurrentUser
+    | MessageToUser_messageToUser
 ) => {
   if (message.Receiver?.id === user.id) {
     return message.User;
@@ -21,6 +27,7 @@ export const determineUserOrGroup = (
 export const PresenterMessage: FC<PresenterMessageProps> = ({
   message,
   user,
+  isNewMessage,
   sx,
   ...props
 }) => {
@@ -48,7 +55,9 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
             ? displayUserMessage.firstname + " " + displayUserMessage.lastname
             : message.DiscussGroup?.groupName}
         </Typography>
-        <Typography>{message.content}</Typography>
+        <Typography sx={{ fontWeight: isNewMessage ? "bold" : "normal" }}>
+          {message.content}
+        </Typography>
       </Grid>
     </Grid>
   );

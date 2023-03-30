@@ -27,13 +27,6 @@ export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
   ({ messageData, sx, ...props }) => {
     const { user } = useApplicationContext();
     const { dispatch } = useContext(MessageContext);
-    // const { data: messageData, refetch } = useQuery<
-    //   MessagesOfCurrentUser,
-    //   MessagesOfCurrentUserVariables
-    // >(MESSAGES_CURRENT_USER, {
-    //   variables: { userId: user?.id as number },
-    //   skip: !user?.id,
-    // });
 
     const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
       LISTEN_MESSAGE,
@@ -74,6 +67,11 @@ export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
           <PresenterMessage
             key={index}
             message={value}
+            isNewMessage={
+              data?.messageToUser && value.id === data?.messageToUser.id
+                ? true
+                : false
+            }
             user={user}
             onClick={() => handleClickMessage(value)}
           />
