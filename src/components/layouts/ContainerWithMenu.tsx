@@ -5,6 +5,7 @@ import { UserMenu } from "./UserMenu";
 import { DashboardNavbar } from "./DashboardNavbar";
 import { Notifications } from "./Notifications";
 import { useApplicationContext } from "../../hooks";
+import { MessageToolbar } from "./MessageToolbar";
 
 type ContainerWithMenuProps = {
   children: React.ReactNode;
@@ -38,6 +39,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
         </Box>
       </DashboardLayoutRoot>
       <DashboardNavbar
+        message={<MessageToolbar />}
         notification={<Notifications />}
         utilisateur={<UserMenu logout={logout} />}
       />

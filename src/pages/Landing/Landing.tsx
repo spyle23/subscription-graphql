@@ -12,8 +12,14 @@ import {
 } from "../../types/graphql-types";
 import { useReactPost } from "../../hooks/post/useReactPost";
 import { useApplicationContext } from "../../hooks";
-import { createContext, useCallback } from "react";
+import { createContext, useCallback, useEffect } from "react";
 import { useComment } from "../../hooks/comment/useComment";
+import { useSubscription } from "@apollo/client";
+import {
+  LISTEN_MESSAGE,
+  MessageToUser,
+  MessageToUserVariables,
+} from "../../graphql/message";
 type CommentGen = {
   commentPost?: (postId: number, commentInput: CommentInput) => Promise<void>;
 };
@@ -21,7 +27,7 @@ export const CommentContext = createContext<CommentGen>({});
 
 export default function Landing() {
   const { allPost, postLoading, refetch } = usePost();
-  const { user } = useApplicationContext();
+  const { user, dispatchSnack } = useApplicationContext();
   const { createPost } = usePostUser();
   const { addReact } = useReactPost();
   const { commentExec, loading: commentLoading, errorComment } = useComment();
@@ -32,6 +38,31 @@ export default function Landing() {
     },
     [user]
   );
+
+  const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
+    LISTEN_MESSAGE,
+    {
+      variables: { userId: user?.id as number },
+      skip: !user?.id,
+    }
+  );
+
+  useEffect(() => {
+    if (data?.messageToUser) {
+      dispatchSnack({
+        open: true,
+        severity: "info",
+        withImage: true,
+        message: "Nouveau message",
+        subtitle: `${
+          data.messageToUser.User.firstname +
+          " " +
+          data.messageToUser.User.lastname
+        } vous a envoyé un nouveau message`,
+      });
+    }
+  }, [data]);
+
   const commentPost = useCallback(
     async (postId: number, commentInput: CommentInput) => {
       await commentExec({
