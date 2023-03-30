@@ -15,7 +15,10 @@ type HeaderMessageProps = {
 export const HeaderMessage: FC<HeaderMessageProps> = ({ data }) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ backgroundColor: "inherit", "svg": { fill: "inherit" } }} >
+      <AppBar
+        position="static"
+        sx={{ backgroundColor: "inherit", svg: { fill: "inherit" } }}
+      >
         <Toolbar>
           <Box sx={{ display: "flex" }}>
             <DynamicAvatar user={data} />
