@@ -11,17 +11,19 @@ export const MESSAGE_TWO_USER = gql`
       receiverId: $receiverId
       discussGroupId: $discussGroupId
     ) {
-      message
-      data {
+      id
+      userId
+      User {
         id
-        userId
-        receiverId
-        discussGroupId
-        content
-        createdAt
-        updatedAt
+        photo
+        firstname
+        lastname
       }
-      success
+      receiverId
+      discussGroupId
+      content
+      createdAt
+      updatedAt
     }
   }
 `;

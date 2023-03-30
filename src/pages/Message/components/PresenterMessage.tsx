@@ -8,7 +8,7 @@ type PresenterMessageProps = {
   message: MessagesOfCurrentUser_messagesOfCurrentUser;
 } & GridProps;
 
-const determineUserOrGroup = (
+export const determineUserOrGroup = (
   user: login_login_data,
   message: MessagesOfCurrentUser_messagesOfCurrentUser
 ) => {

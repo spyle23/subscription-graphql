@@ -7,9 +7,10 @@ import {
   MessagesOfCurrentUserVariables,
   MessagesOfCurrentUser_messagesOfCurrentUser,
 } from "../../../graphql/message/types/MessagesOfCurrentUser";
+import { login_login_data } from "../../../graphql/user";
 import { useApplicationContext } from "../../../hooks";
 import { MessageContext } from "../Message";
-import { PresenterMessage } from "./PresenterMessage";
+import { determineUserOrGroup, PresenterMessage } from "./PresenterMessage";
 
 export const ContainerMessage: FC<BoxProps> = React.memo(({ sx, ...props }) => {
   const { user } = useApplicationContext();
@@ -25,7 +26,11 @@ export const ContainerMessage: FC<BoxProps> = React.memo(({ sx, ...props }) => {
   const handleClickMessage = (
     value: MessagesOfCurrentUser_messagesOfCurrentUser
   ) => {
-    dispatch({ type: "select message", value: value });
+    dispatch({
+      type: "select message",
+      value: value,
+      userDiscuss: determineUserOrGroup(user as login_login_data, value),
+    });
   };
 
   return (

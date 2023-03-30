@@ -7,10 +7,19 @@
 // GraphQL query operation: MessageTwoUser
 // ====================================================
 
-export interface MessageTwoUser_messageTwoUser_data {
-  __typename: "Message";
+export interface MessageTwoUser_messageTwoUser_User {
+  __typename: "User";
+  id: number;
+  photo: string | null;
+  firstname: string | null;
+  lastname: string | null;
+}
+
+export interface MessageTwoUser_messageTwoUser {
+  __typename: "MessageWithRecepter";
   id: number;
   userId: number;
+  User: MessageTwoUser_messageTwoUser_User;
   receiverId: number | null;
   discussGroupId: number | null;
   content: string;
@@ -18,15 +27,8 @@ export interface MessageTwoUser_messageTwoUser_data {
   updatedAt: any;
 }
 
-export interface MessageTwoUser_messageTwoUser {
-  __typename: "MessageResponse";
-  message: string;
-  data: MessageTwoUser_messageTwoUser_data[] | null;
-  success: boolean;
-}
-
 export interface MessageTwoUser {
-  messageTwoUser: MessageTwoUser_messageTwoUser;
+  messageTwoUser: MessageTwoUser_messageTwoUser[];
 }
 
 export interface MessageTwoUserVariables {
