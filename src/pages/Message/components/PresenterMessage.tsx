@@ -32,6 +32,10 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
   ...props
 }) => {
   if (!user) return <></>;
+  const uploadMessage =
+    user.id === message.User.id
+      ? "Vous avez envoyé une pièce jointe"
+      : "a envoyé une pièce jointe";
   const displayUserMessage = determineUserOrGroup(user, message);
   return (
     <Grid
@@ -56,7 +60,7 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
             : message.DiscussGroup?.groupName}
         </Typography>
         <Typography sx={{ fontWeight: isNewMessage ? "bold" : "normal" }}>
-          {message.content}
+          {message.image ? uploadMessage : message.content}
         </Typography>
       </Grid>
     </Grid>

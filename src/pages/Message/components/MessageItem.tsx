@@ -2,7 +2,10 @@ import { FC } from "react";
 import { Box, Card, CardProps, Typography, useTheme } from "@mui/material";
 import { login_login_data } from "../../../graphql/user";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
-import { MessageToUser_messageToUser, MessageTwoUser_messageTwoUser } from "../../../graphql/message";
+import {
+  MessageToUser_messageToUser,
+  MessageTwoUser_messageTwoUser,
+} from "../../../graphql/message";
 
 type MessageItemProps = {
   user?: login_login_data;
@@ -22,6 +25,7 @@ export const MessageItem: FC<MessageItemProps> = ({
         width: "100%",
         display: "flex",
         my: 2,
+        p: 2,
         justifyContent: user?.id === message.User.id ? "end" : "startf",
       }}
     >
@@ -48,6 +52,11 @@ export const MessageItem: FC<MessageItemProps> = ({
           >
             {message.content}
           </Typography>
+          {message.image && (
+            <Box sx={{ width: 300 }} >
+              <img src={message.image} alt="image" width="100%" />
+            </Box>
+          )}
         </Card>
       </Box>
     </Box>

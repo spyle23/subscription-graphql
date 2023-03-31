@@ -15,7 +15,9 @@ import React, {
   useState,
   useEffect,
   Reducer,
+  useCallback,
 } from "react";
+import CollectionsIcon from "@mui/icons-material/Collections";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import {
   LISTEN_MESSAGE,
@@ -43,6 +45,8 @@ import { HeaderMessage } from "./components/HeaderMessage";
 import { MessageItem } from "./components/MessageItem";
 import { useForm } from "react-hook-form";
 import { MessageInput } from "../../types/graphql-types";
+import { useDropzone } from "react-dropzone";
+import { useFileUploader } from "../../hooks/application/useFileUploader";
 
 type MessageActionType = {
   openMessage: boolean;
@@ -77,7 +81,10 @@ const initialValue: MessageActionType = {
   userId: undefined,
 };
 
-const reducerMessage = (state: MessageActionType, action: ActionType): MessageActionType => {
+const reducerMessage = (
+  state: MessageActionType,
+  action: ActionType
+): MessageActionType => {
   switch (action.type) {
     case "select message":
       return {
@@ -110,7 +117,9 @@ export const Message = (): JSX.Element => {
     variables: { userId: user?.id as number },
     skip: !user?.id,
   });
-  const [currentMessage, dispatch] = useReducer<Reducer<MessageActionType, ActionType>>(reducerMessage, initialValue);
+  const [currentMessage, dispatch] = useReducer<
+    Reducer<MessageActionType, ActionType>
+  >(reducerMessage, initialValue);
   const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
     LISTEN_MESSAGE,
     {
@@ -145,7 +154,7 @@ export const Message = (): JSX.Element => {
     return currentMessages;
   }, [messageTwoUser, data]);
 
-  const { register, handleSubmit, reset } = useForm<MessageInput>();
+  const { register, handleSubmit, reset, getValues } = useForm<MessageInput>();
   const sendMessage = async (data: MessageInput) => {
     await messageExec({
       variables: {
@@ -154,10 +163,27 @@ export const Message = (): JSX.Element => {
         messageInput: data,
       },
     });
-    reset({ content: "" });
     await refetchMessageData();
     await refetch();
   };
+
+  const { uploadFile } = useFileUploader();
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(acceptedFiles[0]);
+    reader.onload = async () => {
+      const file = await uploadFile({
+        data: reader.result?.toString() || "",
+        type: acceptedFiles[0].type,
+        name: acceptedFiles[0].name,
+      });
+      reset({ ...getValues(), image: file });
+    };
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+  });
 
   return (
     <Grid container>
@@ -187,6 +213,14 @@ export const Message = (): JSX.Element => {
                 style={{ display: "flex", width: "100%" }}
                 onSubmit={handleSubmit(sendMessage)}
               >
+                <div {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  <IconButton>
+                    <CollectionsIcon
+                      sx={{ fill: theme.palette.primary.main }}
+                    />
+                  </IconButton>
+                </div>
                 <TextField
                   {...register("content")}
                   placeholder="votre message ..."
@@ -196,6 +230,11 @@ export const Message = (): JSX.Element => {
                   <PlayArrowIcon sx={{ fill: theme.palette.primary.main }} />
                 </IconButton>
               </form>
+              {getValues().image && (
+                <Box sx={{ width: 300 }}>
+                  <img src={getValues().image} alt="image" width="100%" />
+                </Box>
+              )}
             </Box>
           </Box>
         )}
