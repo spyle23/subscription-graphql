@@ -36,6 +36,7 @@ export interface DiscussGroupInput {
  */
 export interface MessageInput {
   content: string;
+  image: string;
 }
 
 /**

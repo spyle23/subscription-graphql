@@ -35,6 +35,7 @@ export interface MessagesOfCurrentUser_messagesOfCurrentUser {
   User: MessagesOfCurrentUser_messagesOfCurrentUser_User;
   Receiver: MessagesOfCurrentUser_messagesOfCurrentUser_Receiver | null;
   DiscussGroup: MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup | null;
+  image: string | null;
   content: string;
   id: number;
 }

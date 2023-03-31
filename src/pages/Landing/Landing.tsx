@@ -27,7 +27,7 @@ export const CommentContext = createContext<CommentGen>({});
 
 export default function Landing() {
   const { allPost, postLoading, refetch } = usePost();
-  const { user, dispatchSnack } = useApplicationContext();
+  const { user } = useApplicationContext();
   const { createPost } = usePostUser();
   const { addReact } = useReactPost();
   const { commentExec, loading: commentLoading, errorComment } = useComment();
@@ -38,30 +38,6 @@ export default function Landing() {
     },
     [user]
   );
-
-  const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
-    LISTEN_MESSAGE,
-    {
-      variables: { userId: user?.id as number },
-      skip: !user?.id,
-    }
-  );
-
-  useEffect(() => {
-    if (data?.messageToUser) {
-      dispatchSnack({
-        open: true,
-        severity: "info",
-        withImage: true,
-        message: "Nouveau message",
-        subtitle: `${
-          data.messageToUser.User.firstname +
-          " " +
-          data.messageToUser.User.lastname
-        } vous a envoyé un nouveau message`,
-      });
-    }
-  }, [data]);
 
   const commentPost = useCallback(
     async (postId: number, commentInput: CommentInput) => {

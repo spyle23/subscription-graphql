@@ -20,6 +20,7 @@ export interface MessageTwoUser_messageTwoUser {
   id: number;
   userId: number;
   User: MessageTwoUser_messageTwoUser_User;
+  image: string | null;
   receiverId: number | null;
   discussGroupId: number | null;
   content: string;

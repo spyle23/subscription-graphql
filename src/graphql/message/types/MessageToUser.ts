@@ -33,6 +33,7 @@ export interface MessageToUser_messageToUser_DiscussGroup {
 export interface MessageToUser_messageToUser {
   __typename: "MessageWithRecepter";
   content: string;
+  image: string | null;
   userId: number;
   User: MessageToUser_messageToUser_User;
   id: number;

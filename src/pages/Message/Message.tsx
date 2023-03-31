@@ -14,6 +14,7 @@ import React, {
   useReducer,
   useState,
   useEffect,
+  Reducer,
 } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import {
@@ -76,7 +77,7 @@ const initialValue: MessageActionType = {
   userId: undefined,
 };
 
-const reducerMessage = (state: MessageActionType, action: ActionType) => {
+const reducerMessage = (state: MessageActionType, action: ActionType): MessageActionType => {
   switch (action.type) {
     case "select message":
       return {
@@ -109,7 +110,7 @@ export const Message = (): JSX.Element => {
     variables: { userId: user?.id as number },
     skip: !user?.id,
   });
-  const [currentMessage, dispatch] = useReducer(reducerMessage, initialValue);
+  const [currentMessage, dispatch] = useReducer<Reducer<MessageActionType, ActionType>>(reducerMessage, initialValue);
   const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
     LISTEN_MESSAGE,
     {
@@ -144,7 +145,7 @@ export const Message = (): JSX.Element => {
     return currentMessages;
   }, [messageTwoUser, data]);
 
-  const { register, handleSubmit } = useForm<MessageInput>();
+  const { register, handleSubmit, reset } = useForm<MessageInput>();
   const sendMessage = async (data: MessageInput) => {
     await messageExec({
       variables: {
@@ -153,6 +154,7 @@ export const Message = (): JSX.Element => {
         messageInput: data,
       },
     });
+    reset({ content: "" });
     await refetchMessageData();
     await refetch();
   };

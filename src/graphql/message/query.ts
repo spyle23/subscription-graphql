@@ -19,6 +19,7 @@ export const MESSAGE_TWO_USER = gql`
         firstname
         lastname
       }
+      image
       receiverId
       discussGroupId
       content
@@ -48,6 +49,7 @@ export const MESSAGES_CURRENT_USER = gql`
         groupName
         coverPhoto
       }
+      image
       content
       id
     }
