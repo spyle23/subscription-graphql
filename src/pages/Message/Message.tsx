@@ -17,6 +17,7 @@ import React, {
   Reducer,
   useCallback,
 } from "react";
+import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import {
@@ -47,6 +48,7 @@ import { useForm } from "react-hook-form";
 import { MessageInput } from "../../types/graphql-types";
 import { useDropzone } from "react-dropzone";
 import { useFileUploader } from "../../hooks/application/useFileUploader";
+import { useFileDeleter } from "../../hooks/application/useFileDeleter";
 
 type MessageActionType = {
   openMessage: boolean;
@@ -168,6 +170,7 @@ export const Message = (): JSX.Element => {
   };
 
   const { uploadFile } = useFileUploader();
+  const { deleteFile } = useFileDeleter();
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const reader = new FileReader();
     reader.readAsDataURL(acceptedFiles[0]);
@@ -184,6 +187,16 @@ export const Message = (): JSX.Element => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
   });
+
+  const handleDeleteImage = async () => {
+    const currentValues = getValues();
+    if (!currentValues.image) return;
+    await deleteFile(currentValues.image);
+    reset({
+      ...currentValues,
+      image: undefined,
+    });
+  };
 
   return (
     <Grid container>
@@ -223,6 +236,11 @@ export const Message = (): JSX.Element => {
                 </div>
                 <TextField
                   {...register("content")}
+                  InputProps={{
+                    sx: {
+                      borderRadius: "25px !important",
+                    },
+                  }}
                   placeholder="votre message ..."
                   sx={{ width: "80%" }}
                 />
@@ -231,8 +249,14 @@ export const Message = (): JSX.Element => {
                 </IconButton>
               </form>
               {getValues().image && (
-                <Box sx={{ width: 300 }}>
+                <Box sx={{ width: 300, position: "relative" }}>
                   <img src={getValues().image} alt="image" width="100%" />
+                  <IconButton
+                    sx={{ position: "absolute", top: 10, right: 10 }}
+                    onClick={handleDeleteImage}
+                  >
+                    <CloseOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
             </Box>
