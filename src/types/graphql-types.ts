@@ -32,11 +32,11 @@ export interface DiscussGroupInput {
 }
 
 /**
- * messgae inputs
+ * message inputs
  */
 export interface MessageInput {
   content: string;
-  image: string;
+  image?: string | null;
 }
 
 /**
