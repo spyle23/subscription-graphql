@@ -4,12 +4,14 @@ import { AuthenticationRoute } from "../pages/Authentication/AuthenticationRoute
 import Landing from "../pages/Landing/Landing";
 import { Message } from "../pages/Message/Message";
 import { PrivateRoute } from "./PrivateRoute";
+import { Profile } from "../pages/Profile/Profile";
 
 const PrivateRouter = (): JSX.Element => {
   return (
     <Routes>
       <Route index element={<Landing />} />
       <Route path="messages" element={<Message />} />
+      <Route path="profil" element={<Profile />} />
     </Routes>
   );
 };

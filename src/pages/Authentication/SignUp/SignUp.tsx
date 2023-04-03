@@ -15,23 +15,7 @@ import { CustomCard } from "../../../components/card/CustomCard";
 import { SignupInput } from "../../../types/graphql-types";
 import { useApplicationContext } from "../../../hooks";
 import { useNavigate } from "react-router-dom";
-
-const civilites: string[] = [
-  "Malagasy",
-  "Français",
-  "Anglais",
-  "Américain",
-  "Chinois",
-  "Belge",
-  "Allemand",
-  "Congolais",
-  "Japonais",
-  "Russe",
-  "Corréen",
-  "Egyptien",
-  "Cameronais",
-  "Mongol",
-];
+import { civilites } from "../../../utils/civilite";
 
 export const SignUp = (): JSX.Element => {
   const [show, setShow] = useState<boolean>(false);

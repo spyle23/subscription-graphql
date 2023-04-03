@@ -250,7 +250,7 @@ export const Message = (): JSX.Element => {
               </form>
               {getValues().image && (
                 <Box sx={{ width: 300, position: "relative" }}>
-                  <img src={getValues().image} alt="image" width="100%" />
+                  <img src={getValues().image || ""} alt="image" width="100%" />
                   <IconButton
                     sx={{ position: "absolute", top: 10, right: 10 }}
                     onClick={handleDeleteImage}
