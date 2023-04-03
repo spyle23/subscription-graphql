@@ -15,10 +15,24 @@ import { useDropzone } from "react-dropzone";
 import { useFileUploader } from "../../hooks/application/useFileUploader";
 import moment from "moment";
 import { civilites } from "../../utils/civilite";
+import { useForm } from "react-hook-form";
+import { UpdateUserInput } from "../../types/graphql-types";
+import { useCurrentUser } from "../../hooks/user/useCurrentUser";
+import { useUpdateUser } from "../../hooks/user/useUpdateUser";
 
 export const Profile = (): JSX.Element => {
   const theme = useTheme();
   const { user } = useApplicationContext();
+  const { data: userInfo, refetch } = useCurrentUser(user?.id as number);
+  const {
+    register,
+    formState: { errors },
+    reset,
+    getValues,
+    handleSubmit,
+  } = useForm<UpdateUserInput>();
+
+  const { updateUser } = useUpdateUser();
 
   const { uploadFile } = useFileUploader();
 
@@ -31,6 +45,12 @@ export const Profile = (): JSX.Element => {
         type: acceptedFiles[0].type,
         name: acceptedFiles[0].name,
       });
+      if (file) {
+        reset({ photo: file });
+        const values = getValues();
+        await updateUser(values);
+        await refetch();
+      }
     };
   }, []);
 
@@ -42,8 +62,8 @@ export const Profile = (): JSX.Element => {
       <Box sx={{ display: "flex", my: 2 }}>
         <Box sx={{ width: 200, height: 200, position: "relative", mr: 2 }}>
           <Avatar
-            alt={user?.firstname || "profile"}
-            src={user?.photo || ""}
+            alt={userInfo?.firstname || "profile"}
+            src={userInfo?.photo || ""}
             sx={{ width: "100%", height: "100%" }}
           />
           <Box
@@ -64,9 +84,9 @@ export const Profile = (): JSX.Element => {
         </Box>
         <Box>
           <Typography fontWeight="bold" fontSize="1.5em">
-            {user?.firstname}
+            {userInfo?.firstname}
           </Typography>
-          <Typography>{user?.lastname}</Typography>
+          <Typography>{userInfo?.lastname}</Typography>
           <Typography>
             Compte crée le {moment(user?.createdAt).format("DD MMMM YYYY ")}
           </Typography>
@@ -77,15 +97,17 @@ export const Profile = (): JSX.Element => {
         <Box sx={{ p: 1 }}>
           <Box sx={{ my: 1 }}>
             <Typography>Addresse email: </Typography>
-            <TextField defaultValue={user?.email} />
+            <TextField {...register("email")} defaultValue={user?.email} />
           </Box>
-          <Box sx={{ my: 1, width: 200 }}>
+          <Box sx={{ my: 1, width: { xs: "max-content", md: 200 } }}>
             <Typography>Civilité</Typography>
             <Autocomplete
               disablePortal
               options={civilites}
-              defaultValue={user?.civilite}
-              renderInput={(params) => <TextField {...params} />}
+              defaultValue={userInfo?.civilite}
+              renderInput={(params) => (
+                <TextField {...params} {...register("civilite")} />
+              )}
             />
           </Box>
         </Box>

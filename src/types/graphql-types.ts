@@ -69,10 +69,9 @@ export interface SignupInput {
  * input for update user
  */
 export interface UpdateUserInput {
-  email: string;
+  email?: string | null;
   firstname?: string | null;
   lastname?: string | null;
-  password: string;
   civilite?: string | null;
   photo?: string | null;
 }

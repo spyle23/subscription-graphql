@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Card,
   CardActions,
@@ -10,13 +11,12 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { FC, useState } from "react";
+import { FC, useState, useMemo } from "react";
 import { GetOrderPost_getOrderPost } from "../../graphql/post/types/GetOrderPost";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CommentIcon from "@mui/icons-material/Comment";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { CommentContainer } from "../comments/CommentContainer";
-import { AccountCircle } from "@mui/icons-material";
 import moment from "moment";
 import { ReactionInput, ReactionType } from "../../types/graphql-types";
 import { login_login_data } from "../../graphql/user";
@@ -47,16 +47,22 @@ export const PostCard: FC<PostCardProps> = ({
     await addReact(post?.id, { reactionType: ReactionType.LIKE });
   };
 
+  const displayName = useMemo(() => {
+    const name =
+      user?.id === post?.user?.id
+        ? "Vous"
+        : post?.user?.firstname + " " + post?.user?.lastname;
+    return name;
+  }, [user, post]);
+
   return (
     <Box>
       <Card elevation={1} {...cardProps}>
         <CardHeader
-          avatar={post?.user?.photo || <AccountCircle />}
+          avatar={<Avatar src={post?.user?.photo || ""} />}
           title={
             <>
-              <Typography variant="h5">
-                {post?.user?.firstname + " " + post?.user?.lastname}
-              </Typography>
+              <Typography variant="h5">{displayName}</Typography>
               <Typography>
                 {moment(new Date(post?.updatedAt || post?.createdAt))
                   .startOf("hour")
