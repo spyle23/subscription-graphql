@@ -16,13 +16,11 @@ import {
 import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
 
-type UserMenuProps = {
-  logout: () => void;
-};
 
-export const UserMenu: FC<UserMenuProps> = ({ logout }): JSX.Element => {
-  const { user } = useApplicationContext();
+export const UserMenu: FC = (): JSX.Element => {
+  const { user, logout } = useApplicationContext();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
@@ -30,6 +28,8 @@ export const UserMenu: FC<UserMenuProps> = ({ logout }): JSX.Element => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorEl(event.currentTarget);
   };
+
+  const navigate = useNavigate()
 
   const handleClose = (): void => {
     setAnchorEl(null);
@@ -77,7 +77,7 @@ export const UserMenu: FC<UserMenuProps> = ({ logout }): JSX.Element => {
             }
           >
             <Divider />
-            <ListItemButton>
+            <ListItemButton onClick={()=> navigate("/subscription-graphql/landing/profil")} >
               <ListItemIcon>
                 <AccountCircleIcon />
               </ListItemIcon>

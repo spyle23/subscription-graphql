@@ -3,6 +3,7 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  Button,
   Container,
   IconButton,
   TextField,
@@ -57,6 +58,10 @@ export const Profile = (): JSX.Element => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
   });
+
+  const handleUpdate = async (data: UpdateUserInput) => {
+    await updateUser(data);
+  };
   return (
     <Container>
       <Box sx={{ display: "flex", my: 2 }}>
@@ -110,6 +115,9 @@ export const Profile = (): JSX.Element => {
               )}
             />
           </Box>
+          <Button variant="contained" onClick={handleSubmit(handleUpdate)}>
+            Valider
+          </Button>
         </Box>
       </Box>
     </Container>

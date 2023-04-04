@@ -21,7 +21,6 @@ const DashboardLayoutRoot = styled("div")(() => ({
 export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
   children,
 }): JSX.Element => {
-  const { logout } = useApplicationContext();
   return (
     <>
       <DashboardLayoutRoot>
@@ -41,7 +40,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
       <DashboardNavbar
         message={<MessageToolbar />}
         notification={<Notifications />}
-        utilisateur={<UserMenu logout={logout} />}
+        utilisateur={<UserMenu />}
       />
     </>
   );

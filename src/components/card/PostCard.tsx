@@ -38,6 +38,7 @@ export const PostCard: FC<PostCardProps> = ({
   const [reacted, setReacted] = useState<boolean>(
     post?.reactions?.find((react) => react.userId === user?.id) ? true : false
   );
+  const [show, setShow] = useState<boolean>(false);
   const handleToggleComment = () => {
     setShowComment((curr) => !curr);
   };
@@ -54,6 +55,11 @@ export const PostCard: FC<PostCardProps> = ({
         : post?.user?.firstname + " " + post?.user?.lastname;
     return name;
   }, [user, post]);
+
+  const handleShow = () => {
+    console.log("ato");
+    setShow(true);
+  };
 
   return (
     <Box>
@@ -77,6 +83,13 @@ export const PostCard: FC<PostCardProps> = ({
             <img src={post.image} alt="post_image" style={{ width: "100%" }} />
           )}
         </CardContent>
+        {show && (
+          <Box sx={{ p: 2 }}>
+            <IconButton>
+              <FavoriteIcon />
+            </IconButton>
+          </Box>
+        )}
         <CardActions>
           <Grid container sx={{ position: "relative" }}>
             <Grid
@@ -88,7 +101,7 @@ export const PostCard: FC<PostCardProps> = ({
                 alignItems: "center",
               }}
             >
-              <IconButton onClick={handleReact}>
+              <IconButton onClick={handleReact} onMouseEnter={handleShow}>
                 <ThumbUpIcon
                   sx={{ fill: reacted ? "#512da8" : "currentcolor" }}
                 />
