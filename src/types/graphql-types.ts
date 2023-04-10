@@ -12,6 +12,7 @@ export enum ReactionType {
   HAHA = "HAHA",
   LIKE = "LIKE",
   LOVE = "LOVE",
+  SAD = "SAD",
   WOAHOU = "WOAHOU",
 }
 

@@ -25,6 +25,7 @@
     "@types/node": "^18.13.0",
     "apollo": "^2.34.0",
     "cross-fetch": "^3.1.5",
+    "framer-motion": "^10.11.2",
     "graphql": "^15.6.1",
     "graphql-ws": "^5.11.3",
     "moment": "^2.29.4",

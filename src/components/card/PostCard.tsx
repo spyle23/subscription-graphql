@@ -9,17 +9,19 @@ import {
   Grid,
   IconButton,
   Typography,
-  useTheme,
 } from "@mui/material";
-import { FC, useState, useMemo } from "react";
+import { FC, useState, useMemo, MouseEvent } from "react";
 import { GetOrderPost_getOrderPost } from "../../graphql/post/types/GetOrderPost";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CommentIcon from "@mui/icons-material/Comment";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import { CommentContainer } from "../comments/CommentContainer";
 import moment from "moment";
 import { ReactionInput, ReactionType } from "../../types/graphql-types";
 import { login_login_data } from "../../graphql/user";
+import {FBReactions} from "../comments/FBReactions";
+import LikeIcon from "../../assets/likeicon.png";
+import { motion } from "framer-motion";
+import { IReactions } from "../../types/IReactions";
+import { reactions } from "../../constants/reactions";
 
 type PostCardProps = {
   post: GetOrderPost_getOrderPost;
@@ -27,25 +29,41 @@ type PostCardProps = {
   addReact: (postId: number, reactionType: ReactionInput) => Promise<void>;
 } & CardProps;
 
+const findUrlByReaction = (value: ReactionType): string | undefined=>{
+  const val = reactions.find((item)=> item.value === value)
+  return val?.url
+}
+
 export const PostCard: FC<PostCardProps> = ({
   post,
   user,
   addReact,
+  onMouseLeave,
   ...cardProps
 }) => {
-  const theme = useTheme();
   const [showComment, setShowComment] = useState<boolean>(false);
-  const [reacted, setReacted] = useState<boolean>(
-    post?.reactions?.find((react) => react.userId === user?.id) ? true : false
-  );
   const [show, setShow] = useState<boolean>(false);
+  const userReact = useMemo(()=>post?.reactions?.find((react)=> react.userId === user?.id) , [post, user])
+  const [reaction, setReaction] = useState<IReactions>({
+    url: userReact ? findUrlByReaction(userReact.reactionType): undefined,
+    value: userReact?.reactionType
+  });
   const handleToggleComment = () => {
     setShowComment((curr) => !curr);
   };
 
-  const handleReact = async () => {
-    setReacted((prev) => !prev);
-    await addReact(post?.id, { reactionType: ReactionType.LIKE });
+  const handleReact = async (value: IReactions) => {
+    if(!value.value) return ;
+    setReaction((prev)=>{
+      if(prev.value === value.value){
+        return {
+          url: undefined,
+          value: undefined
+        } as IReactions
+      }
+      return value
+    });
+    await addReact(post?.id, { reactionType: value.value });
   };
 
   const displayName = useMemo(() => {
@@ -56,14 +74,14 @@ export const PostCard: FC<PostCardProps> = ({
     return name;
   }, [user, post]);
 
-  const handleShow = () => {
-    console.log("ato");
-    setShow(true);
-  };
+  const handleLeave = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+    onMouseLeave && onMouseLeave(e)
+    setShow(false)
+  }
 
   return (
     <Box>
-      <Card elevation={1} {...cardProps}>
+      <Card elevation={1} {...cardProps} onMouseLeave={handleLeave} >
         <CardHeader
           avatar={<Avatar src={post?.user?.photo || ""} />}
           title={
@@ -83,13 +101,7 @@ export const PostCard: FC<PostCardProps> = ({
             <img src={post.image} alt="post_image" style={{ width: "100%" }} />
           )}
         </CardContent>
-        {show && (
-          <Box sx={{ p: 2 }}>
-            <IconButton>
-              <FavoriteIcon />
-            </IconButton>
-          </Box>
-        )}
+        <FBReactions btnClicked={show} onClick={handleReact}  />
         <CardActions>
           <Grid container sx={{ position: "relative" }}>
             <Grid
@@ -101,12 +113,13 @@ export const PostCard: FC<PostCardProps> = ({
                 alignItems: "center",
               }}
             >
-              <IconButton onClick={handleReact} onMouseEnter={handleShow}>
-                <ThumbUpIcon
-                  sx={{ fill: reacted ? "#512da8" : "currentcolor" }}
-                />
-              </IconButton>
-              <Typography>{post.reactions?.length}</Typography>
+              <motion.button
+                // whileHover={{ scale: 1.2 }}
+                className="likeBtn"
+                onMouseEnter={()=> setShow(true)}
+              >
+                <motion.img src={reaction?.url || LikeIcon} width={reaction?.url ? "27" : "15"} />
+              </motion.button>
             </Grid>
             <Grid
               item
