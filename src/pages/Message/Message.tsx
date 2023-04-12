@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import {
   Box,
+  Button,
   Divider,
   Grid,
   IconButton,
@@ -19,6 +20,7 @@ import React, {
 } from "react";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import CollectionsIcon from "@mui/icons-material/Collections";
+import AddIcon from '@mui/icons-material/Add';
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import {
   LISTEN_MESSAGE,
@@ -49,6 +51,7 @@ import { MessageInput } from "../../types/graphql-types";
 import { useDropzone } from "react-dropzone";
 import { useFileUploader } from "../../hooks/application/useFileUploader";
 import { useFileDeleter } from "../../hooks/application/useFileDeleter";
+import { NewMessageModal } from "../../components/modal/NewMessageModal";
 
 type MessageActionType = {
   openMessage: boolean;
@@ -169,6 +172,8 @@ export const Message = (): JSX.Element => {
     await refetch();
   };
 
+  const [open, setOpen] = useState<boolean>(false)
+
   const { uploadFile } = useFileUploader();
   const { deleteFile } = useFileDeleter();
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -205,6 +210,12 @@ export const Message = (): JSX.Element => {
           <Typography variant="h3" sx={{ textAlign: "center" }}>
             📧 Messages
           </Typography>
+        </Box>
+        <Box sx={{ my: 2, display: "flex", justifyContent: "center" }} >
+          <Button variant="outlined" onClick={()=> setOpen(true)} >
+            <AddIcon />
+            Nouveau message
+          </Button>
         </Box>
         <MessageContext.Provider value={memoizedMessage}>
           <ContainerMessage messageData={messageData} />
@@ -263,6 +274,7 @@ export const Message = (): JSX.Element => {
           </Box>
         )}
       </Grid>
+      <NewMessageModal open={open} onClose={()=> setOpen(false)} />
     </Grid>
   );
 };
