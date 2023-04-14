@@ -1,5 +1,18 @@
 import { gql } from "@apollo/client";
 
+export const ALL_USER = gql`
+  query AllUser {
+    allUser {
+      id
+      lastname
+      firstname
+      email
+      civilite
+      photo
+    }
+  }
+`;
+
 export const PROFILE = gql`
   query Profile($userId: Float!) {
     profile(userId: $userId) {

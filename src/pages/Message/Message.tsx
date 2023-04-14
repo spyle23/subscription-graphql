@@ -30,10 +30,7 @@ import {
   MessageToUser_messageToUser,
   MessageTwoUser,
   MessageTwoUserVariables,
-  MESSAGE_TWO_USER,
-  SendMessageDiscussGroup,
-  SendMessageDiscussGroupVariables,
-  SEND_MESSAGE,
+  MESSAGE_TWO_USER
 } from "../../graphql/message";
 import {
   MessagesOfCurrentUser,
@@ -52,6 +49,7 @@ import { useDropzone } from "react-dropzone";
 import { useFileUploader } from "../../hooks/application/useFileUploader";
 import { useFileDeleter } from "../../hooks/application/useFileDeleter";
 import { NewMessageModal } from "../../components/modal/NewMessageModal";
+import { useSendMessage } from "../../hooks/message/useSendMessage";
 
 type MessageActionType = {
   openMessage: boolean;
@@ -110,10 +108,7 @@ export const MessageContext = createContext<MessageContexteType>(
 
 export const Message = (): JSX.Element => {
   const theme = useTheme();
-  const [messageExec, { error }] = useMutation<
-    SendMessageDiscussGroup,
-    SendMessageDiscussGroupVariables
-  >(SEND_MESSAGE);
+  const { sendMessage: sendMessageExec } = useSendMessage();
   const { user } = useApplicationContext();
   const { data: messageData, refetch: refetchMessageData } = useQuery<
     MessagesOfCurrentUser,
@@ -161,13 +156,11 @@ export const Message = (): JSX.Element => {
 
   const { register, handleSubmit, reset, getValues } = useForm<MessageInput>();
   const sendMessage = async (data: MessageInput) => {
-    await messageExec({
-      variables: {
-        userId: user?.id as number,
-        receiverId: currentMessage.userDiscuss?.id,
-        messageInput: data,
-      },
-    });
+    await sendMessageExec(
+        user?.id as number,
+        data,
+        currentMessage.userDiscuss?.id,
+    );
     await refetchMessageData();
     await refetch();
   };
@@ -274,7 +267,7 @@ export const Message = (): JSX.Element => {
           </Box>
         )}
       </Grid>
-      <NewMessageModal open={open} onClose={()=> setOpen(false)} />
+      <NewMessageModal open={open} onClose={()=> setOpen(false)} refetch={refetch} refetchMessage={refetchMessageData} />
     </Grid>
   );
 };
