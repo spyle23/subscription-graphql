@@ -24,7 +24,7 @@ export interface MessagesOfCurrentUser_messagesOfCurrentUser_Receiver {
 }
 
 export interface MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup {
-  __typename: "DiscussGroup";
+  __typename: "GroupWithMembers";
   id: number;
   groupName: string;
   coverPhoto: string | null;

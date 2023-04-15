@@ -48,8 +48,9 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
           <DynamicAvatar user={displayUserMessage} />
         ) : (
           <Avatar
+            sx={{ mr:2 }}
             alt={message.DiscussGroup?.groupName || "profile"}
-            src={message.DiscussGroup?.coverPhoto as string}
+            src={message.DiscussGroup?.coverPhoto || ""}
           />
         )}
       </Grid>

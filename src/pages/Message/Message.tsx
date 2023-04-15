@@ -36,6 +36,7 @@ import {
   MessagesOfCurrentUser,
   MessagesOfCurrentUserVariables,
   MessagesOfCurrentUser_messagesOfCurrentUser,
+  MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup,
   MessagesOfCurrentUser_messagesOfCurrentUser_Receiver,
   MessagesOfCurrentUser_messagesOfCurrentUser_User,
 } from "../../graphql/message/types/MessagesOfCurrentUser";
@@ -60,6 +61,7 @@ type MessageActionType = {
   receiverId?: number;
   userId?: number;
   discussGroupId?: number;
+  DiscussGroup?: MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup | null;
 };
 
 type MessageContexteType = {
@@ -95,6 +97,7 @@ const reducerMessage = (
         receiverId: action.value.Receiver?.id,
         userId: action.value.User?.id,
         discussGroupId: action.value.DiscussGroup?.id,
+        DiscussGroup: action.value.DiscussGroup,
         userDiscuss: action.userDiscuss,
       };
     default:
@@ -159,7 +162,8 @@ export const Message = (): JSX.Element => {
     await sendMessageExec(
         user?.id as number,
         data,
-        currentMessage.userDiscuss?.id,
+        currentMessage.receiverId,
+        currentMessage.discussGroupId
     );
     await refetchMessageData();
     await refetch();
@@ -217,9 +221,7 @@ export const Message = (): JSX.Element => {
       <Grid item md={8} sx={{ borderLeft: "1px solid gray" }}>
         {currentMessage.openMessage && (
           <Box sx={{ position: "relative", height: "80vh" }}>
-            {currentMessage.userDiscuss && (
-              <HeaderMessage data={currentMessage.userDiscuss} />
-            )}
+            <HeaderMessage data={currentMessage.userDiscuss} group={currentMessage.DiscussGroup} />
             <Box sx={{ p: 2, height: "90%", overflowY: "auto" }}>
               {messages.map((message) => (
                 <MessageItem key={message.id} message={message} user={user} />
