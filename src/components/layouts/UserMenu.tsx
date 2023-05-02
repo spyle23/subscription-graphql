@@ -18,7 +18,6 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 
-
 export const UserMenu: FC = (): JSX.Element => {
   const { user, logout } = useApplicationContext();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
@@ -29,7 +28,7 @@ export const UserMenu: FC = (): JSX.Element => {
     setAnchorEl(event.currentTarget);
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleClose = (): void => {
     setAnchorEl(null);
@@ -77,13 +76,21 @@ export const UserMenu: FC = (): JSX.Element => {
             }
           >
             <Divider />
-            <ListItemButton onClick={()=> navigate("/subscription-graphql/landing/profil")} >
+            <ListItemButton
+              onClick={() => navigate("/subscription-graphql/landing/profil")}
+            >
               <ListItemIcon>
                 <AccountCircleIcon />
               </ListItemIcon>
               <ListItemText primary="Voir le profile" />
             </ListItemButton>
-            <ListItemButton onClick={logout} >
+            <ListItemButton
+              onClick={() => {
+                logout();
+                navigate("/subscription-graphql/auth/login");
+                window.location.reload();
+              }}
+            >
               <ListItemIcon>
                 <LogoutIcon />
               </ListItemIcon>
