@@ -14,6 +14,8 @@ import {
   useState,
   useMemo,
 } from "react";
+import { GraphqlProvider } from "./providers/GraphqlProvider";
+import { MaterialProvider } from "./providers/MaterialProvider";
 
 export const TokenContext = createContext<{
   token: string | undefined;
@@ -24,15 +26,20 @@ export const TokenContext = createContext<{
 });
 
 function App() {
-  const [token, setToken] = useState<string>();
-  const tokenFromstorage = AuthStorage.isAuth()?.token;
-  const client = apolloClient(token || tokenFromstorage);
+  // const [token, setToken] = useState<string>();
+  // const tokenFromstorage = AuthStorage.isAuth()?.token;
+  // const client = apolloClient(token || tokenFromstorage);
 
-  const memoizedContext = useMemo(() => ({ token, setToken }), [token]);
+  // const memoizedContext = useMemo(() => ({ token, setToken }), [token]);
 
   return (
     <BrowserRouter>
-      <TokenContext.Provider value={memoizedContext}>
+      <GraphqlProvider>
+        <MaterialProvider>
+          <MainRouter />
+        </MaterialProvider>
+      </GraphqlProvider>
+      {/* <TokenContext.Provider value={memoizedContext}>
         <ApolloProvider client={client}>
           <ContextProvider>
             <ThemeProvider theme={theme}>
@@ -43,7 +50,7 @@ function App() {
             </ThemeProvider>
           </ContextProvider>
         </ApolloProvider>
-      </TokenContext.Provider>
+      </TokenContext.Provider> */}
     </BrowserRouter>
   );
 }
