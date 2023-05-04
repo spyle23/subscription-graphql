@@ -51,11 +51,11 @@ export const Notifications = (): JSX.Element => {
   }, [data]);
 
   useEffect(() => {
-    if (userProfile?.profile?.notifications) {
+    if (userProfile?.notifications) {
       const notificationsData =
-        userProfile?.profile?.notifications.length > 5
-          ? userProfile?.profile?.notifications.slice(0, 4)
-          : userProfile?.profile?.notifications;
+        userProfile?.notifications.length > 5
+          ? userProfile?.notifications.slice(0, 4)
+          : userProfile?.notifications;
       dispatch((prev) => ({ ...prev, notifications: notificationsData }));
     }
   }, [userProfile]);
