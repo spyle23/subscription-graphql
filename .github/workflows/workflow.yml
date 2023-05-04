@@ -24,14 +24,15 @@ jobs:
           rm -rf node_modules
           rm -f yarn.lock
 
-      - name: Install dependencies       
-        run: yarn install
+      - name: Install dependencies, build and test app       
+        run: |
+          yarn install
+          yarn build
+          yarn test
 
-      - name: generate all types
-        run: yarn generate:types
-
-      - name: Build
-        run: yarn build
-
-      - name: Test
-        run: yarn test
+      - name: Upload Artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist
