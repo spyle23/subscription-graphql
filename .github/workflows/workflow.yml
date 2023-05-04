@@ -20,9 +20,9 @@ jobs:
           node-version: '16.15.1'
       
       - name: delete package
-        run: 
-          - rm -rf node_modules
-          - rm -rf yarn.lock
+        run: |
+          rm -rf node_modules
+          rm -f yarn.lock
 
       - name: Install dependencies       
         run: yarn install
