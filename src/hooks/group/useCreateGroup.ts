@@ -7,7 +7,7 @@ import {
 import { DiscussGroupInput, UserChoose } from "../../types/graphql-types";
 
 export const useCreateGroup = () => {
-  const [createExec, { loading, error }] = useMutation<
+  const [createExec, { loading, error, data }] = useMutation<
     CreateDiscussGroup,
     CreateDiscussGroupVariables
   >(CREATE_GROUP);
@@ -25,6 +25,7 @@ export const useCreateGroup = () => {
   };
 
   return {
+    data,
     createGroup,
     loading,
     error: error?.message

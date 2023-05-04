@@ -6,7 +6,7 @@ import {
 import { IApplicationContext } from "../../contexts/application/type";
 import { IRequest, UseApplicationType } from "./type";
 import { useContext, useCallback, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { UserAuthStateEnum } from "../../types/UserType";
 import { AuthStorage, LocalStorage } from "../../utils/AuthStorage";
 import { TokenContext } from "../../App";
@@ -30,7 +30,7 @@ export const useApplicationContext = (): UseApplicationType &
   const { setToken } = useContext(TokenContext);
   const contexts = useContext(ApplicationContext);
   const snackbarContexts = useContext(SnackbarContext);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [userAuthStatus, setUserAuthStatus] = useState<UserAuthStateEnum>(
     UserAuthStateEnum.WAITING
@@ -59,8 +59,8 @@ export const useApplicationContext = (): UseApplicationType &
     AuthStorage.clearToken(() => {
       setUser(undefined);
       setToken(undefined);
-      navigate("/subscription-graphql/auth/login");
-      window.location.reload();
+      // navigate("/subscription-graphql/auth/login");
+      // window.location.reload();
     });
   };
 

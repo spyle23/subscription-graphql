@@ -191,13 +191,18 @@ export const Message = (): JSX.Element => {
   });
 
   const handleDeleteImage = async () => {
-    const currentValues = getValues();
-    if (!currentValues.image) return;
-    await deleteFile(currentValues.image);
-    reset({
-      ...currentValues,
-      image: undefined,
-    });
+    try {
+      const currentValues = getValues();
+      if (!currentValues.image) return;
+      await deleteFile(currentValues.image);
+      reset({
+        ...currentValues,
+        image: undefined,
+      });
+      
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
