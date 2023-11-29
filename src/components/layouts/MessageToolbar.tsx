@@ -16,7 +16,7 @@ export const MessageToolbar = (): JSX.Element => {
   );
   const [numberMsg, setNumberMsg] = useState<number>(0);
   const { user } = useApplicationContext();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
     LISTEN_MESSAGE,
@@ -35,7 +35,7 @@ export const MessageToolbar = (): JSX.Element => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorEl(event.currentTarget);
     setNumberMsg(0);
-    navigate("/subscription-graphql/landing/messages");
+    // navigate("/subscription-graphql/landing/messages");
   };
 
   const handleClose = (): void => {
@@ -56,6 +56,24 @@ export const MessageToolbar = (): JSX.Element => {
           <MailIcon />
         </Badge>
       </IconButton>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        <Box sx={{ p: 2 }}>
+          
+        </Box>
+      </Popover>
     </div>
   );
 };

@@ -106,6 +106,7 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
         await createGroup(data, userChoose);
       }
       setStep(1);
+      onClose();
       return;
     }
     const messageInput = getValues();

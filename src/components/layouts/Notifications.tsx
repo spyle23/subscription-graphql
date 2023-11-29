@@ -11,6 +11,7 @@ import {
 } from "../../graphql/notification/types/CommentPost";
 import { useApplicationContext } from "../../hooks";
 import { useCurrentUser } from "../../hooks/user/useCurrentUser";
+import addNotification from "react-push-notification";
 
 type NotificationType = {
   nbrNotification: number;
@@ -46,6 +47,11 @@ export const Notifications = (): JSX.Element => {
         open: true,
         message: data.commentPost.name,
         severity: "info",
+      });
+      addNotification({
+        title: `${data.commentPost.name}`,
+        message: `${data.commentPost.description}`,
+        native: true,
       });
     }
   }, [data]);
