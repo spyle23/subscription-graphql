@@ -51,6 +51,7 @@ import { useFileUploader } from "../../hooks/application/useFileUploader";
 import { useFileDeleter } from "../../hooks/application/useFileDeleter";
 import { NewMessageModal } from "../../components/modal/NewMessageModal";
 import { useSendMessage } from "../../hooks/message/useSendMessage";
+import addNotification from "react-push-notification";
 
 type MessageActionType = {
   openMessage: boolean;
@@ -205,6 +206,17 @@ export const Message = (): JSX.Element => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (data?.messageToUser) {
+      addNotification({
+        title: `${data.messageToUser.User.firstname} ${data.messageToUser.User.lastname}`,
+        message: `${data.messageToUser.content}`,
+        native: true,
+        icon: `${data.messageToUser.User.photo}`,
+      });
+    }
+  }, [data]);
 
   return (
     <Grid container>

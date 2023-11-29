@@ -34,6 +34,7 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.43.2",
+    "react-push-notification": "^1.5.3",
     "react-router-dom": "^6.8.1",
     "styled-components": "^5.3.6"
   },
