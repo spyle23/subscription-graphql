@@ -20,7 +20,7 @@ import React, {
 } from "react";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import CollectionsIcon from "@mui/icons-material/Collections";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import {
   LISTEN_MESSAGE,
@@ -30,7 +30,7 @@ import {
   MessageToUser_messageToUser,
   MessageTwoUser,
   MessageTwoUserVariables,
-  MESSAGE_TWO_USER
+  MESSAGE_TWO_USER,
 } from "../../graphql/message";
 import {
   MessagesOfCurrentUser,
@@ -160,16 +160,18 @@ export const Message = (): JSX.Element => {
   const { register, handleSubmit, reset, getValues } = useForm<MessageInput>();
   const sendMessage = async (data: MessageInput) => {
     await sendMessageExec(
-        user?.id as number,
-        data,
-        currentMessage.receiverId,
-        currentMessage.discussGroupId
+      user?.id as number,
+      data,
+      user?.id === currentMessage.receiverId
+        ? currentMessage.userId
+        : currentMessage.receiverId,
+      currentMessage.discussGroupId
     );
     await refetchMessageData();
     await refetch();
   };
 
-  const [open, setOpen] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false);
 
   const { uploadFile } = useFileUploader();
   const { deleteFile } = useFileDeleter();
@@ -199,9 +201,8 @@ export const Message = (): JSX.Element => {
         ...currentValues,
         image: undefined,
       });
-      
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -213,8 +214,8 @@ export const Message = (): JSX.Element => {
             📧 Messages
           </Typography>
         </Box>
-        <Box sx={{ my: 2, display: "flex", justifyContent: "center" }} >
-          <Button variant="outlined" onClick={()=> setOpen(true)} >
+        <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
+          <Button variant="outlined" onClick={() => setOpen(true)}>
             <AddIcon />
             Nouveau message
           </Button>
@@ -226,7 +227,10 @@ export const Message = (): JSX.Element => {
       <Grid item md={8} sx={{ borderLeft: "1px solid gray" }}>
         {currentMessage.openMessage && (
           <Box sx={{ position: "relative", height: "80vh" }}>
-            <HeaderMessage data={currentMessage.userDiscuss} group={currentMessage.DiscussGroup} />
+            <HeaderMessage
+              data={currentMessage.userDiscuss}
+              group={currentMessage.DiscussGroup}
+            />
             <Box sx={{ p: 2, height: "90%", overflowY: "auto" }}>
               {messages.map((message) => (
                 <MessageItem key={message.id} message={message} user={user} />
@@ -274,7 +278,12 @@ export const Message = (): JSX.Element => {
           </Box>
         )}
       </Grid>
-      <NewMessageModal open={open} onClose={()=> setOpen(false)} refetch={refetch} refetchMessage={refetchMessageData} />
+      <NewMessageModal
+        open={open}
+        onClose={() => setOpen(false)}
+        refetch={refetch}
+        refetchMessage={refetchMessageData}
+      />
     </Grid>
   );
 };
