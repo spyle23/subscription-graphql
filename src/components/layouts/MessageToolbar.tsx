@@ -1,36 +1,50 @@
-import { useSubscription } from "@apollo/client";
 import MailIcon from "@mui/icons-material/Mail";
 import { Badge, IconButton, Popover, Typography, Box } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  LISTEN_MESSAGE,
-  MessageToUser,
-  MessageToUserVariables,
-} from "../../graphql/message";
-import { useApplicationContext } from "../../hooks";
+import React, { useEffect, useMemo, useState, useContext } from "react";
+import { FirstpageMessage } from "../../pages/Message/components/FirstpageMessage";
+import { useMessage } from "../../hooks/message/useMessage";
+import { MessageContext } from "../../pages/Message/Message";
+import { MessageContexteType } from "../../types/message";
+import { DiscussionContext } from "../../contexts/message";
 
 export const MessageToolbar = (): JSX.Element => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
   const [numberMsg, setNumberMsg] = useState<number>(0);
-  const { user } = useApplicationContext();
+  const {
+    data,
+    messageData,
+    refetch,
+    refetchMessageData,
+    messageTwoUser,
+    currentMessage,
+    dispatch,
+  } = useMessage();
+  const { dispatchDiscussion } = useContext(DiscussionContext);
   // const navigate = useNavigate();
 
-  const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
-    LISTEN_MESSAGE,
-    {
-      variables: { userId: user?.id as number },
-      skip: !user?.id,
-    }
+  const memoizedMessage: MessageContexteType = useMemo(
+    () => ({
+      currentMessage,
+      dispatch,
+    }),
+    [currentMessage, dispatch]
   );
-
   useEffect(() => {
     if (data?.messageToUser) {
       setNumberMsg((prev) => prev + 1);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (messageTwoUser) {
+      dispatchDiscussion({
+        type: "add discussion",
+        value: { ...currentMessage, messages: messageTwoUser.messageTwoUser },
+      });
+    }
+  }, [messageTwoUser, currentMessage, dispatchDiscussion]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorEl(event.currentTarget);
@@ -61,17 +75,25 @@ export const MessageToolbar = (): JSX.Element => {
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
+        PaperProps={{ style: { minWidth: 300 } }}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "center",
         }}
         transformOrigin={{
-          vertical: "top",
+          vertical: "bottom",
           horizontal: "center",
         }}
       >
-        <Box sx={{ p: 2 }}>
-          
+        <Box sx={{ p: 1 }}>
+          <MessageContext.Provider value={memoizedMessage}>
+            <FirstpageMessage
+              messageData={messageData}
+              refetch={refetch}
+              refetchMessageData={refetchMessageData}
+              onClose={handleClose}
+            />
+          </MessageContext.Provider>
         </Box>
       </Popover>
     </div>

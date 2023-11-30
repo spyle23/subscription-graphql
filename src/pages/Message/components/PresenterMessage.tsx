@@ -43,7 +43,7 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
       sx={{ p: 1, cursor: "pointer", ":hover": { background: "grey" }, ...sx }}
       {...props}
     >
-      <Grid item xs={1} sx={{ display: "flex", justifyContent: "center" }}>
+      <Grid item xs={1} sx={{ display: "flex", justifyContent: "center", mr: 2 }}>
         {displayUserMessage ? (
           <DynamicAvatar user={displayUserMessage} />
         ) : (

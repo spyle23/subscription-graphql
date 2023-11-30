@@ -21,12 +21,14 @@ type FirstpageMessageProps = {
   refetch: (
     variables?: Partial<MessageTwoUserVariables> | undefined
   ) => Promise<ApolloQueryResult<MessageTwoUser>>;
+  onClose?: () => void;
 };
 
 export const FirstpageMessage: FC<FirstpageMessageProps> = ({
   messageData,
   refetch,
   refetchMessageData,
+  onClose,
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   return (
@@ -42,7 +44,7 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
           Nouveau message
         </Button>
       </Box>
-      <ContainerMessage messageData={messageData} />
+      <ContainerMessage messageData={messageData} onClose={onClose} />
       <NewMessageModal
         open={open}
         onClose={() => setOpen(false)}

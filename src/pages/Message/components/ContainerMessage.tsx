@@ -21,10 +21,11 @@ import { determineUserOrGroup, PresenterMessage } from "./PresenterMessage";
 
 type ContainerMessageProps = {
   messageData?: MessagesOfCurrentUser;
+  onClose?:()=> void;
 } & BoxProps;
 
 export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
-  ({ messageData, sx, ...props }) => {
+  ({ messageData, onClose, sx, ...props }) => {
     const { user } = useApplicationContext();
     const { dispatch } = useContext(MessageContext);
 
@@ -59,10 +60,11 @@ export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
         value: value,
         userDiscuss: determineUserOrGroup(user as login_login_data, value),
       });
+      onClose && onClose();
     };
 
     return (
-      <Box sx={{ height: "80vh", overflowY: "auto", p: 2, ...sx }} {...props}>
+      <Box sx={{ height: "450px " ,overflowY: "auto", p: 2, ...sx }} {...props}>
         {messageCurrent?.map((value, index) => (
           <PresenterMessage
             key={index}

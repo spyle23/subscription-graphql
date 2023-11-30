@@ -1,11 +1,12 @@
 import { styled } from "@mui/material";
 import { Box } from "@mui/system";
-import { FC } from "react";
+import { FC, useReducer, Reducer } from "react";
 import { UserMenu } from "./UserMenu";
 import { DashboardNavbar } from "./DashboardNavbar";
 import { Notifications } from "./Notifications";
-import { useApplicationContext } from "../../hooks";
 import { MessageToolbar } from "./MessageToolbar";
+import { ActionMessageType, MessageGlobalApp } from "../../types/message";
+import { DiscussionOpenTab } from "./DiscussionOpenTab";
 
 type ContainerWithMenuProps = {
   children: React.ReactNode;
@@ -14,7 +15,7 @@ type ContainerWithMenuProps = {
 const DashboardLayoutRoot = styled("div")(() => ({
   display: "flex",
   flex: "1 1 auto",
-  width: "100vw",
+  width: "98vw",
   paddingTop: 64,
 }));
 
@@ -32,9 +33,11 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
             width: "100%",
             background: "#f8f8f8",
             minHeight: "92vh",
+            position: "relative",
           }}
         >
           {children}
+          <DiscussionOpenTab />
         </Box>
       </DashboardLayoutRoot>
       <DashboardNavbar

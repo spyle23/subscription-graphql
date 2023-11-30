@@ -1,4 +1,7 @@
-import { MessageToUser_messageToUser } from "../graphql/message";
+import {
+  MessageToUser_messageToUser,
+  MessageTwoUser_messageTwoUser,
+} from "../graphql/message";
 import {
   MessagesOfCurrentUser_messagesOfCurrentUser,
   MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup,
@@ -33,3 +36,18 @@ export type ActionType = {
     | MessagesOfCurrentUser_messagesOfCurrentUser_Receiver
     | null;
 };
+
+export type DiscussionContexteType = {
+  discussion: MessageGlobalApp[];
+  dispatchDiscussion: React.Dispatch<ActionMessageType>;
+}
+
+export type ActionMessageType = {
+  type: string;
+  value: MessageGlobalApp;
+  trigger?: boolean;
+}
+
+export type MessageGlobalApp = {
+  messages: (MessageToUser_messageToUser | MessageTwoUser_messageTwoUser)[];
+} & MessageActionType;

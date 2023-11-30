@@ -16,7 +16,7 @@ import {
 } from "../../graphql/message";
 import { ActionType, MessageActionType } from "../../types/message";
 
-const initialValue: MessageActionType = {
+export const initialValue: MessageActionType = {
   openMessage: false,
   receiverId: undefined,
   userId: undefined,

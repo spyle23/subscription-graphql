@@ -25,7 +25,6 @@ export const MessageItem: FC<MessageItemProps> = ({
         width: "100%",
         display: "flex",
         my: 2,
-        p: 2,
         justifyContent: user?.id === message.User.id ? "end" : "startf",
       }}
     >
@@ -53,7 +52,7 @@ export const MessageItem: FC<MessageItemProps> = ({
             {message.content}
           </Typography>
           {message.image && (
-            <Box sx={{ width: 300 }} >
+            <Box sx={{ width: "100%" }} >
               <img src={message.image} alt="image" width="100%" />
             </Box>
           )}
