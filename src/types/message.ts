@@ -28,13 +28,14 @@ export type MessageContexteType = {
 
 export type ActionType = {
   type: string;
-  value:
+  value?:
     | MessagesOfCurrentUser_messagesOfCurrentUser
     | MessageToUser_messageToUser;
   userDiscuss:
     | MessagesOfCurrentUser_messagesOfCurrentUser_User
     | MessagesOfCurrentUser_messagesOfCurrentUser_Receiver
     | null;
+  message?: MessageActionType;
 };
 
 export type DiscussionContexteType = {

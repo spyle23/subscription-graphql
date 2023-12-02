@@ -13,15 +13,28 @@ const reducerMessageGlobal = (
 ) => {
   switch (action.type) {
     case "add discussion":
-      return [...state, action.value];
+      if (
+        !state.find((item) =>
+          action.value.discussGroupId
+            ? item.discussGroupId === action.value.discussGroupId
+            : item.userId === action.value.userId &&
+              item.receiverId === action.value.receiverId
+        )
+      ) {
+        return [...state, action.value];
+      }
+      return state.map((i) => ({ ...i, messages: action.value.messages }));
 
     case "delete discussion":
+      if (action.value.discussGroupId) {
+        return state.filter(
+          (val) => val.discussGroupId !== action.value.discussGroupId
+        );
+      }
       return state.filter(
         (val) =>
-          val.userId === action.value.userId &&
-          (action.value.receiverId
-            ? val.receiverId !== action.value.receiverId
-            : val.discussGroupId !== action.value.discussGroupId)
+          val.userId !== action.value.userId &&
+          val.receiverId !== action.value.receiverId
       );
     default:
       return state.map((val) => {

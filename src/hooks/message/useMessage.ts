@@ -15,6 +15,8 @@ import {
   MessageTwoUserVariables,
 } from "../../graphql/message";
 import { ActionType, MessageActionType } from "../../types/message";
+import { MessageInput } from "../../types/graphql-types";
+import { useSendMessage } from "./useSendMessage";
 
 export const initialValue: MessageActionType = {
   openMessage: false,
@@ -30,12 +32,14 @@ const reducerMessage = (
     case "select message":
       return {
         openMessage: true,
-        receiverId: action.value.Receiver?.id,
-        userId: action.value.User?.id,
-        discussGroupId: action.value.DiscussGroup?.id,
-        DiscussGroup: action.value.DiscussGroup,
+        receiverId: action.value?.Receiver?.id,
+        userId: action.value?.User?.id,
+        discussGroupId: action.value?.DiscussGroup?.id,
+        DiscussGroup: action.value?.DiscussGroup,
         userDiscuss: action.userDiscuss,
       };
+    case "from message":
+      return action.message ?? state;
     default:
       return initialValue;
   }
@@ -43,6 +47,7 @@ const reducerMessage = (
 
 export const useMessage = () => {
   const { user } = useApplicationContext();
+  const { sendMessage: sendMessageExec } = useSendMessage();
   const { data: messageData, refetch: refetchMessageData } = useQuery<
     MessagesOfCurrentUser,
     MessagesOfCurrentUserVariables
@@ -72,12 +77,26 @@ export const useMessage = () => {
     },
     skip: !currentMessage.userId,
   });
+
+  const sendMessage = async (data: MessageInput) => {
+    await sendMessageExec(
+      user?.id as number,
+      data,
+      user?.id === currentMessage.receiverId
+        ? currentMessage.userId
+        : currentMessage.receiverId,
+      currentMessage.discussGroupId
+    );
+    await refetchMessageData();
+    await refetch();
+  };
   return {
     user,
     messageData,
     refetchMessageData,
     currentMessage,
     dispatch,
+    sendMessage,
     data,
     messageTwoUser,
     refetch,

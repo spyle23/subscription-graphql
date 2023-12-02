@@ -1,36 +1,49 @@
 import MailIcon from "@mui/icons-material/Mail";
 import { Badge, IconButton, Popover, Typography, Box } from "@mui/material";
-import React, { useEffect, useMemo, useState, useContext } from "react";
+import React, { useEffect, useMemo, useState, useContext, FC } from "react";
 import { FirstpageMessage } from "../../pages/Message/components/FirstpageMessage";
-import { useMessage } from "../../hooks/message/useMessage";
-import { MessageContext } from "../../pages/Message/Message";
-import { MessageContexteType } from "../../types/message";
+import { ActionType, MessageActionType } from "../../types/message";
 import { DiscussionContext } from "../../contexts/message";
+import {
+  MessageToUser,
+  MessageTwoUser,
+  MessageTwoUserVariables,
+} from "../../graphql/message";
+import { ApolloQueryResult } from "@apollo/client";
+import {
+  MessagesOfCurrentUser,
+  MessagesOfCurrentUserVariables,
+} from "../../graphql/message/types/MessagesOfCurrentUser";
 
-export const MessageToolbar = (): JSX.Element => {
+type MessageToolbarProps = {
+  currentMessage: MessageActionType;
+  dispatch: React.Dispatch<ActionType>;
+  data: MessageToUser | undefined;
+  messageData: MessagesOfCurrentUser | undefined;
+  messageTwoUser: MessageTwoUser | undefined;
+  refetch: (
+    variables?: Partial<MessageTwoUserVariables> | undefined
+  ) => Promise<ApolloQueryResult<MessageTwoUser>>;
+  refetchMessageData: (
+    variables?: Partial<MessagesOfCurrentUserVariables> | undefined
+  ) => Promise<ApolloQueryResult<MessagesOfCurrentUser>>;
+};
+
+export const MessageToolbar: FC<MessageToolbarProps> = ({
+  refetch,
+  currentMessage,
+  messageTwoUser,
+  refetchMessageData,
+  messageData,
+  data,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
   const [numberMsg, setNumberMsg] = useState<number>(0);
-  const {
-    data,
-    messageData,
-    refetch,
-    refetchMessageData,
-    messageTwoUser,
-    currentMessage,
-    dispatch,
-  } = useMessage();
   const { dispatchDiscussion } = useContext(DiscussionContext);
   // const navigate = useNavigate();
 
-  const memoizedMessage: MessageContexteType = useMemo(
-    () => ({
-      currentMessage,
-      dispatch,
-    }),
-    [currentMessage, dispatch]
-  );
   useEffect(() => {
     if (data?.messageToUser) {
       setNumberMsg((prev) => prev + 1);
@@ -86,14 +99,12 @@ export const MessageToolbar = (): JSX.Element => {
         }}
       >
         <Box sx={{ p: 1 }}>
-          <MessageContext.Provider value={memoizedMessage}>
-            <FirstpageMessage
-              messageData={messageData}
-              refetch={refetch}
-              refetchMessageData={refetchMessageData}
-              onClose={handleClose}
-            />
-          </MessageContext.Provider>
+          <FirstpageMessage
+            messageData={messageData}
+            refetch={refetch}
+            refetchMessageData={refetchMessageData}
+            onClose={handleClose}
+          />
         </Box>
       </Popover>
     </div>

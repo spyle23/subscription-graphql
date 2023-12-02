@@ -1,25 +1,18 @@
-import {
-  Grid
-} from "@mui/material";
-import React, {
-  createContext,
-  useMemo,
-  useEffect,
-} from "react";
+import { Grid } from "@mui/material";
+import React, { createContext, useMemo, useEffect } from "react";
 import { MessageInput } from "../../types/graphql-types";
-import { useSendMessage } from "../../hooks/message/useSendMessage";
 import addNotification from "react-push-notification";
 import { FirstpageMessage } from "./components/FirstpageMessage";
-import { MessageContexteType } from "../../types/message";
-import { useMessage } from "../../hooks/message/useMessage";
+import { MessageActionType, MessageContexteType } from "../../types/message";
+import { initialValue, useMessage } from "../../hooks/message/useMessage";
 import { SecondpageMessage } from "./components/SecondpageMessage";
 
-export const MessageContext = createContext<MessageContexteType>(
-  {} as MessageContexteType
-);
+export const MessageContext = createContext<MessageContexteType>({
+  currentMessage: initialValue,
+  dispatch: (val) => {},
+} as MessageContexteType);
 
 export const Message = (): JSX.Element => {
-  const { sendMessage: sendMessageExec } = useSendMessage();
   const {
     user,
     currentMessage,
@@ -28,6 +21,7 @@ export const Message = (): JSX.Element => {
     messageData,
     messageTwoUser,
     refetch,
+    sendMessage,
     refetchMessageData,
   } = useMessage();
   const memoizedMessage: MessageContexteType = useMemo(
@@ -45,18 +39,6 @@ export const Message = (): JSX.Element => {
       : messageTwoUser?.messageTwoUser;
     return currentMessages;
   }, [messageTwoUser, data]);
-  const sendMessage = async (data: MessageInput) => {
-    await sendMessageExec(
-      user?.id as number,
-      data,
-      user?.id === currentMessage.receiverId
-        ? currentMessage.userId
-        : currentMessage.receiverId,
-      currentMessage.discussGroupId
-    );
-    await refetchMessageData();
-    await refetch();
-  };
 
   useEffect(() => {
     if (data?.messageToUser) {
@@ -82,7 +64,12 @@ export const Message = (): JSX.Element => {
       </Grid>
       <Grid item md={8} sx={{ borderLeft: "1px solid gray" }}>
         {currentMessage.openMessage && (
-          <SecondpageMessage currentMessage={currentMessage} messages={messages} sendMessage={sendMessage} sx={{ height: "90vh" }} />
+          <SecondpageMessage
+            currentMessage={currentMessage}
+            messages={messages}
+            sendMessage={sendMessage}
+            sx={{ height: "90vh" }}
+          />
         )}
       </Grid>
     </Grid>

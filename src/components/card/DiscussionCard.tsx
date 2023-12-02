@@ -8,10 +8,8 @@ import {
   CardHeader,
   CardProps,
   IconButton,
-  TextField,
-  useTheme,
 } from "@mui/material";
-import { MessageGlobalApp } from "../../types/message";
+import { ActionMessageType, MessageActionType, MessageGlobalApp } from "../../types/message";
 import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import CloseIcon from "@mui/icons-material/Close";
@@ -19,18 +17,23 @@ import { MessageItem } from "../../pages/Message/components/MessageItem";
 import { login_login_data } from "../../graphql/user";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import { MessageForm } from "../../pages/Message/components/MessageForm";
+import { MessageInput } from "../../types/graphql-types";
 
 type DiscussionCardProps = {
   discussion: MessageGlobalApp;
   user?: login_login_data;
+  dispatchDiscussion: React.Dispatch<ActionMessageType>;
+  sendMessage: (data: MessageInput, value?: MessageActionType) => Promise<void>;
 } & CardProps;
 
 export const DiscussionCard: FC<DiscussionCardProps> = ({
   discussion,
   user,
+  dispatchDiscussion,
+  sendMessage,
   ...cardProps
 }) => {
-  const theme = useTheme();
   return (
     <Card {...cardProps}>
       <CardHeader
@@ -54,10 +57,25 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
               alignItems: "center",
             }}
           >
-            <IconButton>
+            <IconButton
+              onClick={() =>
+                dispatchDiscussion({
+                  type: "minimize discussion",
+                  value: discussion,
+                  trigger: false,
+                })
+              }
+            >
               <MinimizeIcon />
             </IconButton>
-            <IconButton>
+            <IconButton
+              onClick={() =>
+                dispatchDiscussion({
+                  type: "delete discussion",
+                  value: discussion,
+                })
+              }
+            >
               <CloseIcon />
             </IconButton>
           </Box>
@@ -69,29 +87,7 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
         ))}
       </CardContent>
       <CardActions>
-        <form
-          style={{ display: "flex", width: "100%" }}
-          // onSubmit={handleSubmit(sendMessage)}
-        >
-          <div>
-            <IconButton>
-              <CollectionsIcon sx={{ fill: theme.palette.primary.main }} />
-            </IconButton>
-          </div>
-          <TextField
-            // {...register("content")}
-            InputProps={{
-              sx: {
-                borderRadius: "25px !important",
-              },
-            }}
-            placeholder="votre message ..."
-            sx={{ width: "80%" }}
-          />
-          <IconButton type="submit">
-            <PlayArrowIcon sx={{ fill: theme.palette.primary.main }} />
-          </IconButton>
-        </form>
+        <MessageForm sendMessage={sendMessage} discussion={discussion} />
       </CardActions>
     </Card>
   );
