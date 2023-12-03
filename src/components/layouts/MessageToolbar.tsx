@@ -14,9 +14,12 @@ import {
   MessagesOfCurrentUser,
   MessagesOfCurrentUserVariables,
 } from "../../graphql/message/types/MessagesOfCurrentUser";
+import { determineUserOrGroup } from "../../pages/Message/components/PresenterMessage";
+import { login_login_data } from "../../graphql/user";
 
 type MessageToolbarProps = {
   currentMessage: MessageActionType;
+  user?: login_login_data;
   dispatch: React.Dispatch<ActionType>;
   data: MessageToUser | undefined;
   messageData: MessagesOfCurrentUser | undefined;
@@ -31,6 +34,8 @@ type MessageToolbarProps = {
 
 export const MessageToolbar: FC<MessageToolbarProps> = ({
   refetch,
+  user,
+  dispatch,
   currentMessage,
   messageTwoUser,
   refetchMessageData,
@@ -41,14 +46,31 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
     null
   );
   const [numberMsg, setNumberMsg] = useState<number>(0);
-  const { dispatchDiscussion } = useContext(DiscussionContext);
+  const { dispatchDiscussion, discussion } = useContext(DiscussionContext);
   // const navigate = useNavigate();
 
   useEffect(() => {
-    if (data?.messageToUser) {
-      setNumberMsg((prev) => prev + 1);
+    if (data?.messageToUser && user) {
+      if (
+        !discussion.find(
+          (val) =>
+            val.userId === data.messageToUser.userId &&
+            (data.messageToUser.discussGroupId
+              ? val.discussGroupId === data.messageToUser.discussGroupId
+              : val.receiverId === data.messageToUser.receiverId)
+        )
+      ) {
+        dispatch({
+          type: "select message",
+          value: data.messageToUser,
+          userDiscuss: determineUserOrGroup(user, data.messageToUser),
+        });
+        setNumberMsg((prev) => prev + 1);
+      } else {
+        refetch();
+      }
     }
-  }, [data]);
+  }, [data, user]);
 
   useEffect(() => {
     if (messageTwoUser) {
@@ -100,6 +122,7 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
       >
         <Box sx={{ p: 1 }}>
           <FirstpageMessage
+            data={data}
             messageData={messageData}
             refetch={refetch}
             refetchMessageData={refetchMessageData}

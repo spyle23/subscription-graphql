@@ -9,12 +9,14 @@ import {
 } from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { ApolloQueryResult } from "@apollo/client";
 import {
+  MessageToUser,
   MessageTwoUser,
   MessageTwoUserVariables,
 } from "../../../graphql/message";
 
 type FirstpageMessageProps = {
   messageData: MessagesOfCurrentUser | undefined;
+  data?: MessageToUser;
   refetchMessageData: (
     variables?: Partial<MessagesOfCurrentUserVariables> | undefined
   ) => Promise<ApolloQueryResult<MessagesOfCurrentUser>>;
@@ -26,6 +28,7 @@ type FirstpageMessageProps = {
 
 export const FirstpageMessage: FC<FirstpageMessageProps> = ({
   messageData,
+  data,
   refetch,
   refetchMessageData,
   onClose,
@@ -44,7 +47,11 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
           Nouveau message
         </Button>
       </Box>
-      <ContainerMessage messageData={messageData} onClose={onClose} />
+      <ContainerMessage
+        data={data}
+        messageData={messageData}
+        onClose={onClose}
+      />
       <NewMessageModal
         open={open}
         onClose={() => setOpen(false)}

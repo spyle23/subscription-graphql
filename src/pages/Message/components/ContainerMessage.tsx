@@ -1,6 +1,6 @@
 import { useQuery, useSubscription } from "@apollo/client";
 import { Box, BoxProps } from "@mui/material";
-import React, { FC, useContext, useMemo } from "react";
+import React, { FC, useContext, useEffect, useMemo } from "react";
 import {
   LISTEN_MESSAGE,
   MESSAGES_CURRENT_USER,
@@ -20,19 +20,15 @@ import { MessageContext } from "../Message";
 import { determineUserOrGroup, PresenterMessage } from "./PresenterMessage";
 
 type ContainerMessageProps = {
+  data?: MessageToUser;
   messageData?: MessagesOfCurrentUser;
-  onClose?:()=> void;
+  onClose?: () => void;
 } & BoxProps;
 
 export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
-  ({ messageData, onClose, sx, ...props }) => {
+  ({ messageData, data, onClose, sx, ...props }) => {
     const { user } = useApplicationContext();
     const { dispatch } = useContext(MessageContext);
-
-    const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
-      LISTEN_MESSAGE,
-      { variables: { userId: user?.id as number } }
-    );
 
     const messageCurrent = useMemo(() => {
       const current = data?.messageToUser
@@ -64,7 +60,7 @@ export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
     };
 
     return (
-      <Box sx={{ height: "450px " ,overflowY: "auto", p: 2, ...sx }} {...props}>
+      <Box sx={{ height: "450px ", overflowY: "auto", p: 2, ...sx }} {...props}>
         {messageCurrent?.map((value, index) => (
           <PresenterMessage
             key={index}

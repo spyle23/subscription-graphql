@@ -42,7 +42,7 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
         justifyContent: "space-between",
       }}
     >
-      <Grid container sx={{ width: "90%" }}>
+      <Grid container sx={{ width: "90%", justifyContent: "flex-end" }}>
         {discussion
           .filter((val) => val.openMessage)
           .map((i) => (

@@ -17,8 +17,10 @@ const reducerMessageGlobal = (
         !state.find((item) =>
           action.value.discussGroupId
             ? item.discussGroupId === action.value.discussGroupId
-            : item.userId === action.value.userId &&
-              item.receiverId === action.value.receiverId
+            : (item.userId === action.value.userId &&
+                item.receiverId === action.value.receiverId) ||
+              (item.userId === action.value.receiverId &&
+                item.receiverId === action.value.userId)
         )
       ) {
         return [...state, action.value];
@@ -33,8 +35,8 @@ const reducerMessageGlobal = (
       }
       return state.filter(
         (val) =>
-          val.userId !== action.value.userId &&
-          val.receiverId !== action.value.receiverId
+          (val.userId !== action.value.userId &&
+          val.receiverId !== action.value.receiverId)
       );
     default:
       return state.map((val) => {

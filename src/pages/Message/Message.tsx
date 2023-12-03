@@ -14,7 +14,6 @@ export const MessageContext = createContext<MessageContexteType>({
 
 export const Message = (): JSX.Element => {
   const {
-    user,
     currentMessage,
     dispatch,
     data,
@@ -56,6 +55,7 @@ export const Message = (): JSX.Element => {
       <Grid item md={4} sx={{ p: 2 }}>
         <MessageContext.Provider value={memoizedMessage}>
           <FirstpageMessage
+            data={data}
             messageData={messageData}
             refetch={refetch}
             refetchMessageData={refetchMessageData}
