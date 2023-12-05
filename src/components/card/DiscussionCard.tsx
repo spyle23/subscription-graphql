@@ -8,8 +8,13 @@ import {
   CardHeader,
   CardProps,
   IconButton,
+  useTheme,
 } from "@mui/material";
-import { ActionMessageType, MessageActionType, MessageGlobalApp } from "../../types/message";
+import {
+  ActionMessageType,
+  MessageActionType,
+  MessageGlobalApp,
+} from "../../types/message";
 import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import CloseIcon from "@mui/icons-material/Close";
@@ -19,9 +24,12 @@ import CollectionsIcon from "@mui/icons-material/Collections";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { MessageForm } from "../../pages/Message/components/MessageForm";
 import { MessageInput } from "../../types/graphql-types";
+import { WriteMessage } from "../../graphql/message/types/WriteMessage";
+import { SyncLoader } from "react-spinners";
 
 type DiscussionCardProps = {
   discussion: MessageGlobalApp;
+  writting?: WriteMessage;
   user?: login_login_data;
   dispatchDiscussion: React.Dispatch<ActionMessageType>;
   sendMessage: (data: MessageInput, value?: MessageActionType) => Promise<void>;
@@ -30,10 +38,12 @@ type DiscussionCardProps = {
 export const DiscussionCard: FC<DiscussionCardProps> = ({
   discussion,
   user,
+  writting,
   dispatchDiscussion,
   sendMessage,
   ...cardProps
 }) => {
+  const theme = useTheme();
   return (
     <Card {...cardProps}>
       <CardHeader
@@ -85,9 +95,21 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
         {discussion.messages.map((message) => (
           <MessageItem key={message.id} message={message} user={user} />
         ))}
+        {writting?.writeMessage.isWritting &&
+          (writting?.writeMessage.userId === discussion.userId ||
+            writting?.writeMessage.userId === discussion.receiverId) && (
+            <Box sx={{ display: "flex", alignItems: "center" }} >
+              <DynamicAvatar user={discussion.userDiscuss ?? undefined} sx={{ mr: 1 }} />
+              <SyncLoader color={theme.palette.primary.main} loading size={5} />
+            </Box>
+          )}
       </CardContent>
       <CardActions>
-        <MessageForm sendMessage={sendMessage} discussion={discussion} />
+        <MessageForm
+          sendMessage={sendMessage}
+          discussion={discussion}
+          user={user}
+        />
       </CardActions>
     </Card>
   );

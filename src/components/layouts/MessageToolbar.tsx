@@ -16,12 +16,14 @@ import {
 } from "../../graphql/message/types/MessagesOfCurrentUser";
 import { determineUserOrGroup } from "../../pages/Message/components/PresenterMessage";
 import { login_login_data } from "../../graphql/user";
+import { WriteMessage } from "../../graphql/message/types/WriteMessage";
 
 type MessageToolbarProps = {
   currentMessage: MessageActionType;
   user?: login_login_data;
   dispatch: React.Dispatch<ActionType>;
   data: MessageToUser | undefined;
+  writting?:WriteMessage;
   messageData: MessagesOfCurrentUser | undefined;
   messageTwoUser: MessageTwoUser | undefined;
   refetch: (

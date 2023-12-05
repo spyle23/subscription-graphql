@@ -36,6 +36,7 @@
     "react-hook-form": "^7.43.2",
     "react-push-notification": "^1.5.3",
     "react-router-dom": "^6.8.1",
+    "react-spinners": "^0.13.8",
     "styled-components": "^5.3.6"
   },
   "devDependencies": {

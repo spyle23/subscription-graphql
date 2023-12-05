@@ -38,3 +38,22 @@ export const MODIFY_MESSAGE = gql`
     )
   }
 `;
+
+export const WRITTING_CHECK = gql`
+  mutation WrittingCheck(
+    $isWritting: Boolean!
+    $userId: Float!
+    $discussGroupId: Float
+    $receiverId: Float
+  ) {
+    writtingCheck(
+      isWritting: $isWritting
+      userId: $userId
+      discussGroupId: $discussGroupId
+      receiverId: $receiverId
+    ) {
+      success
+      message
+    }
+  }
+`;

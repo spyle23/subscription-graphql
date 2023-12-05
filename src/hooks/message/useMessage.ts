@@ -13,10 +13,15 @@ import {
   MessageToUserVariables,
   MessageTwoUser,
   MessageTwoUserVariables,
+  WRITING_MESSAGE,
 } from "../../graphql/message";
 import { ActionType, MessageActionType } from "../../types/message";
 import { MessageInput } from "../../types/graphql-types";
 import { useSendMessage } from "./useSendMessage";
+import {
+  WriteMessage,
+  WriteMessageVariables,
+} from "../../graphql/message/types/WriteMessage";
 
 export const initialValue: MessageActionType = {
   openMessage: false,
@@ -65,6 +70,13 @@ export const useMessage = () => {
       skip: !user?.id,
     }
   );
+  const { data: writting } = useSubscription<
+    WriteMessage,
+    WriteMessageVariables
+  >(WRITING_MESSAGE, {
+    variables: { userId: user?.id as number },
+    skip: !user?.id,
+  });
 
   const { data: messageTwoUser, refetch } = useQuery<
     MessageTwoUser,
@@ -96,6 +108,7 @@ export const useMessage = () => {
     refetchMessageData,
     currentMessage,
     dispatch,
+    writting,
     sendMessage,
     data,
     messageTwoUser,

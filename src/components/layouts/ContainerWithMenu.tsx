@@ -1,6 +1,6 @@
 import { styled } from "@mui/material";
 import { Box } from "@mui/system";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useEffect } from "react";
 import { UserMenu } from "./UserMenu";
 import { DashboardNavbar } from "./DashboardNavbar";
 import { Notifications } from "./Notifications";
@@ -31,7 +31,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
 }): JSX.Element => {
   const options = useMessage();
   const location = useLocation();
-  const { sendMessage, currentMessage, dispatch } = options;
+  const { sendMessage, currentMessage, dispatch, writting } = options;
   const memoizedMessage: MessageContexteType = useMemo(
     () => ({
       currentMessage,
@@ -56,7 +56,10 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
           >
             {children}
             {!location.pathname.includes("messages") && (
-              <DiscussionOpenTab sendMessage={sendMessage} />
+              <DiscussionOpenTab
+                writting={writting}
+                sendMessage={sendMessage}
+              />
             )}
           </Box>
         </DashboardLayoutRoot>

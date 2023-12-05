@@ -13,9 +13,11 @@ import {
   MessageTwoUser,
   MessageTwoUserVariables,
 } from "../../../graphql/message";
+import { WriteMessage } from "../../../graphql/message/types/WriteMessage";
 
 type FirstpageMessageProps = {
   messageData: MessagesOfCurrentUser | undefined;
+  writting?:WriteMessage
   data?: MessageToUser;
   refetchMessageData: (
     variables?: Partial<MessagesOfCurrentUserVariables> | undefined

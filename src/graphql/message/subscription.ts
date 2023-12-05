@@ -29,3 +29,12 @@ export const LISTEN_MESSAGE = gql`
     }
   }
 `;
+
+export const WRITING_MESSAGE = gql`
+  subscription WriteMessage($userId: Float!) {
+    writeMessage(userId: $userId) {
+      isWritting
+      userId
+    }
+  }
+`;

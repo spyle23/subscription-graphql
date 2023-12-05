@@ -1,5 +1,5 @@
-import { useContext, FC } from "react";
-import { Avatar, Box, Grid } from "@mui/material";
+import { useContext, FC, useEffect } from "react";
+import { Avatar, Box, Grid, useTheme } from "@mui/material";
 import { DiscussionContext } from "../../contexts/message";
 import { DiscussionCard } from "../card/DiscussionCard";
 import { useApplicationContext } from "../../hooks";
@@ -8,17 +8,22 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { MessageInput } from "../../types/graphql-types";
 import { MessageContext } from "../../pages/Message/Message";
 import { MessageActionType } from "../../types/message";
+import { WriteMessage } from "../../graphql/message/types/WriteMessage";
+import { SyncLoader } from "react-spinners";
 
 type DiscussionOpenTabProps = {
+  writting?: WriteMessage;
   sendMessage: (data: MessageInput) => Promise<void>;
 };
 
 export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
+  writting,
   sendMessage,
 }) => {
   const { discussion, dispatchDiscussion } = useContext(DiscussionContext);
   const { dispatch } = useContext(MessageContext);
   const { user } = useApplicationContext();
+  const theme = useTheme();
 
   const changedSendMessage = async (
     data: MessageInput,
@@ -31,6 +36,12 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
     });
     await sendMessage(data);
   };
+
+  useEffect(() => {
+    if (writting) {
+      console.log("writting", writting);
+    }
+  }, [writting]);
   return (
     <Box
       sx={{
@@ -53,6 +64,7 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
               sx={{ p: 1 }}
             >
               <DiscussionCard
+                writting={writting}
                 discussion={i}
                 user={user}
                 dispatchDiscussion={dispatchDiscussion}
@@ -117,6 +129,16 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
                   right: 0,
                 }}
               />
+              {writting?.writeMessage.isWritting &&
+                (writting?.writeMessage.userId === i.userId ||
+                  writting?.writeMessage.userId === i.receiverId) && (
+                  <SyncLoader
+                    color={theme.palette.primary.main}
+                    loading
+                    size={3}
+                    style={{ position: "absolute", bottom: 0, left: 0 }}
+                  />
+                )}
             </Box>
           ))}
       </Box>

@@ -21,6 +21,7 @@ export const Message = (): JSX.Element => {
     messageTwoUser,
     refetch,
     sendMessage,
+    writting,
     refetchMessageData,
   } = useMessage();
   const memoizedMessage: MessageContexteType = useMemo(
@@ -65,6 +66,7 @@ export const Message = (): JSX.Element => {
       <Grid item md={8} sx={{ borderLeft: "1px solid gray" }}>
         {currentMessage.openMessage && (
           <SecondpageMessage
+            writting={writting}
             currentMessage={currentMessage}
             messages={messages}
             sendMessage={sendMessage}

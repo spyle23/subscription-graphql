@@ -9,17 +9,32 @@ import { useFileDeleter } from "../../../hooks/application/useFileDeleter";
 import { useDropzone } from "react-dropzone";
 import { MessageInput } from "../../../types/graphql-types";
 import { MessageActionType } from "../../../types/message";
+import { useMutation } from "@apollo/client";
+import { WRITTING_CHECK } from "../../../graphql/message";
+import {
+  WrittingCheck,
+  WrittingCheckVariables,
+} from "../../../graphql/message/types/WrittingCheck";
+import { login_login_data } from "../../../graphql/user";
 
 type MessageFormProps = {
   sendMessage: (data: MessageInput, value?: MessageActionType) => Promise<void>;
   discussion: MessageActionType;
+  user?: login_login_data;
 };
 
-export const MessageForm: FC<MessageFormProps> = ({ sendMessage, discussion }) => {
+export const MessageForm: FC<MessageFormProps> = ({
+  sendMessage,
+  discussion,
+  user,
+}) => {
   const theme = useTheme();
   const { register, handleSubmit, reset, getValues } = useForm<MessageInput>();
   const { uploadFile } = useFileUploader();
   const { deleteFile } = useFileDeleter();
+  const [writeMessage] = useMutation<WrittingCheck, WrittingCheckVariables>(
+    WRITTING_CHECK
+  );
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const reader = new FileReader();
     reader.readAsDataURL(acceptedFiles[0]);
@@ -36,6 +51,20 @@ export const MessageForm: FC<MessageFormProps> = ({ sendMessage, discussion }) =
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
   });
+
+  const handleFocus = async (isWritting: boolean) => {
+    await writeMessage({
+      variables: {
+        isWritting: isWritting,
+        userId: user?.id as number,
+        receiverId:
+          discussion.receiverId !== user?.id
+            ? discussion.receiverId
+            : discussion.userId,
+        discussGroupId: discussion.discussGroupId,
+      },
+    });
+  };
 
   const handleDeleteImage = async () => {
     try {
@@ -74,6 +103,8 @@ export const MessageForm: FC<MessageFormProps> = ({ sendMessage, discussion }) =
               borderRadius: "25px !important",
             },
           }}
+          onFocus={async () => await handleFocus(true)}
+          onBlur={async () => await handleFocus(false)}
           placeholder="votre message ..."
           sx={{ width: "80%" }}
         />
