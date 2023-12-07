@@ -1,6 +1,6 @@
 import { useCallback, FC, useMemo, useEffect, useContext } from "react";
 import { useQuery } from "@apollo/client";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import {
   GetCommentByPost,
   GetCommentByPostVariables,
@@ -12,6 +12,7 @@ import { CommentInput as CommentInputData } from "../../types/graphql-types";
 import { CommentInput } from "./CommentInput";
 import { CommentPresenter } from "./CommentPresenter";
 import { CommentContext } from "../../pages/Landing/Landing";
+import { CommentSkeleton } from "../skeleton/CommentSkeleton";
 
 type CommentContainerProps = {
   idPost: number;
@@ -47,10 +48,6 @@ export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
 
   const comments = useMemo(() => data?.getCommentByPost.data, [data]);
 
-  if (loading) {
-    return <CircularProgress />;
-  }
-
   return (
     <Box
       sx={{
@@ -63,6 +60,7 @@ export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
       {comments?.map((comment, index) => (
         <CommentPresenter key={index} {...comment} />
       ))}
+      {loading && [1, 2, 3].map((i) => <CommentSkeleton key={i} />)}
       <CommentInput saveComment={saveComment} />
     </Box>
   );

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useRef } from "react";
 import {
   Avatar,
   Box,
@@ -44,6 +44,12 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
   ...cardProps
 }) => {
   const theme = useTheme();
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
+    }
+  }, [discussion.messages]);
   return (
     <Card {...cardProps}>
       <CardHeader
@@ -91,20 +97,23 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
           </Box>
         }
       />
-      <CardContent sx={{ height: "350px", overflowY: "auto" }}>
+      <CardContent ref={scrollRef} sx={{ height: "350px", overflowY: "auto" }}>
         {discussion.messages.map((message) => (
           <MessageItem key={message.id} message={message} user={user} />
         ))}
         {writting?.writeMessage.isWritting &&
           (writting?.writeMessage.userId === discussion.userId ||
             writting?.writeMessage.userId === discussion.receiverId) && (
-            <Box sx={{ display: "flex", alignItems: "center" }} >
-              <DynamicAvatar user={discussion.userDiscuss ?? undefined} sx={{ mr: 1 }} />
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <DynamicAvatar
+                user={discussion.userDiscuss ?? undefined}
+                sx={{ mr: 1 }}
+              />
               <SyncLoader color={theme.palette.primary.main} loading size={5} />
             </Box>
           )}
       </CardContent>
-      <CardActions>
+      <CardActions sx={{ justifyContent: "center" }}>
         <MessageForm
           sendMessage={sendMessage}
           discussion={discussion}

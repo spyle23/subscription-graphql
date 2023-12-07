@@ -1,4 +1,5 @@
 import {
+  MessageToUser,
   MessageToUser_messageToUser,
   MessageTwoUser_messageTwoUser,
 } from "../graphql/message";
@@ -11,6 +12,7 @@ import {
 
 export type MessageActionType = {
   openMessage: boolean;
+  newMessageNbr:number;
   userDiscuss?:
     | MessagesOfCurrentUser_messagesOfCurrentUser_User
     | MessagesOfCurrentUser_messagesOfCurrentUser_Receiver
@@ -46,6 +48,7 @@ export type DiscussionContexteType = {
 export type ActionMessageType = {
   type: string;
   value: MessageGlobalApp;
+  data?: MessageToUser;
   trigger?: boolean;
 }
 

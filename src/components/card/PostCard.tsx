@@ -17,11 +17,12 @@ import { CommentContainer } from "../comments/CommentContainer";
 import moment from "moment";
 import { ReactionInput, ReactionType } from "../../types/graphql-types";
 import { login_login_data } from "../../graphql/user";
-import {FBReactions} from "../comments/FBReactions";
+import { FBReactions } from "../comments/FBReactions";
 import LikeIcon from "../../assets/likeicon.png";
 import { motion } from "framer-motion";
 import { IReactions } from "../../types/IReactions";
 import { reactions } from "../../constants/reactions";
+import { DisplayMedia } from "../media/DisplayMedia";
 
 type PostCardProps = {
   post: GetOrderPost_getOrderPost;
@@ -29,10 +30,10 @@ type PostCardProps = {
   addReact: (postId: number, reactionType: ReactionInput) => Promise<void>;
 } & CardProps;
 
-const findUrlByReaction = (value: ReactionType): string | undefined=>{
-  const val = reactions.find((item)=> item.value === value)
-  return val?.url
-}
+const findUrlByReaction = (value: ReactionType): string | undefined => {
+  const val = reactions.find((item) => item.value === value);
+  return val?.url;
+};
 
 export const PostCard: FC<PostCardProps> = ({
   post,
@@ -43,25 +44,28 @@ export const PostCard: FC<PostCardProps> = ({
 }) => {
   const [showComment, setShowComment] = useState<boolean>(false);
   const [show, setShow] = useState<boolean>(false);
-  const userReact = useMemo(()=>post?.reactions?.find((react)=> react.userId === user?.id) , [post, user])
+  const userReact = useMemo(
+    () => post?.reactions?.find((react) => react.userId === user?.id),
+    [post, user]
+  );
   const [reaction, setReaction] = useState<IReactions>({
-    url: userReact ? findUrlByReaction(userReact.reactionType): undefined,
-    value: userReact?.reactionType
+    url: userReact ? findUrlByReaction(userReact.reactionType) : undefined,
+    value: userReact?.reactionType,
   });
   const handleToggleComment = () => {
     setShowComment((curr) => !curr);
   };
 
   const handleReact = async (value: IReactions) => {
-    if(!value.value) return ;
-    setReaction((prev)=>{
-      if(prev.value === value.value){
+    if (!value.value) return;
+    setReaction((prev) => {
+      if (prev.value === value.value) {
         return {
           url: undefined,
-          value: undefined
-        } as IReactions
+          value: undefined,
+        } as IReactions;
       }
-      return value
+      return value;
     });
     await addReact(post?.id, { reactionType: value.value });
   };
@@ -74,14 +78,16 @@ export const PostCard: FC<PostCardProps> = ({
     return name;
   }, [user, post]);
 
-  const handleLeave = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    onMouseLeave && onMouseLeave(e)
-    setShow(false)
-  }
+  const handleLeave = (
+    e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
+  ) => {
+    onMouseLeave && onMouseLeave(e);
+    setShow(false);
+  };
 
   return (
     <Box>
-      <Card elevation={1} {...cardProps} onMouseLeave={handleLeave} >
+      <Card elevation={1} {...cardProps} onMouseLeave={handleLeave}>
         <CardHeader
           avatar={<Avatar src={post?.user?.photo || ""} />}
           title={
@@ -97,11 +103,9 @@ export const PostCard: FC<PostCardProps> = ({
         ></CardHeader>
         <CardContent>
           <Typography>{post.description}</Typography>
-          {post.image && (
-            <img src={post.image} alt="post_image" style={{ width: "100%" }} />
-          )}
+          {post.image && <DisplayMedia url={post.image} />}
         </CardContent>
-        <FBReactions btnClicked={show} onClick={handleReact}  />
+        <FBReactions btnClicked={show} onClick={handleReact} />
         <CardActions>
           <Grid container sx={{ position: "relative" }}>
             <Grid
@@ -116,9 +120,13 @@ export const PostCard: FC<PostCardProps> = ({
               <motion.button
                 // whileHover={{ scale: 1.2 }}
                 className="likeBtn"
-                onMouseEnter={()=> setShow(true)}
+                style={{ background: "transparent" }}
+                onMouseEnter={() => setShow(true)}
               >
-                <motion.img src={reaction?.url || LikeIcon} width={reaction?.url ? "27" : "15"} />
+                <motion.img
+                  src={reaction?.url || LikeIcon}
+                  width={reaction?.url ? "27" : "15"}
+                />
               </motion.button>
             </Grid>
             <Grid

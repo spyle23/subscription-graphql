@@ -35,9 +35,26 @@ const reducerMessageGlobal = (
       }
       return state.filter(
         (val) =>
-          (val.userId !== action.value.userId &&
-          val.receiverId !== action.value.receiverId)
+          val.userId !== action.value.userId &&
+          val.receiverId !== action.value.receiverId
       );
+    case "change newMessageNbr":
+      if (action.data) {
+        return state.map((val) => {
+          if (
+            action.data?.messageToUser.discussGroupId === val.discussGroupId ||
+            action.data?.messageToUser.userId === val.userId ||
+            action.data?.messageToUser.userId === val.receiverId
+          ) {
+            return {
+              ...val,
+              newMessageNbr: val.newMessageNbr + 1,
+            };
+          }
+          return val;
+        });
+      }
+      return state;
     default:
       return state.map((val) => {
         if (
@@ -48,6 +65,7 @@ const reducerMessageGlobal = (
         ) {
           return {
             ...val,
+            newMessageNbr: action.trigger ? 0 : val.newMessageNbr,
             openMessage: action.trigger ? action.trigger : false,
           };
         }

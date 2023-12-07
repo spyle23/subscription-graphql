@@ -6,6 +6,7 @@ import {
   MessageToUser_messageToUser,
   MessageTwoUser_messageTwoUser,
 } from "../../../graphql/message";
+import { DisplayMedia } from "../../../components/media/DisplayMedia";
 
 type MessageItemProps = {
   user?: login_login_data;
@@ -52,9 +53,7 @@ export const MessageItem: FC<MessageItemProps> = ({
             {message.content}
           </Typography>
           {message.image && (
-            <Box sx={{ width: "100%" }} >
-              <img src={message.image} alt="image" width="100%" />
-            </Box>
+            <DisplayMedia url={message.image} controls fill={user?.id === message.userId ? "white" : undefined} />
           )}
         </Card>
       </Box>

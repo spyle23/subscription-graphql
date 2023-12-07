@@ -16,6 +16,7 @@ import {
   WrittingCheckVariables,
 } from "../../../graphql/message/types/WrittingCheck";
 import { login_login_data } from "../../../graphql/user";
+import { DisplayMedia } from "../../../components/media/DisplayMedia";
 
 type MessageFormProps = {
   sendMessage: (data: MessageInput, value?: MessageActionType) => Promise<void>;
@@ -85,9 +86,41 @@ export const MessageForm: FC<MessageFormProps> = ({
     reset({ content: "", image: undefined });
   };
   return (
-    <Box sx={{ px: 2 }}>
+    <Box>
+      {getValues().image && (
+        <Box
+          sx={{
+            background: "grey",
+            p: 1,
+            display: "flex",
+            alignItems: "center",
+            borderRadius: "10px",
+          }}
+        >
+          <Box
+            sx={{
+              width: "100px",
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <DisplayMedia url={getValues().image as string} />
+            <IconButton
+              sx={{ position: "absolute", top: 0, right: 0, p: 0 }}
+              onClick={handleDeleteImage}
+            >
+              <CloseOutlinedIcon color="error" />
+            </IconButton>
+          </Box>
+        </Box>
+      )}
       <form
-        style={{ display: "flex", width: "100%" }}
+        style={{
+          display: "flex",
+          width: "100%",
+          justifyContent: "space-around",
+        }}
         onSubmit={handleSubmit(submitMessage)}
       >
         <div {...getRootProps()}>
@@ -112,17 +145,6 @@ export const MessageForm: FC<MessageFormProps> = ({
           <PlayArrowIcon sx={{ fill: theme.palette.primary.main }} />
         </IconButton>
       </form>
-      {getValues().image && (
-        <Box sx={{ width: "100px", position: "relative" }}>
-          <img src={getValues().image || ""} alt="image" width="100%" />
-          <IconButton
-            sx={{ position: "absolute", top: 10, right: 10 }}
-            onClick={handleDeleteImage}
-          >
-            <CloseOutlinedIcon />
-          </IconButton>
-        </Box>
-      )}
     </Box>
   );
 };

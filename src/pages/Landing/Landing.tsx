@@ -20,6 +20,7 @@ import {
   MessageToUser,
   MessageToUserVariables,
 } from "../../graphql/message";
+import { PostSkeleton } from "../../components/skeleton/PostSkeleton";
 type CommentGen = {
   commentPost?: (postId: number, commentInput: CommentInput) => Promise<void>;
 };
@@ -56,6 +57,7 @@ export default function Landing() {
     <Container>
       <PostCreateForm createPost={handleCreatePost} />
       <CommentContext.Provider value={{ commentPost: commentPost }}>
+        {postLoading && [1, 2, 3, 4].map((i) => <PostSkeleton key={i} />)}
         {allPost?.getOrderPost.map((value) => (
           <PostCard
             key={value.id}

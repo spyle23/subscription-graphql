@@ -31,7 +31,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
 }): JSX.Element => {
   const options = useMessage();
   const location = useLocation();
-  const { sendMessage, currentMessage, dispatch, writting } = options;
+  const { sendMessage, currentMessage, dispatch, writting, data } = options;
   const memoizedMessage: MessageContexteType = useMemo(
     () => ({
       currentMessage,
@@ -57,6 +57,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
             {children}
             {!location.pathname.includes("messages") && (
               <DiscussionOpenTab
+                data={data}
                 writting={writting}
                 sendMessage={sendMessage}
               />

@@ -25,6 +25,7 @@ import {
 
 export const initialValue: MessageActionType = {
   openMessage: false,
+  newMessageNbr: 0,
   receiverId: undefined,
   userId: undefined,
 };
@@ -37,6 +38,7 @@ const reducerMessage = (
     case "select message":
       return {
         openMessage: true,
+        newMessageNbr: 0,
         receiverId: action.value?.Receiver?.id,
         userId: action.value?.User?.id,
         discussGroupId: action.value?.DiscussGroup?.id,
