@@ -92,7 +92,7 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
           />
         </Search>
         <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <IconButton
             size="large"
             aria-label="home icon"
@@ -111,7 +111,7 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
               <MailIcon />
             </Badge>
           </IconButton> */}
-          { message }
+          {message}
           {notification}
           {utilisateur}
         </Box>

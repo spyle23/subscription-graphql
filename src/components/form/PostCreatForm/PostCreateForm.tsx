@@ -24,6 +24,7 @@ import { Delete } from "@mui/icons-material";
 import { useFileDeleter } from "../../../hooks/application/useFileDeleter";
 import { TransitionProps } from "@mui/material/transitions";
 import { HeadCard } from "../headCard/HeadCard";
+import { DynamicAvatar } from "../../Avatar/DynamicAvatar";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -92,13 +93,9 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
   };
   return (
     <>
-      <Card elevation={1} sx={{ width: { xs: "100%", md: 500 }, p: 2 }}>
+      <Card elevation={1} sx={{ width: { xs: "100%", md: 500 }, p: 2, display: "flex", alignItems: "center" }}>
         <IconButton>
-          {user?.photo ? (
-            <img src={user.photo} alt="profile" />
-          ) : (
-            <FacebookOutlinedIcon />
-          )}
+          <DynamicAvatar user={user} />
         </IconButton>
         <TextField
           sx={{

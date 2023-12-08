@@ -22,7 +22,7 @@ type ContainerWithMenuProps = {
 const DashboardLayoutRoot = styled("div")(() => ({
   display: "flex",
   flex: "1 1 auto",
-  width: "98vw",
+  width: "100vw",
   paddingTop: 64,
 }));
 
@@ -50,7 +50,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
               flexDirection: "column",
               width: "100%",
               background: "#f8f8f8",
-              minHeight: "92vh",
+              minHeight: "90vh",
               position: "relative",
             }}
           >

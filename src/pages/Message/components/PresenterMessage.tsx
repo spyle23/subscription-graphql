@@ -37,19 +37,26 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
       ? "Vous avez envoyé une pièce jointe"
       : "a envoyé une pièce jointe";
   const displayUserMessage = determineUserOrGroup(user, message);
-  const displayMessage = message.content.length > 25 ? `${message.content.substring(0, 25)}...` : message.content;
+  const displayMessage =
+    message.content.length > 25
+      ? `${message.content.substring(0, 25)}...`
+      : message.content;
   return (
     <Grid
       container
       sx={{ p: 1, cursor: "pointer", ":hover": { background: "grey" }, ...sx }}
       {...props}
     >
-      <Grid item xs={1} sx={{ display: "flex", justifyContent: "center", mr: 2 }}>
+      <Grid
+        item
+        xs={1}
+        sx={{ display: "flex", justifyContent: "center", mr: 2 }}
+      >
         {displayUserMessage ? (
           <DynamicAvatar user={displayUserMessage} />
         ) : (
           <Avatar
-            sx={{ mr:2 }}
+            sx={{ mr: 2 }}
             alt={message.DiscussGroup?.groupName || "profile"}
             src={message.DiscussGroup?.coverPhoto || ""}
           />

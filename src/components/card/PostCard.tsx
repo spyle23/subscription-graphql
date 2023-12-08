@@ -23,6 +23,7 @@ import { motion } from "framer-motion";
 import { IReactions } from "../../types/IReactions";
 import { reactions } from "../../constants/reactions";
 import { DisplayMedia } from "../media/DisplayMedia";
+import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 
 type PostCardProps = {
   post: GetOrderPost_getOrderPost;
@@ -89,13 +90,13 @@ export const PostCard: FC<PostCardProps> = ({
     <Box>
       <Card elevation={1} {...cardProps} onMouseLeave={handleLeave}>
         <CardHeader
-          avatar={<Avatar src={post?.user?.photo || ""} />}
+          avatar={<DynamicAvatar user={post.user} />}
           title={
             <>
               <Typography variant="h5">{displayName}</Typography>
               <Typography>
                 {moment(new Date(post?.updatedAt || post?.createdAt))
-                  .startOf("hour")
+                  .startOf("second")
                   .fromNow()}
               </Typography>
             </>

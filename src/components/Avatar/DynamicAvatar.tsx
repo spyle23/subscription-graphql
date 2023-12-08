@@ -1,5 +1,6 @@
 import { AccountCircle } from "@mui/icons-material";
 import { Avatar, Box, BoxProps } from "@mui/material";
+import { usePhotoUrl } from "../../hooks/application/usePhotoUrl";
 
 type DynamicAvatarProps<T> = {
   user?: T;
@@ -15,7 +16,10 @@ export const DynamicAvatar = <
   return (
     <Box sx={{ mr: 1, ...sx }} {...props}>
       {user?.photo ? (
-        <Avatar alt={user?.firstname || "profile"} src={user?.photo} />
+        <Avatar
+          alt={user?.firstname || "profile"}
+          src={usePhotoUrl(user?.photo)}
+        />
       ) : (
         <AccountCircle sx={{ fontSize: "2em" }} />
       )}

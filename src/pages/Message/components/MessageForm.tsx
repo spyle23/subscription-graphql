@@ -86,7 +86,7 @@ export const MessageForm: FC<MessageFormProps> = ({
     reset({ content: "", image: undefined });
   };
   return (
-    <Box>
+    <Box sx={{ py: 1 }} >
       {getValues().image && (
         <Box
           sx={{

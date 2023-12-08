@@ -76,7 +76,7 @@ export const Message = (): JSX.Element => {
               currentMessage={currentMessage}
               messages={messages}
               sendMessage={sendMessage}
-              sx={{ height: "90vh" }}
+              sx={{ height: "80vh" }}
             />
           )}
         </Grid>

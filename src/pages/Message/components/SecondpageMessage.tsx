@@ -1,4 +1,4 @@
-import { Box, BoxProps } from "@mui/material";
+import { Box, BoxProps, useTheme } from "@mui/material";
 import { FC, useEffect } from "react";
 import { HeaderMessage } from "./HeaderMessage";
 import { MessageItem } from "./MessageItem";
@@ -19,7 +19,7 @@ type SecondpageMessageProps = {
   writting?: WriteMessage;
   messages: (MessageTwoUser_messageTwoUser | MessageToUser_messageToUser)[];
   sendMessage: (data: MessageInput) => Promise<void>;
-  handleBack: ()=> void;
+  handleBack: () => void;
 } & BoxProps;
 
 export const SecondpageMessage: FC<SecondpageMessageProps> = ({
@@ -31,6 +31,7 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
   ...props
 }) => {
   const { user } = useApplicationContext();
+  const theme = useTheme();
   return (
     <Box {...props}>
       <HeaderMessage
@@ -45,9 +46,9 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
         {writting?.writeMessage.isWritting &&
           (writting?.writeMessage.userId === currentMessage.userId ||
             writting?.writeMessage.userId === currentMessage.receiverId) && (
-            <Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               <DynamicAvatar user={currentMessage.userDiscuss ?? undefined} />
-              <SyncLoader color="#f7f7f7" loading size={30} />
+              <SyncLoader color={theme.palette.primary.main} loading size={5} />
             </Box>
           )}
       </Box>

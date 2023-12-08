@@ -39,6 +39,7 @@ export const useApplicationContext = (): UseApplicationType &
   const loadUser = useCallback((): void => {
     if (user) {
       setUserAuthStatus(UserAuthStateEnum.AUTHENTICATED);
+      LocalStorage.authenticate(user);
     }
     if (!user) {
       const checkuser = LocalStorage.isAuth();

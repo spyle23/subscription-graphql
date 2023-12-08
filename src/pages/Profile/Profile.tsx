@@ -20,10 +20,12 @@ import { useForm } from "react-hook-form";
 import { UpdateUserInput } from "../../types/graphql-types";
 import { useCurrentUser } from "../../hooks/user/useCurrentUser";
 import { useUpdateUser } from "../../hooks/user/useUpdateUser";
+import { LOCALSTORAGE } from "../../constants";
+import { usePhotoUrl } from "../../hooks/application/usePhotoUrl";
 
 export const Profile = (): JSX.Element => {
   const theme = useTheme();
-  const { user } = useApplicationContext();
+  const { user, setUser } = useApplicationContext();
   const { data: userInfo, refetch } = useCurrentUser(user?.id as number);
   const {
     register,
@@ -50,7 +52,10 @@ export const Profile = (): JSX.Element => {
         reset({ photo: file });
         const values = getValues();
         await updateUser(values);
-        await refetch();
+        const { data } = await refetch();
+        if (data.profile && user) {
+          setUser({ ...user, photo: data.profile.photo });
+        }
       }
     };
   }, []);
@@ -68,7 +73,7 @@ export const Profile = (): JSX.Element => {
         <Box sx={{ width: 200, height: 200, position: "relative", mr: 2 }}>
           <Avatar
             alt={userInfo?.firstname || "profile"}
-            src={userInfo?.photo || ""}
+            src={usePhotoUrl(userInfo?.photo ?? undefined) || ""}
             sx={{ width: "100%", height: "100%" }}
           />
           <Box
