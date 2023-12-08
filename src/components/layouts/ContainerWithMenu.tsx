@@ -55,13 +55,14 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
             }}
           >
             {children}
-            {!location.pathname.includes("messages") && (
-              <DiscussionOpenTab
-                data={data}
-                writting={writting}
-                sendMessage={sendMessage}
-              />
-            )}
+            {!location.pathname.includes("messages") &&
+              window.innerWidth > 900 && (
+                <DiscussionOpenTab
+                  data={data}
+                  writting={writting}
+                  sendMessage={sendMessage}
+                />
+              )}
           </Box>
         </DashboardLayoutRoot>
         <DashboardNavbar

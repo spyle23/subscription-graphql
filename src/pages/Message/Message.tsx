@@ -31,7 +31,6 @@ export const Message = (): JSX.Element => {
     }),
     [currentMessage, dispatch]
   );
-
   const messages = useMemo(() => {
     if (!messageTwoUser?.messageTwoUser) return [];
     const currentMessages = data?.messageToUser
@@ -51,29 +50,37 @@ export const Message = (): JSX.Element => {
     }
   }, [data]);
 
+  const handleBack = () => {
+    dispatch({ type: "reset", userDiscuss: null });
+  };
+
   return (
     <Grid container>
-      <Grid item md={4} sx={{ p: 2 }}>
-        <MessageContext.Provider value={memoizedMessage}>
-          <FirstpageMessage
-            data={data}
-            messageData={messageData}
-            refetch={refetch}
-            refetchMessageData={refetchMessageData}
-          />
-        </MessageContext.Provider>
-      </Grid>
-      <Grid item md={8} sx={{ borderLeft: "1px solid gray" }}>
-        {currentMessage.openMessage && (
-          <SecondpageMessage
-            writting={writting}
-            currentMessage={currentMessage}
-            messages={messages}
-            sendMessage={sendMessage}
-            sx={{ height: "90vh" }}
-          />
-        )}
-      </Grid>
+      {!currentMessage.receiverId && !currentMessage.discussGroupId ? (
+        <Grid item xs={12} sx={{ p: 2 }}>
+          <MessageContext.Provider value={memoizedMessage}>
+            <FirstpageMessage
+              data={data}
+              messageData={messageData}
+              refetch={refetch}
+              refetchMessageData={refetchMessageData}
+            />
+          </MessageContext.Provider>
+        </Grid>
+      ) : (
+        <Grid item xs={12}>
+          {currentMessage.openMessage && (
+            <SecondpageMessage
+              handleBack={handleBack}
+              writting={writting}
+              currentMessage={currentMessage}
+              messages={messages}
+              sendMessage={sendMessage}
+              sx={{ height: "90vh" }}
+            />
+          )}
+        </Grid>
+      )}
     </Grid>
   );
 };

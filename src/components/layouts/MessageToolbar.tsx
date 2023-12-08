@@ -17,6 +17,7 @@ import {
 import { determineUserOrGroup } from "../../pages/Message/components/PresenterMessage";
 import { login_login_data } from "../../graphql/user";
 import { WriteMessage } from "../../graphql/message/types/WriteMessage";
+import { useNavigate } from "react-router-dom";
 
 type MessageToolbarProps = {
   currentMessage: MessageActionType;
@@ -49,10 +50,10 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
   );
   const [numberMsg, setNumberMsg] = useState<number>(0);
   const { dispatchDiscussion, discussion } = useContext(DiscussionContext);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (data?.messageToUser && user) {
+    if (data?.messageToUser && user && window.innerWidth >= 900) {
       if (
         !discussion.find(
           (val) =>
@@ -84,9 +85,12 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
   }, [messageTwoUser, currentMessage, dispatchDiscussion]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    if(window.innerWidth < 900){
+      navigate("/subscription-graphql/landing/messages");
+      return;
+    }
     setAnchorEl(event.currentTarget);
     setNumberMsg(0);
-    // navigate("/subscription-graphql/landing/messages");
   };
 
   const handleClose = (): void => {

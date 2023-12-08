@@ -19,11 +19,13 @@ type SecondpageMessageProps = {
   writting?: WriteMessage;
   messages: (MessageTwoUser_messageTwoUser | MessageToUser_messageToUser)[];
   sendMessage: (data: MessageInput) => Promise<void>;
+  handleBack: ()=> void;
 } & BoxProps;
 
 export const SecondpageMessage: FC<SecondpageMessageProps> = ({
   writting,
   currentMessage,
+  handleBack,
   messages,
   sendMessage,
   ...props
@@ -32,6 +34,7 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
   return (
     <Box {...props}>
       <HeaderMessage
+        handleBack={handleBack}
         data={currentMessage.userDiscuss}
         group={currentMessage.DiscussGroup}
       />
