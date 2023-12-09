@@ -45,3 +45,7 @@ export interface GetOrderPost_getOrderPost {
 export interface GetOrderPost {
   getOrderPost: GetOrderPost_getOrderPost[];
 }
+
+export interface GetOrderPostVariables {
+  cursor?: number | null;
+}

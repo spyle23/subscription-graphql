@@ -14,8 +14,8 @@ export const POST_BY_USER = gql`
 `;
 
 export const POST_ORDER = gql`
-  query GetOrderPost {
-    getOrderPost {
+  query GetOrderPost($cursor: Float) {
+    getOrderPost(cursor: $cursor) {
       description
       image
       id

@@ -18,6 +18,7 @@ export interface GetCommentByPost_getCommentByPost_data {
   __typename: "CommentWithUser";
   image: string | null;
   content: string;
+  id: number;
   User: GetCommentByPost_getCommentByPost_data_User;
   createdAt: any;
   updatedAt: any;
@@ -36,4 +37,5 @@ export interface GetCommentByPost {
 
 export interface GetCommentByPostVariables {
   postId: number;
+  cursor?: number | null;
 }

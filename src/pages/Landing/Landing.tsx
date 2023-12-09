@@ -1,8 +1,6 @@
-import { Typography } from "@mui/material";
 import Container from "@mui/material/Container";
 import { PostCreateForm } from "../../components/form/PostCreatForm/PostCreateForm";
 import { usePost } from "../../hooks/post/usePost";
-import loading from "../../assets/loadingApp.svg";
 import { PostCard } from "../../components/card/PostCard";
 import { usePostUser } from "../../hooks/post/usePostUser";
 import {
@@ -12,7 +10,7 @@ import {
 } from "../../types/graphql-types";
 import { useReactPost } from "../../hooks/post/useReactPost";
 import { useApplicationContext } from "../../hooks";
-import { createContext, useCallback, useEffect } from "react";
+import { Fragment, createContext, useCallback, useEffect } from "react";
 import { useComment } from "../../hooks/comment/useComment";
 import { useSubscription } from "@apollo/client";
 import {
@@ -21,13 +19,14 @@ import {
   MessageToUserVariables,
 } from "../../graphql/message";
 import { PostSkeleton } from "../../components/skeleton/PostSkeleton";
+import { Waypoint } from "react-waypoint";
 type CommentGen = {
   commentPost?: (postId: number, commentInput: CommentInput) => Promise<void>;
 };
 export const CommentContext = createContext<CommentGen>({});
 
 export default function Landing() {
-  const { allPost, postLoading, refetch } = usePost();
+  const { allPost, postLoading, refetch, fetchMore } = usePost();
   const { user } = useApplicationContext();
   const { createPost } = usePostUser();
   const { addReact } = useReactPost();
@@ -39,6 +38,8 @@ export default function Landing() {
     },
     [user]
   );
+
+  console.log("le loading", postLoading);
 
   const commentPost = useCallback(
     async (postId: number, commentInput: CommentInput) => {
@@ -57,16 +58,41 @@ export default function Landing() {
     <Container>
       <PostCreateForm createPost={handleCreatePost} />
       <CommentContext.Provider value={{ commentPost: commentPost }}>
-        {postLoading && [1, 2, 3, 4].map((i) => <PostSkeleton key={i} />)}
-        {allPost?.getOrderPost.map((value) => (
-          <PostCard
-            key={value.id}
-            user={user}
-            addReact={addReactToPost}
-            post={value}
-            sx={{ p: 2, width: { xs: "100%", md: 500 }, my: 1 }}
-          />
+        {allPost?.getOrderPost.map((value, index) => (
+          <Fragment key={value.id}>
+            <PostCard
+              key={value.id}
+              user={user}
+              addReact={addReactToPost}
+              post={value}
+              sx={{ p: 2, width: { xs: "100%", md: 500 }, my: 1 }}
+            />
+            {index === allPost?.getOrderPost.length - 1 &&
+              allPost.getOrderPost.length === 10 && (
+                <Waypoint
+                  onEnter={() =>
+                    fetchMore({
+                      variables: {
+                        cursor:
+                          allPost?.getOrderPost[allPost.getOrderPost.length - 1]
+                            .id,
+                      },
+                      updateQuery(previousQueryResult, { fetchMoreResult }) {
+                        if (!fetchMoreResult) return previousQueryResult;
+                        return {
+                          getOrderPost: [
+                            ...previousQueryResult.getOrderPost,
+                            ...fetchMoreResult.getOrderPost,
+                          ],
+                        };
+                      },
+                    })
+                  }
+                />
+              )}
+          </Fragment>
         ))}
+        {postLoading && [1, 2, 3, 4].map((i) => <PostSkeleton key={i} />)}
       </CommentContext.Provider>
     </Container>
   );

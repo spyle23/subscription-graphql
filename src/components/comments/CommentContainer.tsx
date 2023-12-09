@@ -1,4 +1,11 @@
-import { useCallback, FC, useMemo, useEffect, useContext } from "react";
+import {
+  useCallback,
+  FC,
+  useMemo,
+  useEffect,
+  useContext,
+  Fragment,
+} from "react";
 import { useQuery } from "@apollo/client";
 import { Box, Button, Typography } from "@mui/material";
 import {
@@ -6,28 +13,28 @@ import {
   GetCommentByPostVariables,
   POST_COMMENT,
 } from "../../graphql/comment";
-import { useApplicationContext } from "../../hooks";
-import { useComment } from "../../hooks/comment/useComment";
 import { CommentInput as CommentInputData } from "../../types/graphql-types";
 import { CommentInput } from "./CommentInput";
 import { CommentPresenter } from "./CommentPresenter";
 import { CommentContext } from "../../pages/Landing/Landing";
 import { CommentSkeleton } from "../skeleton/CommentSkeleton";
+import { Waypoint } from "react-waypoint";
 
 type CommentContainerProps = {
   idPost: number;
 };
 
 export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
-  const { user, dispatchSnack } = useApplicationContext();
   const { commentPost } = useContext(CommentContext);
-  const { data, loading, error, refetch } = useQuery<
+  const { data, loading, error, refetch, fetchMore } = useQuery<
     GetCommentByPost,
     GetCommentByPostVariables
   >(POST_COMMENT, {
     variables: {
       postId: idPost,
+      cursor: null,
     },
+    notifyOnNetworkStatusChange: true,
   });
   // const { commentExec, loading: commentLoading, errorComment } = useComment();
 
@@ -58,7 +65,33 @@ export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
       }}
     >
       {comments?.map((comment, index) => (
-        <CommentPresenter key={index} {...comment} />
+        <Fragment>
+          <CommentPresenter key={comment.id} {...comment} />
+          {index === comments?.length - 1 && comments?.length === 10 && (
+            <Waypoint
+              onEnter={() =>
+                fetchMore({
+                  variables: {
+                    cursor: comments[comments.length - 1].id,
+                  },
+                  updateQuery(previousQueryResult, { fetchMoreResult }) {
+                    if (!fetchMoreResult.getCommentByPost.data)
+                      return previousQueryResult;
+                    return {
+                      getCommentByPost: {
+                        ...previousQueryResult.getCommentByPost,
+                        data: previousQueryResult.getCommentByPost.data ? [
+                          ...previousQueryResult.getCommentByPost.data,
+                          ...fetchMoreResult.getCommentByPost.data,
+                        ] : [],
+                      },
+                    };
+                  },
+                })
+              }
+            />
+          )}
+        </Fragment>
       ))}
       {loading && [1, 2, 3].map((i) => <CommentSkeleton key={i} />)}
       <CommentInput saveComment={saveComment} />

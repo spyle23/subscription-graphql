@@ -25,6 +25,7 @@ import { useFileDeleter } from "../../../hooks/application/useFileDeleter";
 import { TransitionProps } from "@mui/material/transitions";
 import { HeadCard } from "../headCard/HeadCard";
 import { DynamicAvatar } from "../../Avatar/DynamicAvatar";
+import { DisplayMedia } from "../../media/DisplayMedia";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -88,12 +89,21 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
   };
 
   const handleClose = () => {
+    reset({ description: "", image: null });
     setUploadPicture(false);
     setOpen(false);
   };
   return (
     <>
-      <Card elevation={1} sx={{ width: { xs: "100%", md: 500 }, p: 2, display: "flex", alignItems: "center" }}>
+      <Card
+        elevation={1}
+        sx={{
+          width: { xs: "100%", md: 500 },
+          p: 2,
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
         <IconButton>
           <DynamicAvatar user={user} />
         </IconButton>
@@ -184,14 +194,7 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
                 >
                   <Delete color="error" />
                 </IconButton>
-
-                <img
-                  src={getValues().image || ""}
-                  alt=""
-                  width="100%"
-                  height="100%"
-                  style={{ objectFit: "cover" }}
-                />
+                <DisplayMedia url={getValues().image ?? ""} />
               </Box>
             )}
           </Box>
