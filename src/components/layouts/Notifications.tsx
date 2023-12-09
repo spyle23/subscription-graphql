@@ -29,13 +29,13 @@ export const Notifications = (): JSX.Element => {
     null
   );
   const { user, dispatchSnack } = useApplicationContext();
-  const { data: userProfile } = useCurrentUser(user?.id as number);
-  const { data, loading, error } = useSubscription<
-    CommentPost,
-    CommentPostVariables
-  >(POST_SUBSCRIPTION, {
-    variables: { userId: user?.id as number },
-  });
+  const { data: userProfile, loading } = useCurrentUser(user?.id as number);
+  const { data } = useSubscription<CommentPost, CommentPostVariables>(
+    POST_SUBSCRIPTION,
+    {
+      variables: { userId: user?.id as number },
+    }
+  );
 
   useEffect(() => {
     if (data) {
