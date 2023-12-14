@@ -18,8 +18,8 @@ export interface MessageToUser_messageToUser_User {
 export interface MessageToUser_messageToUser_Receiver {
   __typename: "User";
   id: number;
-  firstname: string | null;
   lastname: string | null;
+  firstname: string | null;
   photo: string | null;
 }
 
@@ -31,16 +31,14 @@ export interface MessageToUser_messageToUser_DiscussGroup {
 }
 
 export interface MessageToUser_messageToUser {
-  __typename: "MessageWithRecepter";
-  content: string;
-  image: string | null;
-  userId: number;
-  User: MessageToUser_messageToUser_User;
+  __typename: "DiscussionExtend";
+  theme: string;
   id: number;
-  receiverId: number | null;
-  discussGroupId: number | null;
+  User: MessageToUser_messageToUser_User;
   Receiver: MessageToUser_messageToUser_Receiver | null;
   DiscussGroup: MessageToUser_messageToUser_DiscussGroup | null;
+  updatedAt: any;
+  createdAt: any;
 }
 
 export interface MessageToUser {

@@ -16,12 +16,18 @@ export enum ReactionType {
   WOAHOU = "WOAHOU",
 }
 
+export enum RequestStatus {
+  ACCEPTED = "ACCEPTED",
+  DENIED = "DENIED",
+  PENDING = "PENDING",
+}
+
 /**
  * input for the comment
  */
 export interface CommentInput {
   content: string;
-  image?: string | null;
+  files: FileInput[];
 }
 
 /**
@@ -33,11 +39,20 @@ export interface DiscussGroupInput {
 }
 
 /**
+ * input for file
+ */
+export interface FileInput {
+  name: string;
+  extension: string;
+  url: string;
+}
+
+/**
  * message inputs
  */
 export interface MessageInput {
   content: string;
-  image?: string | null;
+  files: FileInput[];
 }
 
 /**
@@ -45,7 +60,7 @@ export interface MessageInput {
  */
 export interface PostInput {
   description: string;
-  image?: string | null;
+  files: FileInput[];
 }
 
 /**
@@ -75,15 +90,6 @@ export interface UpdateUserInput {
   lastname?: string | null;
   civilite?: string | null;
   photo?: string | null;
-}
-
-/**
- * input for the file
- */
-export interface UploadInput {
-  name: string;
-  data: string;
-  type: string;
 }
 
 /**

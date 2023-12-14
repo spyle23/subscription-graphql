@@ -1,33 +1,31 @@
 import { gql } from "@apollo/client";
 
 export const LISTEN_MESSAGE = gql`
-  subscription MessageToUser($userId: Float!) {
-    messageToUser(userId: $userId) {
-      content
-      image
-      userId
-      User {
-        firstname
-        lastname
-        photo
-        id
-      }
+subscription MessageToUser($userId: Float!) {
+  messageToUser(userId: $userId) {
+    theme
+    id
+    User {
+      firstname
+      lastname
+      photo
       id
-      receiverId
-      discussGroupId
-      Receiver {
-        id
-        firstname
-        lastname
-        photo
-      }
-      DiscussGroup {
-        id
-        groupName
-        coverPhoto
-      }
     }
+    Receiver {
+      id
+      lastname
+      firstname
+      photo
+    }
+    DiscussGroup {
+      id
+      groupName
+      coverPhoto
+    }
+    updatedAt
+    createdAt
   }
+}
 `;
 
 export const WRITING_MESSAGE = gql`

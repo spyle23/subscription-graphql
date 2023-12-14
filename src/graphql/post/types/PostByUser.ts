@@ -3,18 +3,34 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { ReactionType } from "./../../../types/graphql-types";
+
 // ====================================================
 // GraphQL query operation: PostByUser
 // ====================================================
 
-export interface PostByUser_postByUser {
-  __typename: "Post";
-  id: number;
+export interface PostByUser_postByUser_reactions {
+  __typename: "Reaction";
+  reactionType: ReactionType;
   userId: number;
+  id: number;
+}
+
+export interface PostByUser_postByUser_files {
+  __typename: "FileExt";
+  name: string;
+  extension: string;
+  url: string;
+}
+
+export interface PostByUser_postByUser {
+  __typename: "PostDisplay";
+  reactions: PostByUser_postByUser_reactions[] | null;
+  files: PostByUser_postByUser_files[];
   description: string;
-  image: string | null;
   createdAt: any;
   updatedAt: any;
+  id: number;
 }
 
 export interface PostByUser {

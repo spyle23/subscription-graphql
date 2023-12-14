@@ -7,12 +7,6 @@
 // GraphQL query operation: Profile
 // ====================================================
 
-export interface Profile_profile_Post {
-  __typename: "Post";
-  description: string;
-  image: string | null;
-}
-
 export interface Profile_profile_notifications {
   __typename: "Notification";
   name: string;
@@ -29,7 +23,6 @@ export interface Profile_profile {
   lastname: string | null;
   photo: string | null;
   civilite: string | null;
-  Post: Profile_profile_Post[];
   notifications: Profile_profile_notifications[];
 }
 

@@ -10,20 +10,27 @@
 export interface MessageTwoUser_messageTwoUser_User {
   __typename: "User";
   id: number;
-  photo: string | null;
-  firstname: string | null;
   lastname: string | null;
+  firstname: string | null;
+  photo: string | null;
+}
+
+export interface MessageTwoUser_messageTwoUser_files {
+  __typename: "FileExt";
+  name: string;
+  extension: string;
+  url: string;
+  id: number;
 }
 
 export interface MessageTwoUser_messageTwoUser {
   __typename: "MessageWithRecepter";
   id: number;
-  userId: number;
   User: MessageTwoUser_messageTwoUser_User;
-  image: string | null;
+  content: string;
+  files: MessageTwoUser_messageTwoUser_files[];
   receiverId: number | null;
   discussGroupId: number | null;
-  content: string;
   createdAt: any;
   updatedAt: any;
 }
@@ -33,7 +40,5 @@ export interface MessageTwoUser {
 }
 
 export interface MessageTwoUserVariables {
-  userId: number;
-  receiverId?: number | null;
-  discussGroupId?: number | null;
+  discussionId: number;
 }

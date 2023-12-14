@@ -6,16 +6,21 @@ export const POST_COMMENT = gql`
       success
       message
       data {
-        image
-        content
         id
+        content
         User {
           firstname
           lastname
           photo
+          id
         }
-        createdAt
+        files {
+          name
+          extension
+          url
+        }
         updatedAt
+        createdAt
       }
     }
   }

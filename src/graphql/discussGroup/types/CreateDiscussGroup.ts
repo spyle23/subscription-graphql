@@ -11,11 +11,9 @@ import { UserChoose, DiscussGroupInput } from "./../../../types/graphql-types";
 
 export interface CreateDiscussGroup_createDiscussGroup {
   __typename: "DiscussGroup";
-  id: number;
   groupName: string;
   coverPhoto: string | null;
-  createdAt: any;
-  updatedAt: any;
+  id: number;
 }
 
 export interface CreateDiscussGroup {
@@ -23,6 +21,7 @@ export interface CreateDiscussGroup {
 }
 
 export interface CreateDiscussGroupVariables {
+  userId: number;
   userChoose: UserChoose;
   data: DiscussGroupInput;
 }

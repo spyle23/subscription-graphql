@@ -2,15 +2,14 @@ import { gql } from "@apollo/client";
 
 export const CREATE_GROUP = gql`
   mutation CreateDiscussGroup(
+    $userId: Float!
     $userChoose: UserChoose!
     $data: DiscussGroupInput!
   ) {
-    createDiscussGroup(userChoose: $userChoose, data: $data) {
-      id
+    createDiscussGroup(userId: $userId, userChoose: $userChoose, data: $data) {
       groupName
       coverPhoto
-      createdAt
-      updatedAt
+      id
     }
   }
 `;

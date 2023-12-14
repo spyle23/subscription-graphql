@@ -1,20 +1,22 @@
 import { gql } from "@apollo/client";
 
 export const SEND_MESSAGE = gql`
-  mutation SendMessageDiscussGroup(
+  mutation SendMessageDiscoussGroup(
+    $discussionId: Float!
     $userId: Float!
     $messageInput: MessageInput!
     $receiverId: Float
     $discussGroupId: Float
   ) {
     sendMessageDiscoussGroup(
+      discussionId: $discussionId
       userId: $userId
       messageInput: $messageInput
       receiverId: $receiverId
       discussGroupId: $discussGroupId
     ) {
-      message
       success
+      message
     }
   }
 `;

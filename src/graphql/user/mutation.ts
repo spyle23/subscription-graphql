@@ -45,3 +45,9 @@ export const UPDATE_INFO = gql`
     updateUser(updateUserInput: $updateUserInput, userId: $userId)
   }
 `;
+
+export const DELETE_FRIEND = gql`
+  mutation DeleteFriends($friendId: Float!, $userId: Float!) {
+    deleteFriends(friendId: $friendId, userId: $userId)
+  }
+`;

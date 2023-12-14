@@ -3,12 +3,20 @@ import { gql } from "@apollo/client";
 export const POST_BY_USER = gql`
   query PostByUser($userId: Float!) {
     postByUser(userId: $userId) {
-      id
-      userId
+      reactions {
+        reactionType
+        userId
+        id
+      }
+      files {
+        name
+        extension
+        url
+      }
       description
-      image
       createdAt
       updatedAt
+      id
     }
   }
 `;
@@ -16,23 +24,22 @@ export const POST_BY_USER = gql`
 export const POST_ORDER = gql`
   query GetOrderPost($cursor: Float) {
     getOrderPost(cursor: $cursor) {
-      description
-      image
-      id
       user {
-        firstname
         lastname
-        id
+        firstname
         photo
-      }
-      comments {
-        content
-        image
         id
       }
       reactions {
         reactionType
         userId
+      }
+      description
+      id
+      files {
+        name
+        id
+        url
       }
       createdAt
       updatedAt
