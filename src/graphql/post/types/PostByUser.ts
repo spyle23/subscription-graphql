@@ -20,6 +20,7 @@ export interface PostByUser_postByUser_files {
   __typename: "FileExt";
   name: string;
   extension: string;
+  id: number;
   url: string;
 }
 

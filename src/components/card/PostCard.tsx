@@ -24,6 +24,7 @@ import { IReactions } from "../../types/IReactions";
 import { reactions } from "../../constants/reactions";
 import { DisplayMedia } from "../media/DisplayMedia";
 import { DynamicAvatar } from "../Avatar/DynamicAvatar";
+import { ContainerDisplay } from "../media/ContainerDisplay";
 
 type PostCardProps = {
   post: GetOrderPost_getOrderPost;
@@ -104,7 +105,7 @@ export const PostCard: FC<PostCardProps> = ({
         ></CardHeader>
         <CardContent>
           <Typography>{post.description}</Typography>
-          {post.image && <DisplayMedia url={post.image} />}
+          <ContainerDisplay data={post.files} />
         </CardContent>
         <FBReactions btnClicked={show} onClick={handleReact} />
         <CardActions>
@@ -142,7 +143,7 @@ export const PostCard: FC<PostCardProps> = ({
               <IconButton onClick={handleToggleComment}>
                 <CommentIcon />
               </IconButton>
-              <Typography>{post.comments?.length}</Typography>
+              <Typography>{post.nbComments}</Typography>
             </Grid>
           </Grid>
         </CardActions>

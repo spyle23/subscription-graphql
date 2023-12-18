@@ -39,8 +39,6 @@ export default function Landing() {
     [user]
   );
 
-  console.log("le loading", postLoading);
-
   const commentPost = useCallback(
     async (postId: number, commentInput: CommentInput) => {
       await commentExec({

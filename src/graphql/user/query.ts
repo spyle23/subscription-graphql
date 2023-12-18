@@ -31,14 +31,3 @@ export const PROFILE = gql`
     }
   }
 `;
-
-export const GET_FRIEND = gql`
-  query GetFriends($userId: Float!, $cursor: Float) {
-    getFriends(userId: $userId, cursor: $cursor) {
-      lastname
-      photo
-      firstname
-      id
-    }
-  }
-`;

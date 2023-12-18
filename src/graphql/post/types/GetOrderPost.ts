@@ -26,6 +26,7 @@ export interface GetOrderPost_getOrderPost_reactions {
 export interface GetOrderPost_getOrderPost_files {
   __typename: "FileExt";
   name: string;
+  extension: string;
   id: number;
   url: string;
 }
@@ -34,6 +35,7 @@ export interface GetOrderPost_getOrderPost {
   __typename: "PostDisplay";
   user: GetOrderPost_getOrderPost_user;
   reactions: GetOrderPost_getOrderPost_reactions[] | null;
+  nbComments: number;
   description: string;
   id: number;
   files: GetOrderPost_getOrderPost_files[];

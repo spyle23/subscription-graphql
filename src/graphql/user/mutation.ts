@@ -47,7 +47,7 @@ export const UPDATE_INFO = gql`
 `;
 
 export const DELETE_FRIEND = gql`
-  mutation DeleteFriends($friendId: Float!, $userId: Float!) {
-    deleteFriends(friendId: $friendId, userId: $userId)
+  mutation DeleteFriend($receiverId: Float!, $userId: Float!) {
+    deleteFriend(receiverId: $receiverId, userId: $userId)
   }
 `;

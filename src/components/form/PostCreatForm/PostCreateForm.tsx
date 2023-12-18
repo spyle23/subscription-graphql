@@ -5,27 +5,21 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
-  Grid,
   IconButton,
   Slide,
-  styled,
   TextField,
 } from "@mui/material";
 import { useApplicationContext } from "../../../hooks";
-import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import CollectionsIcon from "@mui/icons-material/Collections";
-import React, { useState, useCallback, FC } from "react";
+import React, { useState, FC } from "react";
 import { Dropzone } from "../../dropzone/Dropzone";
-import { useForm } from "react-hook-form";
 import { PostInput } from "../../../types/graphql-types";
-import { Delete } from "@mui/icons-material";
-import { useFileDeleter } from "../../../hooks/application/useFileDeleter";
 import { TransitionProps } from "@mui/material/transitions";
 import { HeadCard } from "../headCard/HeadCard";
 import { DynamicAvatar } from "../../Avatar/DynamicAvatar";
-import { DisplayMedia } from "../../media/DisplayMedia";
+import { ContainerDisplay } from "../../media/ContainerDisplay";
+import { useUploadForm } from "../../../hooks/useUploadForm";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -46,35 +40,15 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
   const { user } = useApplicationContext();
   const [uploadPicture, setUploadPicture] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const { deleteFile } = useFileDeleter();
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
-    getValues,
-  } = useForm<PostInput>();
-
-  const handleChangePicture = (file?: string, name?: string) => {
-    const currentValues = getValues();
-    reset({
-      ...currentValues,
-      image: file,
-    });
-  };
-  const deletePicture = async () => {
-    try {
-      const currentValues = getValues();
-      if (!currentValues.image) return;
-      await deleteFile(currentValues.image);
-      reset({
-        ...currentValues,
-        image: undefined,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    watch,
+    onFinished,
+    dropFile,
+  } = useUploadForm<PostInput>();
   const handlePost = async (data: PostInput) => {
     try {
       if (!user) return;
@@ -89,7 +63,7 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
   };
 
   const handleClose = () => {
-    reset({ description: "", image: null });
+    reset({ description: "", files: [] });
     setUploadPicture(false);
     setOpen(false);
   };
@@ -171,33 +145,13 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
               }}
             >
               <Dropzone
-                onFinished={handleChangePicture}
+                onFinished={onFinished}
                 message="Ajouter une image"
                 btnSx={{ height: "100%" }}
               />
             </Box>
           )}
-          <Box sx={{ display: "flex" }}>
-            {getValues().image && (
-              <Box
-                sx={{
-                  width: 150,
-                  height: 150,
-                  mr: 1,
-                  mb: 1,
-                  position: "relative",
-                }}
-              >
-                <IconButton
-                  onClick={deletePicture}
-                  sx={{ position: "absolute", bottom: 5, right: 5 }}
-                >
-                  <Delete color="error" />
-                </IconButton>
-                <DisplayMedia url={getValues().image ?? ""} />
-              </Box>
-            )}
-          </Box>
+          <ContainerDisplay data={watch().files} deleteFile={dropFile} />
         </DialogContent>
         <DialogActions>
           <Button variant="contained" color="error" onClick={handleClose}>

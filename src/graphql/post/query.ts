@@ -11,6 +11,7 @@ export const POST_BY_USER = gql`
       files {
         name
         extension
+        id
         url
       }
       description
@@ -34,10 +35,12 @@ export const POST_ORDER = gql`
         reactionType
         userId
       }
+      nbComments
       description
       id
       files {
         name
+        extension
         id
         url
       }

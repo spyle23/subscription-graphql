@@ -17,6 +17,9 @@ import {
 } from "../../../graphql/message/types/WrittingCheck";
 import { login_login_data } from "../../../graphql/user";
 import { DisplayMedia } from "../../../components/media/DisplayMedia";
+import { useUploadForm } from "../../../hooks/useUploadForm";
+import { CustomUpload } from "../../../components/dropzone/CustomUpload";
+import { ContainerDisplay } from "../../../components/media/ContainerDisplay";
 
 type MessageFormProps = {
   sendMessage: (data: MessageInput, value?: MessageActionType) => Promise<void>;
@@ -30,28 +33,11 @@ export const MessageForm: FC<MessageFormProps> = ({
   user,
 }) => {
   const theme = useTheme();
-  const { register, handleSubmit, reset, getValues } = useForm<MessageInput>();
-  const { uploadFile } = useFileUploader();
-  const { deleteFile } = useFileDeleter();
+  const { register, handleSubmit, reset, watch, onFinished, dropFile } =
+    useUploadForm<MessageInput>();
   const [writeMessage] = useMutation<WrittingCheck, WrittingCheckVariables>(
     WRITTING_CHECK
   );
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(acceptedFiles[0]);
-    reader.onload = async () => {
-      const file = await uploadFile({
-        data: reader.result?.toString() || "",
-        type: acceptedFiles[0].type,
-        name: acceptedFiles[0].name,
-      });
-      reset({ ...getValues(), image: file });
-    };
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-  });
 
   const handleFocus = async (isWritting: boolean) => {
     await writeMessage({
@@ -67,54 +53,13 @@ export const MessageForm: FC<MessageFormProps> = ({
     });
   };
 
-  const handleDeleteImage = async () => {
-    try {
-      const currentValues = getValues();
-      if (!currentValues.image) return;
-      await deleteFile(currentValues.image);
-      reset({
-        ...currentValues,
-        image: undefined,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const submitMessage = async (data: MessageInput) => {
     await sendMessage(data, discussion);
-    reset({ content: "", image: undefined });
+    reset({ content: "", files: [] });
   };
   return (
-    <Box sx={{ py: 1 }} >
-      {getValues().image && (
-        <Box
-          sx={{
-            background: "grey",
-            p: 1,
-            display: "flex",
-            alignItems: "center",
-            borderRadius: "10px",
-          }}
-        >
-          <Box
-            sx={{
-              width: "100px",
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <DisplayMedia url={getValues().image as string} />
-            <IconButton
-              sx={{ position: "absolute", top: 0, right: 0, p: 0 }}
-              onClick={handleDeleteImage}
-            >
-              <CloseOutlinedIcon color="error" />
-            </IconButton>
-          </Box>
-        </Box>
-      )}
+    <Box sx={{ py: 1 }}>
+      <ContainerDisplay data={watch().files} deleteFile={dropFile} />
       <form
         style={{
           display: "flex",
@@ -123,12 +68,11 @@ export const MessageForm: FC<MessageFormProps> = ({
         }}
         onSubmit={handleSubmit(submitMessage)}
       >
-        <div {...getRootProps()}>
-          <input {...getInputProps()} />
+        <CustomUpload onFinished={onFinished}>
           <IconButton>
-            <CollectionsIcon sx={{ fill: theme.palette.primary.main }} />
+            <CollectionsIcon />
           </IconButton>
-        </div>
+        </CustomUpload>
         <TextField
           {...register("content")}
           InputProps={{
