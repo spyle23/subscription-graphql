@@ -21,9 +21,10 @@ export const usePostUser = () => {
   );
 
   const createPost = async (data: PostInput, userId: number) => {
+    const newData: PostInput = data.files ? data : { ...data, files: [] };
     const message = await createExec({
       variables: {
-        data,
+        data: newData,
         userId,
       },
     });

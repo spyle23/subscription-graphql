@@ -2,15 +2,12 @@ import { FC } from "react";
 import { Box, Card, CardProps, Typography, useTheme } from "@mui/material";
 import { login_login_data } from "../../../graphql/user";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
-import {
-  MessageToUser_messageToUser,
-  MessageTwoUser_messageTwoUser,
-} from "../../../graphql/message";
-import { DisplayMedia } from "../../../components/media/DisplayMedia";
+import { MessageTwoUser_messageTwoUser } from "../../../graphql/message";
+import { ContainerDisplay } from "../../../components/media/ContainerDisplay";
 
 type MessageItemProps = {
   user?: login_login_data;
-  message: MessageTwoUser_messageTwoUser | MessageToUser_messageToUser;
+  message: MessageTwoUser_messageTwoUser;
 } & CardProps;
 
 export const MessageItem: FC<MessageItemProps> = ({
@@ -52,9 +49,7 @@ export const MessageItem: FC<MessageItemProps> = ({
           >
             {message.content}
           </Typography>
-          {message.image && (
-            <DisplayMedia url={message.image} controls fill={user?.id === message.userId ? "white" : undefined} />
-          )}
+          <ContainerDisplay data={message.files} />
         </Card>
       </Box>
     </Box>

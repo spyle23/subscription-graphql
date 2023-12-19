@@ -5,6 +5,7 @@ import { FC } from "react";
 import { GetCommentByPost_getCommentByPost_data as IComment } from "../../graphql/comment/types/GetCommentByPost";
 import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 import { DisplayMedia } from "../media/DisplayMedia";
+import { ContainerDisplay } from "../media/ContainerDisplay";
 
 const determineDate = (date1: any, date2: any): Date => {
   const veryDate1 = new Date(date1);
@@ -25,7 +26,7 @@ export const CommentPresenter: FC<IComment> = ({
   createdAt,
   updatedAt,
   content,
-  image,
+  files,
   User,
 }) => {
   return (
@@ -44,7 +45,7 @@ export const CommentPresenter: FC<IComment> = ({
         </Box>
         <Box sx={{ width: 200 }}>
           <Typography>{content}</Typography>
-          {image && <DisplayMedia url={image} />}
+          <ContainerDisplay data={files} />
         </Box>
       </Card>
     </Box>

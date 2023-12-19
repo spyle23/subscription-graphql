@@ -1,31 +1,34 @@
 import { FC } from "react";
-import { Avatar, Box, Grid, GridProps, Typography } from "@mui/material";
+import { Grid, GridProps, Typography } from "@mui/material";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
-import { MessagesOfCurrentUser_messagesOfCurrentUser } from "../../../graphql/message/types/MessagesOfCurrentUser";
+import {
+  MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup,
+  MessagesOfCurrentUser_messagesOfCurrentUser_User,
+} from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { login_login_data } from "../../../graphql/user";
-import { MessageToUser_messageToUser } from "../../../graphql/message";
+import { GetDiscussionCurrentUser_getDiscussionCurrentUser } from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
 type PresenterMessageProps = {
   user?: login_login_data;
   isNewMessage: boolean;
-  message:
-    | MessagesOfCurrentUser_messagesOfCurrentUser
-    | MessageToUser_messageToUser;
+  discussion: GetDiscussionCurrentUser_getDiscussionCurrentUser;
 } & GridProps;
 
 export const determineUserOrGroup = (
   user: login_login_data,
-  message:
-    | MessagesOfCurrentUser_messagesOfCurrentUser
-    | MessageToUser_messageToUser
+  owner: MessagesOfCurrentUser_messagesOfCurrentUser_User,
+  receiver: MessagesOfCurrentUser_messagesOfCurrentUser_User | null,
+  discussGroup: MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup | null
 ) => {
-  if (message.Receiver?.id === user.id) {
-    return message.User;
+  if (discussGroup) {
+    return discussGroup;
   }
-  return message.Receiver;
+  return owner.id === user.id
+    ? (receiver as MessagesOfCurrentUser_messagesOfCurrentUser_User)
+    : owner;
 };
 
 export const PresenterMessage: FC<PresenterMessageProps> = ({
-  message,
+  discussion,
   user,
   isNewMessage,
   sx,
@@ -33,10 +36,16 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
 }) => {
   if (!user) return <></>;
   const uploadMessage =
-    user.id === message.User.id
+    user.id === discussion.User.id
       ? "Vous avez envoyé une pièce jointe"
       : "a envoyé une pièce jointe";
-  const displayUserMessage = determineUserOrGroup(user, message);
+  const displayUserMessage = determineUserOrGroup(
+    user,
+    discussion.User,
+    discussion.Receiver,
+    discussion.DiscussGroup
+  );
+  const message = discussion.messages[0];
   const displayMessage =
     message.content.length > 25
       ? `${message.content.substring(0, 25)}...`
@@ -52,24 +61,16 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
         xs={1}
         sx={{ display: "flex", justifyContent: "center", mr: 2 }}
       >
-        {displayUserMessage ? (
-          <DynamicAvatar user={displayUserMessage} />
-        ) : (
-          <Avatar
-            sx={{ mr: 2 }}
-            alt={message.DiscussGroup?.groupName || "profile"}
-            src={message.DiscussGroup?.coverPhoto || ""}
-          />
-        )}
+        <DynamicAvatar user={displayUserMessage} />
       </Grid>
       <Grid item xs={10}>
         <Typography fontWeight={"bold"}>
-          {displayUserMessage
-            ? displayUserMessage.firstname + " " + displayUserMessage.lastname
-            : message.DiscussGroup?.groupName}
+          {"groupName" in displayUserMessage
+            ? displayUserMessage.groupName
+            : displayUserMessage.firstname + " " + displayUserMessage.lastname}
         </Typography>
         <Typography sx={{ fontWeight: isNewMessage ? "bold" : "normal" }}>
-          {message.image ? uploadMessage : displayMessage}
+          {message.files.length > 0 ? uploadMessage : displayMessage}
         </Typography>
       </Grid>
     </Grid>

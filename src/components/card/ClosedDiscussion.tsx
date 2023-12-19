@@ -34,17 +34,7 @@ export const ClosedDiscussion: FC<ClosedDiscussionProps> = React.memo(
         }}
       >
         <Badge badgeContent={i.newMessageNbr} color="error">
-          {i.userDiscuss ? (
-            <DynamicAvatar user={i.userDiscuss} sx={{ mr: 0 }} />
-          ) : (
-            <Avatar
-              src={
-                i.DiscussGroup?.coverPhoto
-                  ? i.DiscussGroup.coverPhoto
-                  : undefined
-              }
-            />
-          )}
+          <DynamicAvatar user={i.userDiscuss} sx={{ mr: 0 }} />
         </Badge>
         <CancelOutlinedIcon
           onClick={() =>
@@ -61,8 +51,8 @@ export const ClosedDiscussion: FC<ClosedDiscussionProps> = React.memo(
           }}
         />
         {writting?.writeMessage.isWritting &&
-          (writting?.writeMessage.userId === i.userId ||
-            writting?.writeMessage.userId === i.receiverId) && (
+          (writting?.writeMessage.userId === i.User.id ||
+            writting?.writeMessage.userId === i.Receiver?.id) && (
             <SyncLoader
               color={theme.palette.primary.main}
               loading

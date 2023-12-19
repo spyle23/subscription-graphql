@@ -2,7 +2,6 @@ import MailIcon from "@mui/icons-material/Mail";
 import { Badge, IconButton, Popover, Typography, Box } from "@mui/material";
 import React, { useEffect, useMemo, useState, useContext, FC } from "react";
 import { FirstpageMessage } from "../../pages/Message/components/FirstpageMessage";
-import { ActionType, MessageActionType } from "../../types/message";
 import { DiscussionContext } from "../../contexts/message";
 import {
   MessageToUser,
@@ -18,29 +17,24 @@ import { determineUserOrGroup } from "../../pages/Message/components/PresenterMe
 import { login_login_data } from "../../graphql/user";
 import { WriteMessage } from "../../graphql/message/types/WriteMessage";
 import { useNavigate } from "react-router-dom";
+import {
+  GetDiscussionCurrentUser,
+  GetDiscussionCurrentUserVariables,
+  GetDiscussionCurrentUser_getDiscussionCurrentUser,
+} from "../../graphql/discussion/types/GetDiscussionCurrentUser";
 
 type MessageToolbarProps = {
-  currentMessage: MessageActionType;
   user?: login_login_data;
-  dispatch: React.Dispatch<ActionType>;
   data: MessageToUser | undefined;
-  writting?:WriteMessage;
-  messageData: MessagesOfCurrentUser | undefined;
-  messageTwoUser: MessageTwoUser | undefined;
-  refetch: (
-    variables?: Partial<MessageTwoUserVariables> | undefined
-  ) => Promise<ApolloQueryResult<MessageTwoUser>>;
+  writting?: WriteMessage;
+  messageData: GetDiscussionCurrentUser | undefined;
   refetchMessageData: (
-    variables?: Partial<MessagesOfCurrentUserVariables> | undefined
-  ) => Promise<ApolloQueryResult<MessagesOfCurrentUser>>;
+    variables?: Partial<GetDiscussionCurrentUserVariables> | undefined
+  ) => Promise<ApolloQueryResult<GetDiscussionCurrentUser>>;
 };
 
 export const MessageToolbar: FC<MessageToolbarProps> = ({
-  refetch,
   user,
-  dispatch,
-  currentMessage,
-  messageTwoUser,
   refetchMessageData,
   messageData,
   data,
@@ -49,43 +43,31 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
     null
   );
   const [numberMsg, setNumberMsg] = useState<number>(0);
-  const { dispatchDiscussion, discussion } = useContext(DiscussionContext);
+  const { dispatchDiscussion } = useContext(DiscussionContext);
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("data", data);
     if (data?.messageToUser && user && window.innerWidth >= 900) {
-      if (
-        !discussion.find(
-          (val) =>
-            val.userId === data.messageToUser.userId &&
-            (data.messageToUser.discussGroupId
-              ? val.discussGroupId === data.messageToUser.discussGroupId
-              : val.receiverId === data.messageToUser.receiverId)
-        )
-      ) {
-        dispatch({
-          type: "select message",
-          value: data.messageToUser,
-          userDiscuss: determineUserOrGroup(user, data.messageToUser),
-        });
-        setNumberMsg((prev) => prev + 1);
-      } else {
-        refetch();
-      }
+      dispatchDiscussion({
+        type: "add discussion",
+        value: {
+          ...data.messageToUser,
+          newMessageNbr: 1,
+          openMessage: true,
+          userDiscuss: determineUserOrGroup(
+            user,
+            data.messageToUser.User,
+            data.messageToUser.Receiver,
+            data.messageToUser.DiscussGroup
+          ),
+        },
+      });
     }
   }, [data, user]);
 
-  useEffect(() => {
-    if (messageTwoUser) {
-      dispatchDiscussion({
-        type: "add discussion",
-        value: { ...currentMessage, messages: messageTwoUser.messageTwoUser },
-      });
-    }
-  }, [messageTwoUser, currentMessage, dispatchDiscussion]);
-
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
-    if(window.innerWidth < 900){
+    if (window.innerWidth < 900) {
       navigate("/subscription-graphql/landing/messages");
       return;
     }
@@ -95,6 +77,25 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
 
   const handleClose = (): void => {
     setAnchorEl(null);
+  };
+
+  const handleSelect = (
+    data: GetDiscussionCurrentUser_getDiscussionCurrentUser
+  ) => {
+    dispatchDiscussion({
+      type: "add discussion",
+      value: {
+        ...data,
+        newMessageNbr: 0,
+        openMessage: true,
+        userDiscuss: determineUserOrGroup(
+          user as login_login_data,
+          data.User,
+          data.Receiver,
+          data.DiscussGroup
+        ),
+      },
+    });
   };
 
   const open = Boolean(anchorEl);
@@ -129,8 +130,8 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
         <Box sx={{ p: 1 }}>
           <FirstpageMessage
             data={data}
+            onSelect={handleSelect}
             messageData={messageData}
-            refetch={refetch}
             refetchMessageData={refetchMessageData}
             onClose={handleClose}
           />

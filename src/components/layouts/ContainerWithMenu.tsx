@@ -1,18 +1,12 @@
 import { styled } from "@mui/material";
 import { Box } from "@mui/system";
-import { FC, useMemo, useEffect } from "react";
+import { FC, useEffect } from "react";
 import { UserMenu } from "./UserMenu";
 import { DashboardNavbar } from "./DashboardNavbar";
 import { Notifications } from "./Notifications";
 import { MessageToolbar } from "./MessageToolbar";
-import {
-  ActionMessageType,
-  MessageContexteType,
-  MessageGlobalApp,
-} from "../../types/message";
 import { DiscussionOpenTab } from "./DiscussionOpenTab";
 import { useMessage } from "../../hooks/message/useMessage";
-import { MessageContext } from "../../pages/Message/Message";
 import { useLocation } from "react-router-dom";
 
 type ContainerWithMenuProps = {
@@ -31,46 +25,37 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
 }): JSX.Element => {
   const options = useMessage();
   const location = useLocation();
-  const { sendMessage, currentMessage, dispatch, writting, data } = options;
-  const memoizedMessage: MessageContexteType = useMemo(
-    () => ({
-      currentMessage,
-      dispatch,
-    }),
-    [currentMessage, dispatch]
-  );
+  const { writting, data, sendMessage } = options;
   return (
     <>
-      <MessageContext.Provider value={memoizedMessage}>
-        <DashboardLayoutRoot>
-          <Box
-            sx={{
-              display: "flex",
-              flex: "1 1 auto",
-              flexDirection: "column",
-              width: "100%",
-              background: "#f8f8f8",
-              minHeight: "90vh",
-              position: "relative",
-            }}
-          >
-            {children}
-            {!location.pathname.includes("messages") &&
-              window.innerWidth > 900 && (
-                <DiscussionOpenTab
-                  data={data}
-                  writting={writting}
-                  sendMessage={sendMessage}
-                />
-              )}
-          </Box>
-        </DashboardLayoutRoot>
-        <DashboardNavbar
-          message={<MessageToolbar {...options} />}
-          notification={<Notifications />}
-          utilisateur={<UserMenu />}
-        />
-      </MessageContext.Provider>
+      <DashboardLayoutRoot>
+        <Box
+          sx={{
+            display: "flex",
+            flex: "1 1 auto",
+            flexDirection: "column",
+            width: "100%",
+            background: "#f8f8f8",
+            minHeight: "90vh",
+            position: "relative",
+          }}
+        >
+          {children}
+          {!location.pathname.includes("messages") &&
+            window.innerWidth > 900 && (
+              <DiscussionOpenTab
+                data={data}
+                writting={writting}
+                sendMessage={sendMessage}
+              />
+            )}
+        </Box>
+      </DashboardLayoutRoot>
+      <DashboardNavbar
+        message={<MessageToolbar {...options} />}
+        notification={<Notifications />}
+        utilisateur={<UserMenu />}
+      />
     </>
   );
 };

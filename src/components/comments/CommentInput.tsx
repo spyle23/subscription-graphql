@@ -8,6 +8,7 @@ import CollectionsIcon from "@mui/icons-material/Collections";
 import { useUploadForm } from "../../hooks/useUploadForm";
 import { CustomUpload } from "../dropzone/CustomUpload";
 import { ContainerDisplay } from "../media/ContainerDisplay";
+import { login_login_data } from "../../graphql/user";
 
 type CommentInputProps = {
   saveComment: (data: CommentInputData) => Promise<void>;
@@ -27,7 +28,7 @@ export const CommentInput: FC<CommentInputProps> = React.memo(
       <Box sx={{ position: "sticky", bottom: 0, background: "white", p: 2 }}>
         <ContainerDisplay data={watch().files} deleteFile={dropFile} />
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <DynamicAvatar user={user} />
+          <DynamicAvatar user={user as login_login_data } />
           <TextField
             {...register("content", { required: true })}
             sx={{

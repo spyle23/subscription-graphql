@@ -10,6 +10,11 @@ export const CREATE_GROUP = gql`
       groupName
       coverPhoto
       id
+      Discussion {
+        id
+        theme
+        userId
+      }
     }
   }
 `;

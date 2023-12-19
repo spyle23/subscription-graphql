@@ -14,11 +14,13 @@ export const useCreateGroup = () => {
 
   const createGroup = async (
     data: DiscussGroupInput,
+    userId: number,
     userChoose: UserChoose
   ) => {
     await createExec({
       variables: {
         data,
+        userId,
         userChoose,
       },
     });

@@ -17,15 +17,13 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 type HeaderMessageProps = {
-  data?:
+  data:
     | MessagesOfCurrentUser_messagesOfCurrentUser_User
-    | MessagesOfCurrentUser_messagesOfCurrentUser_Receiver
-    | null;
-  group?: MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup | null;
-  handleBack: ()=> void;
+    | MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup;
+  handleBack: () => void;
 };
 
-export const HeaderMessage: FC<HeaderMessageProps> = ({ data, group, handleBack }) => {
+export const HeaderMessage: FC<HeaderMessageProps> = ({ data, handleBack }) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -34,16 +32,14 @@ export const HeaderMessage: FC<HeaderMessageProps> = ({ data, group, handleBack 
       >
         <Toolbar>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton sx={{ mr: 2 }} onClick={handleBack} >
+            <IconButton sx={{ mr: 2 }} onClick={handleBack}>
               <ArrowBackIcon />
             </IconButton>
-            {data ? (
-              <DynamicAvatar sx={{ mr: 2 }} user={data} />
-            ) : (
-              <Avatar sx={{ mr: 2 }} src={group?.coverPhoto || ""} />
-            )}
+            <DynamicAvatar sx={{ mr: 2 }} user={data} />
             <Typography variant="h4">
-              {data ? data.firstname + " " + data.lastname : group?.groupName}
+              {"groupName" in data
+                ? data.groupName
+                : `${data.firstname} ${data.lastname}`}
             </Typography>
           </Box>
         </Toolbar>

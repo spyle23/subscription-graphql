@@ -15,9 +15,8 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CollectionsIcon from "@mui/icons-material/Collections";
-import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import React, { FC, useCallback, useState } from "react";
-import { ApolloQueryResult, useQuery } from "@apollo/client";
+import React, { FC, useState } from "react";
+import { ApolloQueryResult, useMutation, useQuery } from "@apollo/client";
 import { ALL_USER } from "../../graphql/user";
 import { AllUser, AllUser_allUser } from "../../graphql/user/types/AllUser";
 import { useCreateGroup } from "../../hooks/group/useCreateGroup";
@@ -26,72 +25,47 @@ import {
   MessageInput,
   UserChoose,
 } from "../../types/graphql-types";
-import { useForm } from "react-hook-form";
-import { useFileUploader } from "../../hooks/application/useFileUploader";
-import { useFileDeleter } from "../../hooks/application/useFileDeleter";
-import { useDropzone } from "react-dropzone";
 import { useSendMessage } from "../../hooks/message/useSendMessage";
 import { useApplicationContext } from "../../hooks";
+import { CustomUpload } from "../dropzone/CustomUpload";
+import { useUploadForm } from "../../hooks/useUploadForm";
+import { ContainerDisplay } from "../media/ContainerDisplay";
 import {
-  MessagesOfCurrentUser,
-  MessagesOfCurrentUserVariables,
-} from "../../graphql/message/types/MessagesOfCurrentUser";
-import { MessageTwoUser, MessageTwoUserVariables } from "../../graphql/message";
+  CreateDiscussion,
+  CreateDiscussionVariables,
+} from "../../graphql/discussion/types/CreateDiscussion";
+import { CREATE_DISCUSSION } from "../../graphql/discussion";
+import {
+  GetDiscussionCurrentUser,
+  GetDiscussionCurrentUserVariables,
+} from "../../graphql/discussion/types/GetDiscussionCurrentUser";
 
 type NewMessageModalProps = {
   open: boolean;
   refetchMessage: (
-    variables?: Partial<MessagesOfCurrentUserVariables> | undefined
-  ) => Promise<ApolloQueryResult<MessagesOfCurrentUser>>;
-  refetch: (
-    variables?: Partial<MessageTwoUserVariables> | undefined
-  ) => Promise<ApolloQueryResult<MessageTwoUser>>;
+    variables?: Partial<GetDiscussionCurrentUserVariables> | undefined
+  ) => Promise<ApolloQueryResult<GetDiscussionCurrentUser>>;
   onClose: () => void;
 };
 
 export const NewMessageModal: FC<NewMessageModalProps> = ({
   open,
   onClose,
-  refetch,
-  refetchMessage
+  refetchMessage,
 }): JSX.Element => {
   const theme = useTheme();
   const { user } = useApplicationContext();
   const { sendMessage } = useSendMessage();
   const { data: allUser } = useQuery<AllUser>(ALL_USER);
   const { createGroup, data: groupeCreated } = useCreateGroup();
-  const { register, reset, getValues } = useForm<MessageInput>();
+  const [exec, { data }] = useMutation<
+    CreateDiscussion,
+    CreateDiscussionVariables
+  >(CREATE_DISCUSSION);
+  const { register, reset, getValues, watch, onFinished } =
+    useUploadForm<MessageInput>();
   const [step, setStep] = useState<number>(0);
   const [selected, setSelected] = useState<AllUser_allUser[]>([]);
-  const { uploadFile } = useFileUploader();
-  const { deleteFile } = useFileDeleter();
-
-  const handleDeleteImage = async () => {
-    const currentValues = getValues();
-    if (!currentValues.image) return;
-    await deleteFile(currentValues.image);
-    reset({
-      ...currentValues,
-      image: undefined,
-    });
-  };
-
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(acceptedFiles[0]);
-    reader.onload = async () => {
-      const file = await uploadFile({
-        data: reader.result?.toString() || "",
-        type: acceptedFiles[0].type,
-        name: acceptedFiles[0].name,
-      });
-      reset({ ...getValues(), image: file });
-    };
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-  });
 
   const handleDefineStep = async () => {
     if (step === 0) {
@@ -103,28 +77,30 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
           membresId: selected.map((user) => user.id),
         };
 
-        await createGroup(data, userChoose);
+        await createGroup(data, user?.id as number, userChoose);
+      } else {
+        await exec({
+          variables: { userId: user?.id as number, receiverId: selected[0].id },
+        });
       }
       setStep(1);
-      onClose();
       return;
     }
     const messageInput = getValues();
-    if (groupeCreated) {
-      await sendMessage(
-        user?.id as number,
-        messageInput,
-        null,
-        groupeCreated.createDiscussGroup.id
-      );
-      await refetchMessage();
-      await refetch();
-      onClose()
-      return;
-    }
-    await sendMessage(user?.id as number, messageInput, selected[0].id, null);
+    const newMessageInput: MessageInput = messageInput.files
+      ? messageInput
+      : { ...messageInput, files: [] };
+    await sendMessage(
+      user?.id as number,
+      newMessageInput,
+      groupeCreated
+        ? groupeCreated.createDiscussGroup.Discussion.id
+        : (data?.createDiscussion.id as number),
+      groupeCreated ? null : selected[0].id,
+      groupeCreated ? groupeCreated.createDiscussGroup.id : null
+    );
     await refetchMessage();
-    await refetch({ userId: user?.id as number });
+    reset({ content: "", files: [] });
     onClose();
   };
   const handleRetour = () => {
@@ -190,12 +166,11 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
         ) : (
           <Box>
             <Box sx={{ display: "flex" }}>
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
+              <CustomUpload onFinished={onFinished}>
                 <IconButton>
                   <CollectionsIcon sx={{ fill: theme.palette.primary.main }} />
                 </IconButton>
-              </div>
+              </CustomUpload>
               <TextField
                 {...register("content")}
                 InputProps={{
@@ -207,17 +182,7 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
                 sx={{ width: "80%" }}
               />
             </Box>
-            {getValues().image && (
-              <Box sx={{ width: 300, position: "relative" }}>
-                <img src={getValues().image || ""} alt="image" width="100%" />
-                <IconButton
-                  sx={{ position: "absolute", top: 10, right: 10 }}
-                  onClick={handleDeleteImage}
-                >
-                  <CloseOutlinedIcon />
-                </IconButton>
-              </Box>
-            )}
+            <ContainerDisplay data={watch().files} />
           </Box>
         )}
       </DialogContent>

@@ -1,26 +1,28 @@
 import { useMutation } from "@apollo/client";
 import {
   SEND_MESSAGE,
-  SendMessageDiscussGroup,
-  SendMessageDiscussGroupVariables,
+  SendMessageDiscoussGroup,
+  SendMessageDiscoussGroupVariables,
 } from "../../graphql/message";
 import { MessageInput } from "../../types/graphql-types";
 
 export const useSendMessage = () => {
   const [messageExec, { error }] = useMutation<
-    SendMessageDiscussGroup,
-    SendMessageDiscussGroupVariables
+    SendMessageDiscoussGroup,
+    SendMessageDiscoussGroupVariables
   >(SEND_MESSAGE);
 
   const sendMessage = async (
     userId: number,
     data: MessageInput,
+    discussionId: number,
     receiverId?: number | null,
     discussGroupId?: number | null
   ) => {
     await messageExec({
       variables: {
         userId,
+        discussionId,
         receiverId,
         discussGroupId,
         messageInput: data,
@@ -29,6 +31,6 @@ export const useSendMessage = () => {
   };
   return {
     sendMessage,
-    error: error?.message
-  }
+    error: error?.message,
+  };
 };

@@ -23,6 +23,26 @@ export const DISCUSSION_CURRENT_USER = gql`
         coverPhoto
         id
       }
+      messages {
+        id
+        User {
+          id
+          lastname
+          firstname
+          photo
+        }
+        content
+        files {
+          name
+          extension
+          url
+          id
+        }
+        receiverId
+        discussGroupId
+        createdAt
+        updatedAt
+      }
       id
     }
   }

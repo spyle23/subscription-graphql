@@ -13,56 +13,28 @@ const reducerMessageGlobal = (
 ) => {
   switch (action.type) {
     case "add discussion":
-      if (
-        !state.find((item) =>
-          action.value.discussGroupId
-            ? item.discussGroupId === action.value.discussGroupId
-            : (item.userId === action.value.userId &&
-                item.receiverId === action.value.receiverId) ||
-              (item.userId === action.value.receiverId &&
-                item.receiverId === action.value.userId)
-        )
-      ) {
+      if (!state.find((item) => action.value.id === item.id)) {
         return [...state, action.value];
       }
-      return state.map((i) => ({ ...i, messages: action.value.messages }));
+      return state.map((i) =>
+        i.id === action.value.id
+          ? {
+              ...i,
+              messages: action.value.messages,
+              newMessageNbr: i.newMessageNbr + 1,
+            }
+          : i
+      );
 
     case "delete discussion":
-      if (action.value.discussGroupId) {
-        return state.filter(
-          (val) => val.discussGroupId !== action.value.discussGroupId
-        );
-      }
-      return state.filter(
-        (val) =>
-          val.userId !== action.value.userId &&
-          val.receiverId !== action.value.receiverId
+      return state.filter((val) => val.id !== action.value.id);
+    case "change Theme":
+      return state.map((i) =>
+        i.id === action.value.id ? { ...i, theme: action.value.theme } : i
       );
-    case "change newMessageNbr":
-      if (action.data) {
-        return state.map((val) => {
-          if (
-            action.data?.messageToUser.discussGroupId === val.discussGroupId ||
-            action.data?.messageToUser.userId === val.userId ||
-            action.data?.messageToUser.userId === val.receiverId
-          ) {
-            return {
-              ...val,
-              newMessageNbr: val.newMessageNbr + 1,
-            };
-          }
-          return val;
-        });
-      }
-      return state;
     default:
       return state.map((val) => {
-        if (
-          val.userId === action.value.userId &&
-          (action.value.receiverId
-            ? val.receiverId === action.value.receiverId
-            : val.discussGroupId === action.value.discussGroupId)
-        ) {
+        if (val.id === action.value.id) {
           return {
             ...val,
             newMessageNbr: action.trigger ? 0 : val.newMessageNbr,

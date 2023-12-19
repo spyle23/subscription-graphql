@@ -10,8 +10,8 @@ export type UseUploadFormReturn<T extends { files: FileInput[] }> = {
 
 /**
  * use this hook to use the form and upload logic
- * this hook return the finish upload method and the delete file method and all of useForm return 
- * @returns 
+ * this hook return the finish upload method and the delete file method and all of useForm return
+ * @returns
  */
 export const useUploadForm = <
   T extends { files: FileInput[] }
@@ -27,8 +27,18 @@ export const useUploadForm = <
   } = useForm<T>();
   const { deleteFile } = useFileDeleter();
   const onFinished = (data: Upload_upload[]) => {
+    const formatedUpload = data.map<FileInput>((i) => ({
+      extension: i.extension,
+      name: i.name,
+      url: i.url,
+    }));
     const currentValues = getValues();
-    reset({ ...currentValues, files: [...currentValues.files, ...data] });
+    reset({
+      ...currentValues,
+      files: currentValues.files
+        ? [...currentValues.files, ...formatedUpload]
+        : formatedUpload,
+    });
   };
   const dropFile = async (data: FileInput) => {
     const currentValues = getValues();

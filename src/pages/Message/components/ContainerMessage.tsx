@@ -1,61 +1,47 @@
-import { useQuery, useSubscription } from "@apollo/client";
 import { Box, BoxProps } from "@mui/material";
-import React, { FC, useContext, useEffect, useMemo } from "react";
+import React, { FC, useMemo } from "react";
 import {
-  LISTEN_MESSAGE,
-  MESSAGES_CURRENT_USER,
   MessageToUser,
-  MessageToUserVariables,
   MessageToUser_messageToUser,
-  SEND_MESSAGE,
 } from "../../../graphql/message";
-import {
-  MessagesOfCurrentUser,
-  MessagesOfCurrentUserVariables,
-  MessagesOfCurrentUser_messagesOfCurrentUser,
-} from "../../../graphql/message/types/MessagesOfCurrentUser";
-import { login_login_data } from "../../../graphql/user";
+import { MessagesOfCurrentUser_messagesOfCurrentUser } from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { useApplicationContext } from "../../../hooks";
-import { MessageContext } from "../Message";
 import { determineUserOrGroup, PresenterMessage } from "./PresenterMessage";
+import {
+  GetDiscussionCurrentUser,
+  GetDiscussionCurrentUser_getDiscussionCurrentUser,
+} from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
 
 type ContainerMessageProps = {
   data?: MessageToUser;
-  messageData?: MessagesOfCurrentUser;
+  selectDiscussion: (
+    data: GetDiscussionCurrentUser_getDiscussionCurrentUser
+  ) => void;
+  messageData?: GetDiscussionCurrentUser;
   onClose?: () => void;
 } & BoxProps;
 
 export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
-  ({ messageData, data, onClose, sx, ...props }) => {
+  ({ messageData, data, selectDiscussion, onClose, sx, ...props }) => {
     const { user } = useApplicationContext();
-    const { dispatch } = useContext(MessageContext);
 
     const messageCurrent = useMemo(() => {
-      const current = data?.messageToUser
-        ? messageData?.messagesOfCurrentUser.map((item) => {
-            if (
-              (item.Receiver?.id == user?.id || item.User.id == user?.id) &&
-              (item.Receiver?.id === data?.messageToUser.userId ||
-                item.User?.id === data?.messageToUser.userId)
-            ) {
-              return data?.messageToUser;
-            }
-            return item;
-          })
-        : messageData?.messagesOfCurrentUser;
-      return current;
+      if (data?.messageToUser) {
+        return messageData?.getDiscussionCurrentUser.find(
+          (e) => e.id === data.messageToUser.id
+        )
+          ? messageData?.getDiscussionCurrentUser.map((i) =>
+              i.id === data.messageToUser.id ? data.messageToUser : i
+            )
+          : messageData?.getDiscussionCurrentUser;
+      }
+      return messageData?.getDiscussionCurrentUser;
     }, [messageData, data]);
 
     const handleClickMessage = (
-      value:
-        | MessagesOfCurrentUser_messagesOfCurrentUser
-        | MessageToUser_messageToUser
+      value: GetDiscussionCurrentUser_getDiscussionCurrentUser
     ) => {
-      dispatch({
-        type: "select message",
-        value: value,
-        userDiscuss: determineUserOrGroup(user as login_login_data, value),
-      });
+      selectDiscussion(value);
       onClose && onClose();
     };
 
@@ -64,7 +50,7 @@ export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
         {messageCurrent?.map((value, index) => (
           <PresenterMessage
             key={index}
-            message={value}
+            discussion={value}
             isNewMessage={
               data?.messageToUser && value.id === data?.messageToUser.id
                 ? true

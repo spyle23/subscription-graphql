@@ -5,15 +5,26 @@ import { DiscussionCard } from "../card/DiscussionCard";
 import { useApplicationContext } from "../../hooks";
 import { MessageInput } from "../../types/graphql-types";
 import { MessageContext } from "../../pages/Message/Message";
-import { MessageActionType, MessageGlobalApp } from "../../types/message";
+import { MessageGlobalApp } from "../../types/message";
 import { WriteMessage } from "../../graphql/message/types/WriteMessage";
-import { MessageToUser } from "../../graphql/message";
+import {
+  MessageToUser,
+  SendMessageDiscoussGroup_sendMessageDiscoussGroup,
+} from "../../graphql/message";
 import { ClosedDiscussion } from "../card/ClosedDiscussion";
+import { determineUserOrGroup } from "../../pages/Message/components/PresenterMessage";
+import { login_login_data } from "../../graphql/user";
 
 type DiscussionOpenTabProps = {
   data?: MessageToUser;
   writting?: WriteMessage;
-  sendMessage: (data: MessageInput) => Promise<void>;
+  sendMessage: (
+    data: MessageInput,
+    userId: number,
+    discussionId: number,
+    receiverId?: number | null,
+    discussGroupId?: number | null
+  ) => Promise<SendMessageDiscoussGroup_sendMessageDiscoussGroup | undefined>;
 };
 
 export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
@@ -22,29 +33,7 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
   sendMessage,
 }) => {
   const { discussion, dispatchDiscussion } = useContext(DiscussionContext);
-  const { dispatch } = useContext(MessageContext);
   const { user } = useApplicationContext();
-
-  const changedSendMessage = async (
-    data: MessageInput,
-    value?: MessageActionType
-  ) => {
-    dispatch({
-      type: "from message",
-      message: value,
-      userDiscuss: null,
-    });
-    await sendMessage(data);
-  };
-  useEffect(() => {
-    if (data) {
-      dispatchDiscussion({
-        type: "change newMessageNbr",
-        data,
-        value: {} as MessageGlobalApp,
-      });
-    }
-  }, [data]);
   return (
     <Box
       sx={{
@@ -60,18 +49,18 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
         {discussion
           .filter((val) => val.openMessage)
           .map((i) => (
-            <Grid
-              item
-              md={4}
-              key={`${i.discussGroupId ? i.discussGroupId : i.receiverId}`}
-              sx={{ p: 1 }}
-            >
+            <Grid item md={4} key={`${i.id}`} sx={{ p: 1 }}>
               <DiscussionCard
                 writting={writting}
+                messageToUser={
+                  i.id === data?.messageToUser.id
+                    ? data.messageToUser
+                    : undefined
+                }
                 discussion={i}
                 user={user}
                 dispatchDiscussion={dispatchDiscussion}
-                sendMessage={changedSendMessage}
+                sendMessage={sendMessage}
               />
             </Grid>
           ))}
@@ -94,7 +83,7 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
               i={i}
               dispatchDiscussion={dispatchDiscussion}
               writting={writting}
-              key={`${i.discussGroupId ? i.discussGroupId : i.receiverId}`}
+              key={`${i.id}`}
             />
           ))}
       </Box>

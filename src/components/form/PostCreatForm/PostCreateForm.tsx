@@ -20,6 +20,7 @@ import { HeadCard } from "../headCard/HeadCard";
 import { DynamicAvatar } from "../../Avatar/DynamicAvatar";
 import { ContainerDisplay } from "../../media/ContainerDisplay";
 import { useUploadForm } from "../../../hooks/useUploadForm";
+import { login_login_data } from "../../../graphql/user";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -79,12 +80,10 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
         }}
       >
         <IconButton>
-          <DynamicAvatar user={user} />
+          <DynamicAvatar user={user as login_login_data} />
         </IconButton>
         <TextField
-          sx={{
-            width: { md: 350, xs: 200 },
-          }}
+          fullWidth
           InputProps={{
             sx: {
               borderRadius: "25px !important",

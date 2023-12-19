@@ -30,6 +30,34 @@ export interface GetDiscussionCurrentUser_getDiscussionCurrentUser_DiscussGroup 
   id: number;
 }
 
+export interface GetDiscussionCurrentUser_getDiscussionCurrentUser_messages_User {
+  __typename: "User";
+  id: number;
+  lastname: string | null;
+  firstname: string | null;
+  photo: string | null;
+}
+
+export interface GetDiscussionCurrentUser_getDiscussionCurrentUser_messages_files {
+  __typename: "FileExt";
+  name: string;
+  extension: string;
+  url: string;
+  id: number;
+}
+
+export interface GetDiscussionCurrentUser_getDiscussionCurrentUser_messages {
+  __typename: "MessageWithRecepter";
+  id: number;
+  User: GetDiscussionCurrentUser_getDiscussionCurrentUser_messages_User;
+  content: string;
+  files: GetDiscussionCurrentUser_getDiscussionCurrentUser_messages_files[];
+  receiverId: number | null;
+  discussGroupId: number | null;
+  createdAt: any;
+  updatedAt: any;
+}
+
 export interface GetDiscussionCurrentUser_getDiscussionCurrentUser {
   __typename: "DiscussionExtend";
   theme: string;
@@ -38,6 +66,7 @@ export interface GetDiscussionCurrentUser_getDiscussionCurrentUser {
   User: GetDiscussionCurrentUser_getDiscussionCurrentUser_User;
   Receiver: GetDiscussionCurrentUser_getDiscussionCurrentUser_Receiver | null;
   DiscussGroup: GetDiscussionCurrentUser_getDiscussionCurrentUser_DiscussGroup | null;
+  messages: GetDiscussionCurrentUser_getDiscussionCurrentUser_messages[];
   id: number;
 }
 

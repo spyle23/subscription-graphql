@@ -17,7 +17,7 @@ export const ContainerDisplay = <T extends FileInput>({
   return (
     <Grid container {...props}>
       {data
-        .sort((a, b) => {
+        ?.sort((a, b) => {
           const order: ICompare = { image: 0, video: 1 };
           const indexA = order[a.extension.split("/")[0]] || Infinity;
           const indexB = order[b.extension.split("/")[0]] || Infinity;
@@ -31,16 +31,16 @@ export const ContainerDisplay = <T extends FileInput>({
           <Grid
             item
             xs={
-              ["image", "video"].includes(val.extension.split("/")[0]) ? 4 : 8
+              ["image", "video"].includes(val.extension.split("/")[0]) ? 4 : 12
             }
             key={val.url}
-            sx={{ p: 1 }}
+            sx={{ p: 1, position: "relative" }}
           >
             <DisplayMedia data={val} />
             {deleteFile && (
               <IconButton
                 onClick={async () => await deleteFile(val)}
-                sx={{ position: "absolute", bottom: 5, right: 5 }}
+                sx={{ position: "absolute", top: 0, right: 0 }}
               >
                 <Delete color="error" />
               </IconButton>

@@ -14,24 +14,23 @@ import {
   MessageTwoUserVariables,
 } from "../../../graphql/message";
 import { WriteMessage } from "../../../graphql/message/types/WriteMessage";
+import { GetDiscussionCurrentUser, GetDiscussionCurrentUserVariables, GetDiscussionCurrentUser_getDiscussionCurrentUser } from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
 
 type FirstpageMessageProps = {
-  messageData: MessagesOfCurrentUser | undefined;
+  messageData: GetDiscussionCurrentUser | undefined;
+  onSelect: (data: GetDiscussionCurrentUser_getDiscussionCurrentUser) => void;
   writting?:WriteMessage
   data?: MessageToUser;
   refetchMessageData: (
-    variables?: Partial<MessagesOfCurrentUserVariables> | undefined
-  ) => Promise<ApolloQueryResult<MessagesOfCurrentUser>>;
-  refetch: (
-    variables?: Partial<MessageTwoUserVariables> | undefined
-  ) => Promise<ApolloQueryResult<MessageTwoUser>>;
+    variables?: Partial<GetDiscussionCurrentUserVariables> | undefined
+  ) => Promise<ApolloQueryResult<GetDiscussionCurrentUser>>;
   onClose?: () => void;
 };
 
 export const FirstpageMessage: FC<FirstpageMessageProps> = ({
   messageData,
   data,
-  refetch,
+  onSelect,
   refetchMessageData,
   onClose,
 }) => {
@@ -51,13 +50,13 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
       </Box>
       <ContainerMessage
         data={data}
+        selectDiscussion={onSelect}
         messageData={messageData}
         onClose={onClose}
       />
       <NewMessageModal
         open={open}
         onClose={() => setOpen(false)}
-        refetch={refetch}
         refetchMessage={refetchMessageData}
       />
     </Box>

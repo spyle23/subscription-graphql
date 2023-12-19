@@ -8,9 +8,11 @@ import { useFileUploader } from "../../../hooks/application/useFileUploader";
 import { useFileDeleter } from "../../../hooks/application/useFileDeleter";
 import { useDropzone } from "react-dropzone";
 import { MessageInput } from "../../../types/graphql-types";
-import { MessageActionType } from "../../../types/message";
 import { useMutation } from "@apollo/client";
-import { WRITTING_CHECK } from "../../../graphql/message";
+import {
+  SendMessageDiscoussGroup_sendMessageDiscoussGroup,
+  WRITTING_CHECK,
+} from "../../../graphql/message";
 import {
   WrittingCheck,
   WrittingCheckVariables,
@@ -20,10 +22,17 @@ import { DisplayMedia } from "../../../components/media/DisplayMedia";
 import { useUploadForm } from "../../../hooks/useUploadForm";
 import { CustomUpload } from "../../../components/dropzone/CustomUpload";
 import { ContainerDisplay } from "../../../components/media/ContainerDisplay";
+import { MessageGlobalApp } from "../../../types/message";
 
 type MessageFormProps = {
-  sendMessage: (data: MessageInput, value?: MessageActionType) => Promise<void>;
-  discussion: MessageActionType;
+  sendMessage: (
+    data: MessageInput,
+    userId: number,
+    discussionId: number,
+    receiverId?: number | null,
+    discussGroupId?: number | null
+  ) => Promise<SendMessageDiscoussGroup_sendMessageDiscoussGroup | undefined>;
+  discussion: MessageGlobalApp;
   user?: login_login_data;
 };
 
@@ -45,16 +54,25 @@ export const MessageForm: FC<MessageFormProps> = ({
         isWritting: isWritting,
         userId: user?.id as number,
         receiverId:
-          discussion.receiverId !== user?.id
-            ? discussion.receiverId
-            : discussion.userId,
-        discussGroupId: discussion.discussGroupId,
+          discussion.Receiver?.id !== user?.id
+            ? discussion.Receiver?.id
+            : discussion.User.id,
+        discussGroupId: discussion.DiscussGroup?.id,
       },
     });
   };
 
   const submitMessage = async (data: MessageInput) => {
-    await sendMessage(data, discussion);
+    const newData: MessageInput = data.files ? data : { ...data, files: [] };
+    await sendMessage(
+      newData,
+      user?.id as number,
+      discussion.id,
+      discussion.Receiver?.id !== user?.id
+        ? discussion.Receiver?.id
+        : discussion.User.id,
+      discussion.DiscussGroup?.id
+    );
     reset({ content: "", files: [] });
   };
   return (

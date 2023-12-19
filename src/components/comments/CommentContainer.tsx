@@ -39,7 +39,10 @@ export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
   // const { commentExec, loading: commentLoading, errorComment } = useComment();
 
   const saveComment = async (data: CommentInputData) => {
-    commentPost && (await commentPost(idPost, data));
+    const newData: CommentInputData = data.files
+      ? data
+      : { ...data, files: [] };
+    commentPost && (await commentPost(idPost, newData));
     await refetch({ postId: idPost });
   };
 
@@ -65,7 +68,7 @@ export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
       }}
     >
       {comments?.map((comment, index) => (
-        <Fragment>
+        <Fragment key={index} >
           <CommentPresenter key={comment.id} {...comment} />
           {index === comments?.length - 1 && comments?.length === 10 && (
             <Waypoint
@@ -80,10 +83,12 @@ export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
                     return {
                       getCommentByPost: {
                         ...previousQueryResult.getCommentByPost,
-                        data: previousQueryResult.getCommentByPost.data ? [
-                          ...previousQueryResult.getCommentByPost.data,
-                          ...fetchMoreResult.getCommentByPost.data,
-                        ] : [],
+                        data: previousQueryResult.getCommentByPost.data
+                          ? [
+                              ...previousQueryResult.getCommentByPost.data,
+                              ...fetchMoreResult.getCommentByPost.data,
+                            ]
+                          : [],
                       },
                     };
                   },
