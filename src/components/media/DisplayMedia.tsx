@@ -32,7 +32,7 @@ export const DisplayMedia = <T extends FileInput>({
         <Box
           component="img"
           src={fullUrl}
-          sx={{ width: "100%", borderRadius: "10px" }}
+          sx={{ width: "100%", borderRadius: "10px", minHeight: "50px" }}
         />
       );
 

@@ -25,7 +25,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
 }): JSX.Element => {
   const options = useMessage();
   const location = useLocation();
-  const { writting, data, sendMessage } = options;
+  const { writting, data, sendMessage, listenTheme } = options;
   return (
     <>
       <DashboardLayoutRoot>
@@ -45,6 +45,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
             window.innerWidth > 900 && (
               <DiscussionOpenTab
                 data={data}
+                listenTheme={listenTheme}
                 writting={writting}
                 sendMessage={sendMessage}
               />

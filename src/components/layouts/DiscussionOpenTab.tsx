@@ -14,9 +14,11 @@ import {
 import { ClosedDiscussion } from "../card/ClosedDiscussion";
 import { determineUserOrGroup } from "../../pages/Message/components/PresenterMessage";
 import { login_login_data } from "../../graphql/user";
+import { ListenTheme } from "../../graphql/discussion/types/ListenTheme";
 
 type DiscussionOpenTabProps = {
   data?: MessageToUser;
+  listenTheme?: ListenTheme;
   writting?: WriteMessage;
   sendMessage: (
     data: MessageInput,
@@ -29,11 +31,59 @@ type DiscussionOpenTabProps = {
 
 export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
   data,
+  listenTheme,
   writting,
   sendMessage,
 }) => {
   const { discussion, dispatchDiscussion } = useContext(DiscussionContext);
   const { user } = useApplicationContext();
+
+  useEffect(() => {
+    if (user && window.innerWidth >= 900) {
+      if (data?.messageToUser) {
+        dispatchDiscussion({
+          type: "add discussion",
+          value: {
+            ...data.messageToUser,
+            newMessageNbr: 1,
+            openMessage: true,
+            userDiscuss: determineUserOrGroup(
+              user,
+              data.messageToUser.User,
+              data.messageToUser.Receiver,
+              data.messageToUser.DiscussGroup
+            ),
+          },
+        });
+      }
+      if (listenTheme?.listenTheme) {
+        dispatchDiscussion({
+          type: "add discussion",
+          value: {
+            ...listenTheme.listenTheme,
+            newMessageNbr: 0,
+            openMessage: true,
+            userDiscuss: determineUserOrGroup(
+              user,
+              listenTheme.listenTheme.User,
+              listenTheme.listenTheme.Receiver,
+              listenTheme.listenTheme.DiscussGroup
+            ),
+          },
+        });
+      }
+    }
+    if (writting?.writeMessage) {
+      console.log("mandeha ve");
+      dispatchDiscussion({
+        type: writting.writeMessage.isWritting
+          ? "add Writters"
+          : "delete Writters",
+        value: {} as MessageGlobalApp,
+        writters: writting.writeMessage,
+      });
+    }
+  }, [data, user, listenTheme, writting]);
   return (
     <Box
       sx={{
@@ -51,10 +101,14 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
           .map((i) => (
             <Grid item md={4} key={`${i.id}`} sx={{ p: 1 }}>
               <DiscussionCard
-                writting={writting}
                 messageToUser={
                   i.id === data?.messageToUser.id
                     ? data.messageToUser
+                    : undefined
+                }
+                listenTheme={
+                  i.id === listenTheme?.listenTheme.id
+                    ? listenTheme.listenTheme
                     : undefined
                 }
                 discussion={i}
@@ -82,7 +136,6 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
             <ClosedDiscussion
               i={i}
               dispatchDiscussion={dispatchDiscussion}
-              writting={writting}
               key={`${i.id}`}
             />
           ))}

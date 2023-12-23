@@ -18,13 +18,15 @@ import {
   WrittingCheckVariables,
 } from "../../../graphql/message/types/WrittingCheck";
 import { login_login_data } from "../../../graphql/user";
-import { DisplayMedia } from "../../../components/media/DisplayMedia";
 import { useUploadForm } from "../../../hooks/useUploadForm";
 import { CustomUpload } from "../../../components/dropzone/CustomUpload";
 import { ContainerDisplay } from "../../../components/media/ContainerDisplay";
 import { MessageGlobalApp } from "../../../types/message";
+import { CustomIcon } from "../../../components/CustomIcon/CustomIcon";
+import { extractColorFromGradient } from "../../../utils/theme";
 
 type MessageFormProps = {
+  theme: string;
   sendMessage: (
     data: MessageInput,
     userId: number,
@@ -38,26 +40,24 @@ type MessageFormProps = {
 
 export const MessageForm: FC<MessageFormProps> = ({
   sendMessage,
+  theme,
   discussion,
   user,
 }) => {
-  const theme = useTheme();
   const { register, handleSubmit, reset, watch, onFinished, dropFile } =
     useUploadForm<MessageInput>();
   const [writeMessage] = useMutation<WrittingCheck, WrittingCheckVariables>(
     WRITTING_CHECK
   );
 
+  const colorIcons = extractColorFromGradient(theme);
+
   const handleFocus = async (isWritting: boolean) => {
     await writeMessage({
       variables: {
         isWritting: isWritting,
         userId: user?.id as number,
-        receiverId:
-          discussion.Receiver?.id !== user?.id
-            ? discussion.Receiver?.id
-            : discussion.User.id,
-        discussGroupId: discussion.DiscussGroup?.id,
+        discussionId: discussion.id,
       },
     });
   };
@@ -88,7 +88,18 @@ export const MessageForm: FC<MessageFormProps> = ({
       >
         <CustomUpload onFinished={onFinished}>
           <IconButton>
-            <CollectionsIcon />
+            {colorIcons ? (
+              <CustomIcon
+                color1={colorIcons[0]}
+                color2={colorIcons[1]}
+                type={theme.split("-")[0] === "linear" ? "linear" : "radial"}
+                id={`CollectionsIcon`}
+              >
+                <CollectionsIcon sx={{ fill: `url(#CollectionsIcon)` }} />
+              </CustomIcon>
+            ) : (
+              <CollectionsIcon sx={{ fill: theme }} />
+            )}
           </IconButton>
         </CustomUpload>
         <TextField
@@ -104,7 +115,18 @@ export const MessageForm: FC<MessageFormProps> = ({
           sx={{ width: "80%" }}
         />
         <IconButton type="submit">
-          <PlayArrowIcon sx={{ fill: theme.palette.primary.main }} />
+          {colorIcons ? (
+            <CustomIcon
+              color1={colorIcons[0]}
+              color2={colorIcons[1]}
+              type={theme.split("-")[0] === "linear" ? "linear" : "radial"}
+              id={`PlayArrowIcon`}
+            >
+              <PlayArrowIcon sx={{ fill: `url(#PlayArrowIcon)` }} />
+            </CustomIcon>
+          ) : (
+            <PlayArrowIcon sx={{ fill: theme }} />
+          )}
         </IconButton>
       </form>
     </Box>

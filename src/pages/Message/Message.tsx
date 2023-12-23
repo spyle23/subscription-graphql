@@ -37,7 +37,28 @@ export const Message = (): JSX.Element => {
         icon: `${data.messageToUser.User.photo}`,
       });
     }
-  }, [data]);
+    if (writting?.writeMessage) {
+      setCurrentDiscussion((curr) => {
+        if (curr?.id === writting.writeMessage.discussionId) {
+          if (writting.writeMessage.isWritting) {
+            return {
+              ...curr,
+              writters: curr.writters
+                ? [...curr.writters, writting.writeMessage.user]
+                : [writting.writeMessage.user],
+            };
+          }
+          return {
+            ...curr,
+            writters: curr.writters?.filter(
+              (a) => a.id !== writting.writeMessage.user.id
+            ),
+          };
+        }
+        return curr;
+      });
+    }
+  }, [data, writting]);
 
   const handleSelect = (
     data: GetDiscussionCurrentUser_getDiscussionCurrentUser
@@ -82,7 +103,6 @@ export const Message = (): JSX.Element => {
                   : undefined
               }
               handleBack={handleBack}
-              writting={writting}
               currentDiscussion={currentDiscussion}
               sendMessage={sendMessage}
               sx={{ height: "80vh" }}

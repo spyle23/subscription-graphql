@@ -20,8 +20,11 @@ const reducerMessageGlobal = (
         i.id === action.value.id
           ? {
               ...i,
+              theme:
+                i.theme !== action.value.theme ? action.value.theme : i.theme,
               messages: action.value.messages,
-              newMessageNbr: i.newMessageNbr + 1,
+              newMessageNbr:
+                i.theme !== action.value.theme ? 0 : i.newMessageNbr + 1,
             }
           : i
       );
@@ -30,7 +33,32 @@ const reducerMessageGlobal = (
       return state.filter((val) => val.id !== action.value.id);
     case "change Theme":
       return state.map((i) =>
-        i.id === action.value.id ? { ...i, theme: action.value.theme } : i
+        i.id === action.value.id && action.theme
+          ? { ...i, theme: action.theme }
+          : i
+      );
+    case "add Writters":
+      return state.map((i) =>
+        i.id === action.writters?.discussionId &&
+        !i.writters?.find((a) => a.id === action.writters?.user.id)
+          ? {
+              ...i,
+              writters: i.writters
+                ? [...i.writters, action.writters.user]
+                : [action.writters.user],
+            }
+          : i
+      );
+    case "delete Writters":
+      return state.map((i) =>
+        i.id === action.writters?.discussionId
+          ? {
+              ...i,
+              writters: i.writters?.filter(
+                (a) => a.id !== action.writters?.user.id
+              ),
+            }
+          : i
       );
     default:
       return state.map((val) => {

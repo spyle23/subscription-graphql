@@ -17,6 +17,7 @@ import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import { login_login_data } from "../../graphql/user";
 
 export const UserMenu: FC = (): JSX.Element => {
   const { user, logout } = useApplicationContext();
@@ -44,7 +45,7 @@ export const UserMenu: FC = (): JSX.Element => {
         edge="end"
         onClick={handleClick}
       >
-        <DynamicAvatar user={user} />
+        <DynamicAvatar user={user as login_login_data} />
       </IconButton>
       <Popover
         id={id}
@@ -57,7 +58,7 @@ export const UserMenu: FC = (): JSX.Element => {
         }}
         transformOrigin={{
           vertical: "top",
-          horizontal: "center",
+          horizontal: "right",
         }}
       >
         <Box sx={{ p: 2 }}>

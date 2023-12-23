@@ -43,28 +43,19 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
     null
   );
   const [numberMsg, setNumberMsg] = useState<number>(0);
-  const { dispatchDiscussion } = useContext(DiscussionContext);
+  const { discussion, dispatchDiscussion } = useContext(DiscussionContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("data", data);
-    if (data?.messageToUser && user && window.innerWidth >= 900) {
-      dispatchDiscussion({
-        type: "add discussion",
-        value: {
-          ...data.messageToUser,
-          newMessageNbr: 1,
-          openMessage: true,
-          userDiscuss: determineUserOrGroup(
-            user,
-            data.messageToUser.User,
-            data.messageToUser.Receiver,
-            data.messageToUser.DiscussGroup
-          ),
-        },
-      });
+    if (
+      data?.messageToUser &&
+      !discussion.find((i) => i.id === data.messageToUser.id) &&
+      user &&
+      window.innerWidth >= 900
+    ) {
+      setNumberMsg((curr) => curr + 1);
     }
-  }, [data, user]);
+  }, [data, user, discussion]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     if (window.innerWidth < 900) {
@@ -123,7 +114,7 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
           horizontal: "center",
         }}
         transformOrigin={{
-          vertical: "bottom",
+          vertical: "top",
           horizontal: "center",
         }}
       >

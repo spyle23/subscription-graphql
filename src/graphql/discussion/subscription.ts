@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const LISTEN_MESSAGE = gql`
-  subscription MessageToUser($userId: Float!) {
-    messageToUser(userId: $userId) {
+export const LISTEN_THEME = gql`
+  subscription ListenTheme($userId: Float!) {
+    listenTheme(userId: $userId) {
       theme
       createdAt
       updatedAt
@@ -44,21 +44,6 @@ export const LISTEN_MESSAGE = gql`
         updatedAt
       }
       id
-    }
-  }
-`;
-
-export const WRITING_MESSAGE = gql`
-  subscription WriteMessage($userId: Float!) {
-    writeMessage(userId: $userId) {
-      isWritting
-      discussionId
-      user {
-        photo
-        id
-        lastname
-        firstname
-      }
     }
   }
 `;

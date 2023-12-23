@@ -39,6 +39,16 @@ export interface DiscussGroupInput {
 }
 
 /**
+ * input for changing theme discussion
+ */
+export interface DiscussionInput {
+  id: number;
+  userId: number;
+  receiverId?: number | null;
+  theme: string;
+}
+
+/**
  * input for file
  */
 export interface FileInput {

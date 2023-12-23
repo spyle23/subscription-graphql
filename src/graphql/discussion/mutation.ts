@@ -12,3 +12,11 @@ export const CREATE_DISCUSSION = gql`
     }
   }
 `;
+
+export const CHANGE_THEME = gql`
+  mutation ChangeTheme($data: DiscussionInput!) {
+    changeTheme(data: $data) {
+      theme
+    }
+  }
+`;

@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useMemo, useRef } from "react";
 import {
   Avatar,
   Box,
@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardProps,
   IconButton,
+  Typography,
   useTheme,
 } from "@mui/material";
 import { ActionMessageType, MessageGlobalApp } from "../../types/message";
@@ -28,10 +29,14 @@ import {
   MessageTwoUserVariables,
   SendMessageDiscoussGroup_sendMessageDiscoussGroup,
 } from "../../graphql/message";
+import { DiscussionPopover } from "../popover/DiscussionPopover";
+import { extractColorFromGradient } from "../../utils/theme";
+import { CustomIcon } from "../CustomIcon/CustomIcon";
+import { ListenTheme_listenTheme } from "../../graphql/discussion/types/ListenTheme";
 
 type DiscussionCardProps = {
   discussion: MessageGlobalApp;
-  writting?: WriteMessage;
+  listenTheme?: ListenTheme_listenTheme;
   user?: login_login_data;
   messageToUser?: MessageToUser_messageToUser;
   dispatchDiscussion: React.Dispatch<ActionMessageType>;
@@ -47,14 +52,17 @@ type DiscussionCardProps = {
 export const DiscussionCard: FC<DiscussionCardProps> = ({
   discussion,
   user,
-  writting,
+  listenTheme,
   messageToUser,
   dispatchDiscussion,
   sendMessage,
   ...cardProps
 }) => {
-  const theme = useTheme();
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const themeMessage = useMemo(() => {
+    return listenTheme?.theme === discussion.theme ? listenTheme : undefined;
+  }, [listenTheme, discussion]);
+  const colorIcons = extractColorFromGradient(discussion.theme);
   const { data: messages } = useQuery<MessageTwoUser, MessageTwoUserVariables>(
     MESSAGE_TWO_USER,
     {
@@ -132,6 +140,11 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
               alignItems: "center",
             }}
           >
+            <DiscussionPopover
+              colorIcons={colorIcons}
+              theme={discussion.theme}
+              currentDiscussion={discussion}
+            />
             <IconButton
               onClick={() =>
                 dispatchDiscussion({
@@ -141,7 +154,22 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
                 })
               }
             >
-              <MinimizeIcon />
+              {colorIcons ? (
+                <CustomIcon
+                  color1={colorIcons[0]}
+                  color2={colorIcons[1]}
+                  type={
+                    discussion.theme.split("-")[0] === "linear"
+                      ? "linear"
+                      : "radial"
+                  }
+                  id={`MinimizeIcon`}
+                >
+                  <MinimizeIcon sx={{ fill: `url(#MinimizeIcon)` }} />
+                </CustomIcon>
+              ) : (
+                <MinimizeIcon sx={{ fill: discussion.theme }} />
+              )}
             </IconButton>
             <IconButton
               onClick={() =>
@@ -151,29 +179,71 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
                 })
               }
             >
-              <CloseIcon />
+              {colorIcons ? (
+                <CustomIcon
+                  color1={colorIcons[0]}
+                  color2={colorIcons[1]}
+                  type={
+                    discussion.theme.split("-")[0] === "linear"
+                      ? "linear"
+                      : "radial"
+                  }
+                  id={`CloseIcon`}
+                >
+                  <CloseIcon sx={{ fill: `url(#CloseIcon)` }} />
+                </CustomIcon>
+              ) : (
+                <CloseIcon sx={{ fill: discussion.theme }} />
+              )}
             </IconButton>
           </Box>
         }
       />
-      <CardContent ref={scrollRef} sx={{ height: "350px", overflowY: "auto" }}>
+      <CardContent
+        ref={scrollRef}
+        sx={{ height: "350px", overflowY: "auto", overflowX: "hidden" }}
+      >
         {messages?.messageTwoUser.map((message) => (
-          <MessageItem key={message.id} message={message} user={user} />
+          <MessageItem
+            theme={discussion.theme}
+            key={message.id}
+            message={message}
+            user={user}
+          />
         ))}
-        {writting?.writeMessage.isWritting &&
-          (writting?.writeMessage.userId === discussion.User.id ||
-            writting?.writeMessage.userId === discussion.Receiver?.id) && (
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <DynamicAvatar
-                user={discussion.userDiscuss ?? undefined}
-                sx={{ mr: 1 }}
-              />
-              <SyncLoader color={theme.palette.primary.main} loading size={5} />
-            </Box>
-          )}
+        {themeMessage && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Typography component="small" sx={{ fontSize: "0.5em", mr: 1 }}>
+              Thème changé en{" "}
+            </Typography>
+            <Box
+              sx={{
+                width: "10px",
+                height: "10px",
+                background: themeMessage.theme,
+                borderRadius: "50%",
+              }}
+            />
+          </Box>
+        )}
+        {discussion.writters && discussion.writters.length > 0 && (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            {discussion.writters.map((val) => (
+              <DynamicAvatar key={val.id} user={val} sx={{ mr: 1 }} />
+            ))}
+            <SyncLoader color={discussion.theme} loading size={5} />
+          </Box>
+        )}
       </CardContent>
       <CardActions sx={{ justifyContent: "center" }}>
         <MessageForm
+          theme={discussion.theme}
           sendMessage={redefineSendMessage}
           discussion={discussion}
           user={user}

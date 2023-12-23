@@ -9,15 +9,26 @@ type ContainerDisplayProps<T> = {
   deleteFile?: (data: T) => Promise<void>;
 } & GridProps;
 
+const determineWidth = (isImage: boolean, length: number): number => {
+  if (!isImage) return 12;
+  if (length >= 3) return 4;
+  else if (length === 1) return 8;
+  else return 6;
+};
+
 export const ContainerDisplay = <T extends FileInput>({
   data,
   deleteFile,
   ...props
 }: ContainerDisplayProps<T>) => {
+  const newData = data ? [...data] : [];
+  const lengthFilterData = newData.filter((i) =>
+    ["image", "video"].includes(i.extension.split("/")[0])
+  ).length;
   return (
     <Grid container {...props}>
-      {data
-        ?.sort((a, b) => {
+      {newData
+        .sort((a, b) => {
           const order: ICompare = { image: 0, video: 1 };
           const indexA = order[a.extension.split("/")[0]] || Infinity;
           const indexB = order[b.extension.split("/")[0]] || Infinity;
@@ -30,11 +41,17 @@ export const ContainerDisplay = <T extends FileInput>({
         .map((val) => (
           <Grid
             item
-            xs={
-              ["image", "video"].includes(val.extension.split("/")[0]) ? 4 : 12
-            }
+            xs={determineWidth(
+              ["image", "video"].includes(val.extension.split("/")[0]),
+              lengthFilterData
+            )}
             key={val.url}
-            sx={{ p: 1, position: "relative" }}
+            sx={{
+              p: ["image", "video"].includes(val.extension.split("/")[0])
+                ? 0
+                : 1,
+              position: "relative",
+            }}
           >
             <DisplayMedia data={val} />
             {deleteFile && (

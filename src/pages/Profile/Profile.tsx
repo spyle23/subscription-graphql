@@ -22,6 +22,8 @@ import { useCurrentUser } from "../../hooks/user/useCurrentUser";
 import { useUpdateUser } from "../../hooks/user/useUpdateUser";
 import { LOCALSTORAGE } from "../../constants";
 import { usePhotoUrl } from "../../hooks/application/usePhotoUrl";
+import { CustomUpload } from "../../components/dropzone/CustomUpload";
+import { Upload_upload } from "../../graphql/file";
 
 export const Profile = (): JSX.Element => {
   const theme = useTheme();
@@ -37,35 +39,16 @@ export const Profile = (): JSX.Element => {
 
   const { updateUser } = useUpdateUser();
 
-  const { uploadFile } = useFileUploader();
-
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(acceptedFiles[0]);
-    reader.onload = async () => {
-      const file = await uploadFile({
-        data: reader.result?.toString() || "",
-        type: acceptedFiles[0].type,
-        name: acceptedFiles[0].name,
-      });
-      if (file) {
-        reset({ photo: file });
-        const values = getValues();
-        await updateUser(values);
-        const { data } = await refetch();
-        if (data.profile && user) {
-          setUser({ ...user, photo: data.profile.photo });
-        }
-      }
-    };
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-  });
-
   const handleUpdate = async (data: UpdateUserInput) => {
     await updateUser(data);
+  };
+  const onFinished = async (data: Upload_upload[]) => {
+    const values = getValues();
+    await updateUser({ ...values, photo: data[0].url });
+    const { data: newUser } = await refetch();
+    if (user && newUser.profile) {
+      setUser({ ...user, photo: newUser.profile?.photo });
+    }
   };
   return (
     <Container>
@@ -84,12 +67,11 @@ export const Profile = (): JSX.Element => {
               right: 0,
             }}
           >
-            <div {...getRootProps()}>
-              <input {...getInputProps()} />
+            <CustomUpload onFinished={onFinished}>
               <IconButton>
                 <CollectionsIcon sx={{ fill: theme.palette.primary.main }} />
               </IconButton>
-            </div>
+            </CustomUpload>
           </Box>
         </Box>
         <Box>

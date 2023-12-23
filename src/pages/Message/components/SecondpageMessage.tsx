@@ -20,7 +20,6 @@ import {
 
 type SecondpageMessageProps = {
   currentDiscussion: MessageGlobalApp;
-  writting?: WriteMessage;
   messageToUser?: MessageToUser_messageToUser;
   sendMessage: (
     data: MessageInput,
@@ -33,7 +32,6 @@ type SecondpageMessageProps = {
 } & BoxProps;
 
 export const SecondpageMessage: FC<SecondpageMessageProps> = ({
-  writting,
   currentDiscussion,
   messageToUser,
   handleBack,
@@ -93,24 +91,30 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
   return (
     <Box {...props}>
       <HeaderMessage
+        discussion={currentDiscussion}
         handleBack={handleBack}
-        data={currentDiscussion.userDiscuss}
       />
       <Box sx={{ p: 2, height: "90%", overflowY: "auto" }}>
         {messages?.messageTwoUser.map((message) => (
-          <MessageItem key={message.id} message={message} user={user} />
+          <MessageItem
+            theme={currentDiscussion.theme}
+            key={message.id}
+            message={message}
+            user={user}
+          />
         ))}
-        {writting?.writeMessage.isWritting &&
-          (writting?.writeMessage.userId === currentDiscussion.User.id ||
-            writting?.writeMessage.userId ===
-              currentDiscussion.Receiver?.id) && (
+        {currentDiscussion.writters &&
+          currentDiscussion.writters.length > 0 && (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <DynamicAvatar user={currentDiscussion.userDiscuss} />
-              <SyncLoader color={theme.palette.primary.main} loading size={5} />
+              {currentDiscussion.writters.map((val) => (
+                <DynamicAvatar user={val} sx={{ mr: 1 }} />
+              ))}
+              <SyncLoader color={currentDiscussion.theme} loading size={5} />
             </Box>
           )}
       </Box>
       <MessageForm
+        theme={currentDiscussion.theme}
         sendMessage={sendMessage}
         discussion={currentDiscussion}
         user={user}

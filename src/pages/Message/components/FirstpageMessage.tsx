@@ -14,12 +14,16 @@ import {
   MessageTwoUserVariables,
 } from "../../../graphql/message";
 import { WriteMessage } from "../../../graphql/message/types/WriteMessage";
-import { GetDiscussionCurrentUser, GetDiscussionCurrentUserVariables, GetDiscussionCurrentUser_getDiscussionCurrentUser } from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
+import {
+  GetDiscussionCurrentUser,
+  GetDiscussionCurrentUserVariables,
+  GetDiscussionCurrentUser_getDiscussionCurrentUser,
+} from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
 
 type FirstpageMessageProps = {
   messageData: GetDiscussionCurrentUser | undefined;
   onSelect: (data: GetDiscussionCurrentUser_getDiscussionCurrentUser) => void;
-  writting?:WriteMessage
+  writting?: WriteMessage;
   data?: MessageToUser;
   refetchMessageData: (
     variables?: Partial<GetDiscussionCurrentUserVariables> | undefined
@@ -39,7 +43,7 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
     <Box>
       <Box>
         <Typography variant="h3" sx={{ textAlign: "center" }}>
-          📧 Messages
+          Messages
         </Typography>
       </Box>
       <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>

@@ -84,14 +84,12 @@ export const WRITTING_CHECK = gql`
   mutation WrittingCheck(
     $isWritting: Boolean!
     $userId: Float!
-    $discussGroupId: Float
-    $receiverId: Float
+    $discussionId: Float!
   ) {
     writtingCheck(
       isWritting: $isWritting
       userId: $userId
-      discussGroupId: $discussGroupId
-      receiverId: $receiverId
+      discussionId: $discussionId
     ) {
       success
       message

@@ -9,12 +9,11 @@ import { MessageToUser } from "../../graphql/message";
 
 type ClosedDiscussionProps = {
   i: MessageGlobalApp;
-  writting?: WriteMessage;
   dispatchDiscussion: React.Dispatch<ActionMessageType>;
 };
 
 export const ClosedDiscussion: FC<ClosedDiscussionProps> = React.memo(
-  ({ i, writting, dispatchDiscussion }) => {
+  ({ i, dispatchDiscussion }) => {
     const theme = useTheme();
     return (
       <Box
@@ -50,16 +49,14 @@ export const ClosedDiscussion: FC<ClosedDiscussionProps> = React.memo(
             right: 0,
           }}
         />
-        {writting?.writeMessage.isWritting &&
-          (writting?.writeMessage.userId === i.User.id ||
-            writting?.writeMessage.userId === i.Receiver?.id) && (
-            <SyncLoader
-              color={theme.palette.primary.main}
-              loading
-              size={3}
-              style={{ position: "absolute", bottom: 0, left: 0 }}
-            />
-          )}
+        {i.writters && i.writters.length > 0 && (
+          <SyncLoader
+            color={theme.palette.primary.main}
+            loading
+            size={3}
+            style={{ position: "absolute", bottom: 0, left: 0 }}
+          />
+        )}
       </Box>
     );
   }

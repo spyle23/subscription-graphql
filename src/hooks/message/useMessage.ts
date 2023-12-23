@@ -24,6 +24,8 @@ import {
   GetDiscussionCurrentUserVariables,
 } from "../../graphql/discussion/types/GetDiscussionCurrentUser";
 import { MessageInput } from "../../types/graphql-types";
+import { LISTEN_THEME } from "../../graphql/discussion/subscription";
+import { ListenTheme, ListenThemeVariables } from "../../graphql/discussion/types/ListenTheme";
 
 export const useMessage = () => {
   const { user } = useApplicationContext();
@@ -37,6 +39,13 @@ export const useMessage = () => {
   });
   const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
     LISTEN_MESSAGE,
+    {
+      variables: { userId: user?.id as number },
+      skip: !user?.id,
+    }
+  );
+  const { data: listenTheme } = useSubscription<ListenTheme, ListenThemeVariables>(
+    LISTEN_THEME,
     {
       variables: { userId: user?.id as number },
       skip: !user?.id,
@@ -102,6 +111,7 @@ export const useMessage = () => {
     messageData,
     refetchMessageData,
     sendMessage,
+    listenTheme,
     writting,
     data,
   };

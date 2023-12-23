@@ -1,0 +1,131 @@
+import {
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Popover,
+  useTheme,
+} from "@mui/material";
+import AdjustIcon from "@mui/icons-material/Adjust";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import { FC, useState } from "react";
+import { MessageGlobalApp } from "../../types/message";
+import { ThemeModal } from "../modal/ThemeModal";
+import { CustomIcon } from "../CustomIcon/CustomIcon";
+
+type DiscussionPopoverProps = {
+  theme: string;
+  colorIcons: string[] | null;
+  currentDiscussion: MessageGlobalApp;
+};
+
+export const DiscussionPopover: FC<DiscussionPopoverProps> = ({
+  theme,
+  colorIcons,
+  currentDiscussion,
+}) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [changeTheme, setChangeTheme] = useState(false);
+  const open = Boolean(anchorEl);
+  const id = open ? "discussion-popover" : undefined;
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = (): void => {
+    setAnchorEl(null);
+  };
+  const openChangeTheme = () => {
+    setChangeTheme(true);
+    setAnchorEl(null);
+  };
+  const handleCloseTheme = () => {
+    setChangeTheme(false);
+  };
+  return (
+    <div>
+      <IconButton
+        aria-label="show discussion settings"
+        color="inherit"
+        onClick={handleClick}
+      >
+        {colorIcons ? (
+          <CustomIcon
+            color1={colorIcons[0]}
+            color2={colorIcons[1]}
+            type={theme.split("-")[0] === "linear" ? "linear" : "radial"}
+            id={`KeyboardArrowDownIcon`}
+          >
+            <KeyboardArrowDownIcon
+              sx={{ fill: `url(#KeyboardArrowDownIcon)` }}
+            />
+          </CustomIcon>
+        ) : (
+          <KeyboardArrowDownIcon sx={{ fill: theme }} />
+        )}
+      </IconButton>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        PaperProps={{ style: { minWidth: 300 } }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <List
+          sx={{ width: "100%", bgcolor: "background.paper" }}
+          component="nav"
+          aria-labelledby="nested-list-subheader"
+        >
+          <ListItemButton onClick={openChangeTheme}>
+            <ListItemIcon>
+              {colorIcons ? (
+                <CustomIcon
+                  color1={colorIcons[0]}
+                  color2={colorIcons[1]}
+                  type={theme.split("-")[0] === "linear" ? "linear" : "radial"}
+                  id={`AdjustIcon`}
+                >
+                  <AdjustIcon sx={{ fill: `url(#AdjustIcon)` }} />
+                </CustomIcon>
+              ) : (
+                <AdjustIcon sx={{ fill: theme }} />
+              )}
+            </ListItemIcon>
+            <ListItemText primary="Modifier le thème" />
+          </ListItemButton>
+          <ListItemButton>
+            <ListItemIcon>
+              {colorIcons ? (
+                <CustomIcon
+                  color1={colorIcons[0]}
+                  color2={colorIcons[1]}
+                  type={theme.split("-")[0] === "linear" ? "linear" : "radial"}
+                  id={`VideocamIcon`}
+                >
+                  <VideocamIcon sx={{ fill: `url(#VideocamIcon)` }} />
+                </CustomIcon>
+              ) : (
+                <VideocamIcon sx={{ fill: theme }} />
+              )}
+            </ListItemIcon>
+            <ListItemText primary="Appel vidéo" />
+          </ListItemButton>
+        </List>
+      </Popover>
+      <ThemeModal
+        open={changeTheme}
+        onClose={handleCloseTheme}
+        discussion={currentDiscussion}
+      />
+    </div>
+  );
+};

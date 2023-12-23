@@ -20,6 +20,5 @@ export interface WrittingCheck {
 export interface WrittingCheckVariables {
   isWritting: boolean;
   userId: number;
-  discussGroupId?: number | null;
-  receiverId?: number | null;
+  discussionId: number;
 }
