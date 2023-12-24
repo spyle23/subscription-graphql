@@ -76,4 +76,5 @@ export interface GetDiscussionCurrentUser {
 
 export interface GetDiscussionCurrentUserVariables {
   userId: number;
+  cursor?: number | null;
 }

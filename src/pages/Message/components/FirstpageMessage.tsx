@@ -3,7 +3,11 @@ import { ContainerMessage } from "./ContainerMessage";
 import { useState, FC } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { NewMessageModal } from "../../../components/modal/NewMessageModal";
-import { ApolloQueryResult } from "@apollo/client";
+import {
+  ApolloQueryResult,
+  FetchMoreQueryOptions,
+  OperationVariables,
+} from "@apollo/client";
 import { WriteMessage } from "../../../graphql/message/types/WriteMessage";
 import {
   GetDiscussionCurrentUser,
@@ -14,6 +18,21 @@ import { MessageGlobalApp } from "../../../types/message";
 
 type FirstpageMessageProps = {
   discussions: MessageGlobalApp[];
+  loading: boolean;
+  fetchMore: <
+    TFetchData = GetDiscussionCurrentUser,
+    TFetchVars extends OperationVariables = GetDiscussionCurrentUserVariables
+  >(
+    fetchMoreOptions: FetchMoreQueryOptions<TFetchVars, TFetchData> & {
+      updateQuery?: (
+        previousQueryResult: GetDiscussionCurrentUser,
+        options: {
+          fetchMoreResult: TFetchData;
+          variables: TFetchVars;
+        }
+      ) => GetDiscussionCurrentUser;
+    }
+  ) => Promise<ApolloQueryResult<TFetchData>>;
   onSelect: (data: GetDiscussionCurrentUser_getDiscussionCurrentUser) => void;
   writting?: WriteMessage;
   refetchMessageData: (
@@ -25,6 +44,8 @@ type FirstpageMessageProps = {
 export const FirstpageMessage: FC<FirstpageMessageProps> = ({
   discussions,
   onSelect,
+  loading,
+  fetchMore,
   refetchMessageData,
   onClose,
 }) => {
@@ -44,6 +65,8 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
       </Box>
       <ContainerMessage
         discussions={discussions}
+        loading={loading}
+        fetchMore={fetchMore}
         selectDiscussion={onSelect}
         onClose={onClose}
       />

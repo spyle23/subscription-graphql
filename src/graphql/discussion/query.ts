@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const DISCUSSION_CURRENT_USER = gql`
-  query GetDiscussionCurrentUser($userId: Float!) {
-    getDiscussionCurrentUser(userId: $userId) {
+  query GetDiscussionCurrentUser($userId: Float!, $cursor: Float) {
+    getDiscussionCurrentUser(userId: $userId, cursor: $cursor) {
       theme
       createdAt
       updatedAt

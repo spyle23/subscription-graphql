@@ -1,12 +1,38 @@
 import { Box, BoxProps } from "@mui/material";
-import React, { FC, useEffect } from "react";
+import React, { FC, Fragment, useEffect } from "react";
 import { useApplicationContext } from "../../../hooks";
 import { PresenterMessage } from "./PresenterMessage";
-import { GetDiscussionCurrentUser_getDiscussionCurrentUser } from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
+import {
+  GetDiscussionCurrentUser,
+  GetDiscussionCurrentUserVariables,
+  GetDiscussionCurrentUser_getDiscussionCurrentUser,
+} from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
 import { MessageGlobalApp } from "../../../types/message";
+import { Waypoint } from "react-waypoint";
+import {
+  ApolloQueryResult,
+  FetchMoreQueryOptions,
+  OperationVariables,
+} from "@apollo/client";
+import { CommentSkeleton } from "../../../components/skeleton/CommentSkeleton";
 
 type ContainerMessageProps = {
   discussions: MessageGlobalApp[];
+  loading: boolean;
+  fetchMore: <
+    TFetchData = GetDiscussionCurrentUser,
+    TFetchVars extends OperationVariables = GetDiscussionCurrentUserVariables
+  >(
+    fetchMoreOptions: FetchMoreQueryOptions<TFetchVars, TFetchData> & {
+      updateQuery?: (
+        previousQueryResult: GetDiscussionCurrentUser,
+        options: {
+          fetchMoreResult: TFetchData;
+          variables: TFetchVars;
+        }
+      ) => GetDiscussionCurrentUser;
+    }
+  ) => Promise<ApolloQueryResult<TFetchData>>;
   selectDiscussion: (
     data: GetDiscussionCurrentUser_getDiscussionCurrentUser
   ) => void;
@@ -14,7 +40,15 @@ type ContainerMessageProps = {
 } & BoxProps;
 
 export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
-  ({ discussions, selectDiscussion, onClose, sx, ...props }) => {
+  ({
+    discussions,
+    loading,
+    fetchMore,
+    selectDiscussion,
+    onClose,
+    sx,
+    ...props
+  }) => {
     const { user } = useApplicationContext();
 
     const handleClickMessage = (
@@ -25,15 +59,38 @@ export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
     };
 
     return (
-      <Box sx={{ height: "450px ", overflowY: "auto", p: 2, ...sx }} {...props}>
+      <Box sx={{ height: "450px ", overflowY: "auto", p: 1, ...sx }} {...props}>
         {discussions.map((value, index) => (
-          <PresenterMessage
-            key={index}
-            discussion={value}
-            user={user}
-            onClick={() => handleClickMessage(value)}
-          />
+          <Fragment key={value.id}>
+            <PresenterMessage
+              key={value.id}
+              discussion={value}
+              user={user}
+              onClick={() => handleClickMessage(value)}
+            />
+            {index === discussions.length - 1 && discussions.length === 10 && (
+              <Waypoint
+                onEnter={() =>
+                  fetchMore({
+                    variables: {
+                      cursor: discussions[discussions.length - 1].id,
+                    },
+                    updateQuery(previousQueryResult, { fetchMoreResult }) {
+                      if (!fetchMoreResult) return previousQueryResult;
+                      return {
+                        getDiscussionCurrentUser: [
+                          ...previousQueryResult.getDiscussionCurrentUser,
+                          ...fetchMoreResult.getDiscussionCurrentUser,
+                        ],
+                      };
+                    },
+                  })
+                }
+              />
+            )}
+          </Fragment>
         ))}
+        {loading && [1, 2, 3].map((val) => <CommentSkeleton key={val} />)}
       </Box>
     );
   }

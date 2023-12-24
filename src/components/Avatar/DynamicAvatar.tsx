@@ -1,6 +1,6 @@
-import { AccountCircle } from "@mui/icons-material";
 import { Avatar, Box, BoxProps } from "@mui/material";
 import { usePhotoUrl } from "../../hooks/application/usePhotoUrl";
+import profile from "../../assets/profil.png";
 
 type DynamicAvatarProps<T> = {
   user: T;
@@ -15,17 +15,14 @@ export const DynamicAvatar = <
   sx,
   ...props
 }: DynamicAvatarProps<T>) => {
-  const url = "groupName" in user ? user.coverPhoto : user.photo
+  const url = "groupName" in user ? user.coverPhoto : user.photo;
   return (
     <Box sx={{ mr: 1, ...sx }} {...props}>
-      {url ? (
-        <Avatar
-          alt={"profile"}
-          src={usePhotoUrl(url)}
-        />
-      ) : (
-        <AccountCircle sx={{ fontSize: "2em" }} />
-      )}
+      <Avatar
+        alt={"profile"}
+        src={url ? usePhotoUrl(url) : profile}
+        sx={{ width: 36, height: 36 }}
+      />
     </Box>
   );
 };

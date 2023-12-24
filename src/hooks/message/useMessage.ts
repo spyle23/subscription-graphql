@@ -36,13 +36,19 @@ import { usePhotoUrl } from "../application/usePhotoUrl";
 export const useMessage = () => {
   const { user } = useApplicationContext();
   const apolloClient = useApolloClient();
-  const { data: messageData, refetch: refetchMessageData } = useQuery<
-    GetDiscussionCurrentUser,
-    GetDiscussionCurrentUserVariables
-  >(DISCUSSION_CURRENT_USER, {
-    variables: { userId: user?.id as number },
-    skip: !user?.id,
-  });
+  const {
+    data: messageData,
+    refetch: refetchMessageData,
+    loading,
+    fetchMore,
+  } = useQuery<GetDiscussionCurrentUser, GetDiscussionCurrentUserVariables>(
+    DISCUSSION_CURRENT_USER,
+    {
+      variables: { userId: user?.id as number },
+      skip: !user?.id,
+      notifyOnNetworkStatusChange: true,
+    }
+  );
   const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
     LISTEN_MESSAGE,
     {
@@ -129,6 +135,8 @@ export const useMessage = () => {
     user,
     messageData,
     refetchMessageData,
+    loading,
+    fetchMore,
     sendMessage,
     listenTheme,
     writting,

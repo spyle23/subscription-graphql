@@ -58,17 +58,24 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
   return (
     <Grid
       container
-      sx={{ p: 1, cursor: "pointer", ":hover": { background: "grey" }, ...sx }}
+      sx={{
+        p: 1,
+        cursor: "pointer",
+        alignItems: "center",
+        borderRadius: "15px",
+        ":hover": { backgroundColor: "lightgrey" },
+        ...sx,
+      }}
       {...props}
     >
       <Grid
         item
-        xs={1}
-        sx={{ display: "flex", justifyContent: "center", mr: 2 }}
+        xs={2}
+        sx={{ display: "flex", justifyContent: "center", mr: 1 }}
       >
         <DynamicAvatar user={displayUserMessage} />
       </Grid>
-      <Grid item xs={10}>
+      <Grid item xs={9}>
         <Typography fontWeight={"bold"}>
           {"groupName" in displayUserMessage
             ? displayUserMessage.groupName

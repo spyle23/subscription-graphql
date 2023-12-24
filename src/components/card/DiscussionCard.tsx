@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef } from "react";
+import { FC, Fragment, useEffect, useMemo, useRef } from "react";
 import {
   Avatar,
   Box,
@@ -7,6 +7,7 @@ import {
   CardContent,
   CardHeader,
   CardProps,
+  CircularProgress,
   IconButton,
   Typography,
   useTheme,
@@ -19,7 +20,6 @@ import { MessageItem } from "../../pages/Message/components/MessageItem";
 import { login_login_data } from "../../graphql/user";
 import { MessageForm } from "../../pages/Message/components/MessageForm";
 import { MessageInput } from "../../types/graphql-types";
-import { WriteMessage } from "../../graphql/message/types/WriteMessage";
 import { SyncLoader } from "react-spinners";
 import { useApolloClient, useQuery } from "@apollo/client";
 import {
@@ -33,6 +33,7 @@ import { DiscussionPopover } from "../popover/DiscussionPopover";
 import { extractColorFromGradient } from "../../utils/theme";
 import { CustomIcon } from "../CustomIcon/CustomIcon";
 import { ListenTheme_listenTheme } from "../../graphql/discussion/types/ListenTheme";
+import { Waypoint } from "react-waypoint";
 
 type DiscussionCardProps = {
   discussion: MessageGlobalApp;
@@ -63,16 +64,23 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
     return listenTheme?.theme === discussion.theme ? listenTheme : undefined;
   }, [listenTheme, discussion]);
   const colorIcons = extractColorFromGradient(discussion.theme);
-  const { data: messages } = useQuery<MessageTwoUser, MessageTwoUserVariables>(
-    MESSAGE_TWO_USER,
-    {
-      variables: { discussionId: discussion.id },
-      skip: !discussion.id,
-    }
-  );
+  const {
+    data: messages,
+    loading,
+    fetchMore,
+  } = useQuery<MessageTwoUser, MessageTwoUserVariables>(MESSAGE_TWO_USER, {
+    variables: { discussionId: discussion.id, cursor: null },
+    skip: !discussion.id,
+    notifyOnNetworkStatusChange: true,
+  });
+
   useEffect(() => {
     if (scrollRef.current && messages?.messageTwoUser) {
-      scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
+      console.log("srcollRef useEffect", scrollRef.current?.scrollTop);
+      scrollRef.current.scrollTop =
+        messages.messageTwoUser.length === 10
+          ? scrollRef.current?.scrollHeight
+          : 608;
     }
   }, [messages]);
   const apolloClient = useApolloClient();
@@ -203,13 +211,41 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
         ref={scrollRef}
         sx={{ height: "350px", overflowY: "auto", overflowX: "hidden" }}
       >
-        {messages?.messageTwoUser.map((message) => (
-          <MessageItem
-            theme={discussion.theme}
-            key={message.id}
-            message={message}
-            user={user}
-          />
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 1 }}>
+            <CircularProgress color="primary" />
+          </Box>
+        )}
+        {messages?.messageTwoUser.map((message, index) => (
+          <Fragment key={message.id}>
+            <MessageItem
+              theme={discussion.theme}
+              key={message.id}
+              message={message}
+              user={user}
+            />
+            {index === 0 && (
+              <Waypoint
+                onEnter={async () => {
+                  console.log("srcollRef", scrollRef.current?.scrollTop);
+                  await fetchMore({
+                    variables: {
+                      cursor: messages.messageTwoUser[0].id,
+                    },
+                    updateQuery(previousQueryResult, { fetchMoreResult }) {
+                      if (!fetchMoreResult) return previousQueryResult;
+                      return {
+                        messageTwoUser: [
+                          ...fetchMoreResult.messageTwoUser,
+                          ...previousQueryResult.messageTwoUser,
+                        ],
+                      };
+                    },
+                  });
+                }}
+              />
+            )}
+          </Fragment>
         ))}
         {themeMessage && (
           <Box

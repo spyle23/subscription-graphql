@@ -1,5 +1,11 @@
-import { Box, BoxProps, Typography, useTheme } from "@mui/material";
-import { FC, useEffect, useMemo, useRef } from "react";
+import {
+  Box,
+  BoxProps,
+  CircularProgress,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { FC, Fragment, useEffect, useMemo, useRef } from "react";
 import { HeaderMessage } from "./HeaderMessage";
 import { MessageItem } from "./MessageItem";
 import { MessageInput } from "../../../types/graphql-types";
@@ -18,6 +24,7 @@ import {
   SendMessageDiscoussGroup_sendMessageDiscoussGroup,
 } from "../../../graphql/message";
 import { ListenTheme_listenTheme } from "../../../graphql/discussion/types/ListenTheme";
+import { Waypoint } from "react-waypoint";
 
 type SecondpageMessageProps = {
   currentDiscussion: MessageGlobalApp;
@@ -49,13 +56,14 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
       : undefined;
   }, [listenTheme, currentDiscussion]);
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const { data: messages } = useQuery<MessageTwoUser, MessageTwoUserVariables>(
-    MESSAGE_TWO_USER,
-    {
-      variables: { discussionId: currentDiscussion.id },
-      skip: !currentDiscussion.id,
-    }
-  );
+  const {
+    data: messages,
+    fetchMore,
+    loading,
+  } = useQuery<MessageTwoUser, MessageTwoUserVariables>(MESSAGE_TWO_USER, {
+    variables: { discussionId: currentDiscussion.id, cursor: null },
+    skip: !currentDiscussion.id,
+  });
   useEffect(() => {
     if (scrollRef.current && messages?.messageTwoUser) {
       scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
@@ -111,13 +119,40 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
     <Box {...props}>
       <HeaderMessage discussion={currentDiscussion} handleBack={handleBack} />
       <Box ref={scrollRef} sx={{ p: 2, height: "90%", overflowY: "auto" }}>
-        {messages?.messageTwoUser.map((message) => (
-          <MessageItem
-            theme={currentDiscussion.theme}
-            key={message.id}
-            message={message}
-            user={user}
-          />
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <CircularProgress color="primary" />
+          </Box>
+        )}
+        {messages?.messageTwoUser.map((message, index) => (
+          <Fragment key={message.id}>
+            <MessageItem
+              theme={currentDiscussion.theme}
+              key={message.id}
+              message={message}
+              user={user}
+            />
+            {index === 1 && messages.messageTwoUser.length === 10 && (
+              <Waypoint
+                onEnter={() =>
+                  fetchMore({
+                    variables: {
+                      cursor: messages.messageTwoUser[1].id,
+                    },
+                    updateQuery(previousQueryResult, { fetchMoreResult }) {
+                      if (!fetchMoreResult) return previousQueryResult;
+                      return {
+                        messageTwoUser: [
+                          ...fetchMoreResult.messageTwoUser,
+                          ...previousQueryResult.messageTwoUser,
+                        ],
+                      };
+                    },
+                  })
+                }
+              />
+            )}
+          </Fragment>
         ))}
         {themeMessage && (
           <Box

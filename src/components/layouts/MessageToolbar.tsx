@@ -27,6 +27,8 @@ import { MessageGlobalApp } from "../../types/message";
 type MessageToolbarProps = {
   user?: login_login_data;
   data: MessageToUser | undefined;
+  loading: boolean;
+  fetchMore: any;
   writting?: WriteMessage;
   messageData: GetDiscussionCurrentUser | undefined;
   refetchMessageData: (
@@ -37,6 +39,8 @@ type MessageToolbarProps = {
 export const MessageToolbar: FC<MessageToolbarProps> = ({
   user,
   writting,
+  loading,
+  fetchMore,
   refetchMessageData,
   messageData,
   data,
@@ -242,6 +246,8 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
       >
         <Box sx={{ p: 1 }}>
           <FirstpageMessage
+            loading={loading}
+            fetchMore={fetchMore}
             discussions={discussions}
             onSelect={handleSelect}
             refetchMessageData={refetchMessageData}

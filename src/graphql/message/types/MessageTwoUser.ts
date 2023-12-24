@@ -41,4 +41,5 @@ export interface MessageTwoUser {
 
 export interface MessageTwoUserVariables {
   discussionId: number;
+  cursor?: number | null;
 }

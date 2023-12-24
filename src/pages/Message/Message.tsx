@@ -22,6 +22,8 @@ export const Message = (): JSX.Element => {
     user,
     sendMessage,
     listenTheme,
+    loading,
+    fetchMore,
   } = useMessage();
   const [currentDiscussion, setCurrentDiscussion] =
     useState<MessageGlobalApp>();
@@ -203,6 +205,8 @@ export const Message = (): JSX.Element => {
         <Grid item xs={12} sx={{ p: 2 }}>
           <MessageContext.Provider value={memoizedMessage}>
             <FirstpageMessage
+              loading={loading}
+              fetchMore={fetchMore}
               discussions={discussions}
               onSelect={handleSelect}
               refetchMessageData={refetchMessageData}

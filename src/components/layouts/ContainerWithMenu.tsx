@@ -25,7 +25,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
 }): JSX.Element => {
   const options = useMessage();
   const location = useLocation();
-  const { writting, data, sendMessage, listenTheme } = options;
+  const { writting, data, sendMessage, listenTheme, fetchMore, loading } = options;
   useEffect(() => {
     if (data) {
       console.log("impiry no ato ContainerWithMenu");

@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const MESSAGE_TWO_USER = gql`
-  query MessageTwoUser($discussionId: Float!) {
-    messageTwoUser(discussionId: $discussionId) {
+  query MessageTwoUser($discussionId: Float!, $cursor: Float) {
+    messageTwoUser(discussionId: $discussionId, cursor: $cursor) {
       id
       User {
         id
