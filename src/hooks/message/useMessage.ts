@@ -25,7 +25,13 @@ import {
 } from "../../graphql/discussion/types/GetDiscussionCurrentUser";
 import { MessageInput } from "../../types/graphql-types";
 import { LISTEN_THEME } from "../../graphql/discussion/subscription";
-import { ListenTheme, ListenThemeVariables } from "../../graphql/discussion/types/ListenTheme";
+import {
+  ListenTheme,
+  ListenThemeVariables,
+} from "../../graphql/discussion/types/ListenTheme";
+import { useEffect } from "react";
+import addNotification from "react-push-notification";
+import { usePhotoUrl } from "../application/usePhotoUrl";
 
 export const useMessage = () => {
   const { user } = useApplicationContext();
@@ -44,13 +50,13 @@ export const useMessage = () => {
       skip: !user?.id,
     }
   );
-  const { data: listenTheme } = useSubscription<ListenTheme, ListenThemeVariables>(
-    LISTEN_THEME,
-    {
-      variables: { userId: user?.id as number },
-      skip: !user?.id,
-    }
-  );
+  const { data: listenTheme } = useSubscription<
+    ListenTheme,
+    ListenThemeVariables
+  >(LISTEN_THEME, {
+    variables: { userId: user?.id as number },
+    skip: !user?.id,
+  });
   const { data: writting } = useSubscription<
     WriteMessage,
     WriteMessageVariables
@@ -105,6 +111,19 @@ export const useMessage = () => {
     });
     return messageTwoUser?.sendMessageDiscoussGroup;
   };
+
+  useEffect(() => {
+    if (data?.messageToUser) {
+      addNotification({
+        title: `${data.messageToUser.messages[0].User.firstname} ${data.messageToUser.messages[0].User.lastname}`,
+        message: `${data.messageToUser.messages[0].content}`,
+        native: true,
+        icon: usePhotoUrl(
+          data.messageToUser.messages[0].User.photo ?? undefined
+        ),
+      });
+    }
+  }, [data]);
 
   return {
     user,

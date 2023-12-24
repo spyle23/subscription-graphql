@@ -54,14 +54,23 @@ export const DisplayMedia = <T extends FileInput>({
 
     case "application":
       return (
-        <Box sx={{ width: "100%", background: "#8e8ea0", p: 1, display: "flex", alignItems: "center", borderRadius: "10px" }}>
+        <Box
+          sx={{
+            width: "100%",
+            backgroundColor: "lightgrey",
+            p: 1,
+            display: "flex",
+            alignItems: "center",
+            borderRadius: "10px",
+          }}
+        >
           <IconDisplay extension={extension} />
           <Typography sx={{ color: "white", mx: 1 }}>{data.name}</Typography>
         </Box>
       );
     default:
       return (
-        <Box sx={{ width: "100%", background: "#8e8ea0", p: 1 }}>
+        <Box sx={{ width: "100%", backgroundColor: "lightgrey", p: 1 }}>
           <Typography sx={{ color: "white" }}>
             <InsertDriveFileIcon sx={{ fill: "white" }} />
             {data.name}

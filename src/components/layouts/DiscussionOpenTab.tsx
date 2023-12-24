@@ -54,27 +54,13 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
               data.messageToUser.DiscussGroup
             ),
           },
-        });
-      }
-      if (listenTheme?.listenTheme) {
-        dispatchDiscussion({
-          type: "add discussion",
-          value: {
-            ...listenTheme.listenTheme,
-            newMessageNbr: 0,
-            openMessage: true,
-            userDiscuss: determineUserOrGroup(
-              user,
-              listenTheme.listenTheme.User,
-              listenTheme.listenTheme.Receiver,
-              listenTheme.listenTheme.DiscussGroup
-            ),
-          },
+          data,
         });
       }
     }
+  }, [data, user]);
+  useEffect(() => {
     if (writting?.writeMessage) {
-      console.log("mandeha ve");
       dispatchDiscussion({
         type: writting.writeMessage.isWritting
           ? "add Writters"
@@ -83,7 +69,25 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
         writters: writting.writeMessage,
       });
     }
-  }, [data, user, listenTheme, writting]);
+  }, [writting]);
+  useEffect(() => {
+    if (listenTheme?.listenTheme && user) {
+      dispatchDiscussion({
+        type: "add discussion",
+        value: {
+          ...listenTheme.listenTheme,
+          newMessageNbr: 0,
+          openMessage: true,
+          userDiscuss: determineUserOrGroup(
+            user,
+            listenTheme.listenTheme.User,
+            listenTheme.listenTheme.Receiver,
+            listenTheme.listenTheme.DiscussGroup
+          ),
+        },
+      });
+    }
+  }, [listenTheme, user]);
   return (
     <Box
       sx={{
@@ -135,6 +139,9 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
           .map((i) => (
             <ClosedDiscussion
               i={i}
+              messageToUser={
+                i.id === data?.messageToUser.id ? data.messageToUser : undefined
+              }
               dispatchDiscussion={dispatchDiscussion}
               key={`${i.id}`}
             />

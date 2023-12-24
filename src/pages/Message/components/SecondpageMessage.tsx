@@ -1,5 +1,5 @@
-import { Box, BoxProps, useTheme } from "@mui/material";
-import { FC, useEffect, useMemo } from "react";
+import { Box, BoxProps, Typography, useTheme } from "@mui/material";
+import { FC, useEffect, useMemo, useRef } from "react";
 import { HeaderMessage } from "./HeaderMessage";
 import { MessageItem } from "./MessageItem";
 import { MessageInput } from "../../../types/graphql-types";
@@ -17,10 +17,12 @@ import {
   MessageTwoUserVariables,
   SendMessageDiscoussGroup_sendMessageDiscoussGroup,
 } from "../../../graphql/message";
+import { ListenTheme_listenTheme } from "../../../graphql/discussion/types/ListenTheme";
 
 type SecondpageMessageProps = {
   currentDiscussion: MessageGlobalApp;
   messageToUser?: MessageToUser_messageToUser;
+  listenTheme?: ListenTheme_listenTheme;
   sendMessage: (
     data: MessageInput,
     userId: number,
@@ -34,13 +36,19 @@ type SecondpageMessageProps = {
 export const SecondpageMessage: FC<SecondpageMessageProps> = ({
   currentDiscussion,
   messageToUser,
+  listenTheme,
   handleBack,
   sendMessage,
   ...props
 }) => {
   const { user } = useApplicationContext();
-  const theme = useTheme();
   const apolloClient = useApolloClient();
+  const themeMessage = useMemo(() => {
+    return listenTheme?.theme === currentDiscussion.theme
+      ? listenTheme
+      : undefined;
+  }, [listenTheme, currentDiscussion]);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const { data: messages } = useQuery<MessageTwoUser, MessageTwoUserVariables>(
     MESSAGE_TWO_USER,
     {
@@ -49,7 +57,18 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
     }
   );
   useEffect(() => {
-    if (messageToUser && messages) {
+    if (scrollRef.current && messages?.messageTwoUser) {
+      scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
+    }
+  }, [messages]);
+  useEffect(() => {
+    if (
+      messageToUser &&
+      messages &&
+      !messages.messageTwoUser.find(
+        (i) => i.id === messageToUser.messages[0].id
+      )
+    ) {
       apolloClient.writeQuery<MessageTwoUser, MessageTwoUserVariables>({
         data: {
           messageTwoUser: [
@@ -90,11 +109,8 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
   };
   return (
     <Box {...props}>
-      <HeaderMessage
-        discussion={currentDiscussion}
-        handleBack={handleBack}
-      />
-      <Box sx={{ p: 2, height: "90%", overflowY: "auto" }}>
+      <HeaderMessage discussion={currentDiscussion} handleBack={handleBack} />
+      <Box ref={scrollRef} sx={{ p: 2, height: "90%", overflowY: "auto" }}>
         {messages?.messageTwoUser.map((message) => (
           <MessageItem
             theme={currentDiscussion.theme}
@@ -103,6 +119,27 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
             user={user}
           />
         ))}
+        {themeMessage && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Typography component="small" sx={{ fontSize: "0.5em", mr: 1 }}>
+              Thème changé en{" "}
+            </Typography>
+            <Box
+              sx={{
+                width: "10px",
+                height: "10px",
+                background: themeMessage.theme,
+                borderRadius: "50%",
+              }}
+            />
+          </Box>
+        )}
         {currentDiscussion.writters &&
           currentDiscussion.writters.length > 0 && (
             <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -115,7 +152,7 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
       </Box>
       <MessageForm
         theme={currentDiscussion.theme}
-        sendMessage={sendMessage}
+        sendMessage={redefineSendMessage}
         discussion={currentDiscussion}
         user={user}
       />

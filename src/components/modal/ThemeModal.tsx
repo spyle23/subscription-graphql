@@ -114,14 +114,14 @@ export const ThemeModal: FC<ThemeModalProps> = ({
             key={index}
             onClick={() => handleSelect(i, index)}
             sx={{
-              background:
+              backgroundColor:
                 selected === index
-                  ? "linear-gradient(to bottom, #4CAF50, #45a049)"
+                  ? "lightgrey"
                   : undefined,
-              boxShadow:
-                selected === index
-                  ? "0 4px 8px rgba(76, 175, 80, 0.4)"
-                  : undefined,
+              // boxShadow:
+              //   selected === index
+              //     ? "0 4px 8px rgba(76, 175, 80, 0.4)"
+              //     : undefined,
             }}
           />
         ))}

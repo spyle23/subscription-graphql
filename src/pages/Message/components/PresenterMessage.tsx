@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { Grid, GridProps, Typography } from "@mui/material";
+import { FC, useEffect, useState } from "react";
+import { Box, Grid, GridProps, Typography, useTheme } from "@mui/material";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
 import {
   MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup,
@@ -7,10 +7,11 @@ import {
 } from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { login_login_data } from "../../../graphql/user";
 import { GetDiscussionCurrentUser_getDiscussionCurrentUser } from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
+import { MessageGlobalApp } from "../../../types/message";
+import { SyncLoader } from "react-spinners";
 type PresenterMessageProps = {
   user?: login_login_data;
-  isNewMessage: boolean;
-  discussion: GetDiscussionCurrentUser_getDiscussionCurrentUser;
+  discussion: MessageGlobalApp;
 } & GridProps;
 
 export const determineUserOrGroup = (
@@ -30,13 +31,13 @@ export const determineUserOrGroup = (
 export const PresenterMessage: FC<PresenterMessageProps> = ({
   discussion,
   user,
-  isNewMessage,
   sx,
   ...props
 }) => {
+  const theme = useTheme();
   if (!user) return <></>;
   const uploadMessage =
-    user.id === discussion.User.id
+    user.id === discussion.messages[0].User.id
       ? "Vous avez envoyé une pièce jointe"
       : "a envoyé une pièce jointe";
   const displayUserMessage = determineUserOrGroup(
@@ -50,6 +51,10 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
     message.content.length > 25
       ? `${message.content.substring(0, 25)}...`
       : message.content;
+  const displayMessageUser =
+    user.id === discussion.messages[0].User.id
+      ? `vous: ${displayMessage}`
+      : displayMessage;
   return (
     <Grid
       container
@@ -69,9 +74,44 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
             ? displayUserMessage.groupName
             : displayUserMessage.firstname + " " + displayUserMessage.lastname}
         </Typography>
-        <Typography sx={{ fontWeight: isNewMessage ? "bold" : "normal" }}>
-          {message.files.length > 0 ? uploadMessage : displayMessage}
-        </Typography>
+        {discussion.writters && discussion.writters.length > 0 ? (
+          <Box
+            sx={{
+              p: 1,
+              borderRadius: "20px",
+              backgroundColor: "lightgray",
+              width: "max-content",
+            }}
+          >
+            <SyncLoader color={theme.palette.primary.main} loading size={5} />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography
+              sx={{
+                fontWeight: discussion.newMessageNbr > 0 ? "bold" : "normal",
+              }}
+            >
+              {message.files.length > 0 ? uploadMessage : displayMessageUser}
+            </Typography>
+            {discussion.newMessageNbr > 0 && (
+              <Box
+                sx={{
+                  borderRadius: "50%",
+                  width: "10px",
+                  height: "10px",
+                  backgroundColor: theme.palette.primary.main,
+                }}
+              />
+            )}
+          </Box>
+        )}
       </Grid>
     </Grid>
   );

@@ -3,28 +3,19 @@ import { ContainerMessage } from "./ContainerMessage";
 import { useState, FC } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { NewMessageModal } from "../../../components/modal/NewMessageModal";
-import {
-  MessagesOfCurrentUser,
-  MessagesOfCurrentUserVariables,
-} from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { ApolloQueryResult } from "@apollo/client";
-import {
-  MessageToUser,
-  MessageTwoUser,
-  MessageTwoUserVariables,
-} from "../../../graphql/message";
 import { WriteMessage } from "../../../graphql/message/types/WriteMessage";
 import {
   GetDiscussionCurrentUser,
   GetDiscussionCurrentUserVariables,
   GetDiscussionCurrentUser_getDiscussionCurrentUser,
 } from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
+import { MessageGlobalApp } from "../../../types/message";
 
 type FirstpageMessageProps = {
-  messageData: GetDiscussionCurrentUser | undefined;
+  discussions: MessageGlobalApp[];
   onSelect: (data: GetDiscussionCurrentUser_getDiscussionCurrentUser) => void;
   writting?: WriteMessage;
-  data?: MessageToUser;
   refetchMessageData: (
     variables?: Partial<GetDiscussionCurrentUserVariables> | undefined
   ) => Promise<ApolloQueryResult<GetDiscussionCurrentUser>>;
@@ -32,8 +23,7 @@ type FirstpageMessageProps = {
 };
 
 export const FirstpageMessage: FC<FirstpageMessageProps> = ({
-  messageData,
-  data,
+  discussions,
   onSelect,
   refetchMessageData,
   onClose,
@@ -53,9 +43,8 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
         </Button>
       </Box>
       <ContainerMessage
-        data={data}
+        discussions={discussions}
         selectDiscussion={onSelect}
-        messageData={messageData}
         onClose={onClose}
       />
       <NewMessageModal

@@ -26,6 +26,11 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
   const options = useMessage();
   const location = useLocation();
   const { writting, data, sendMessage, listenTheme } = options;
+  useEffect(() => {
+    if (data) {
+      console.log("impiry no ato ContainerWithMenu");
+    }
+  }, [data]);
   return (
     <>
       <DashboardLayoutRoot>

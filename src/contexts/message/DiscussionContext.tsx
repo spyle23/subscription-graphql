@@ -24,7 +24,11 @@ const reducerMessageGlobal = (
                 i.theme !== action.value.theme ? action.value.theme : i.theme,
               messages: action.value.messages,
               newMessageNbr:
-                i.theme !== action.value.theme ? 0 : i.newMessageNbr + 1,
+                i.theme !== action.value.theme
+                  ? 0
+                  : action.data
+                  ? i.newMessageNbr + 1
+                  : i.newMessageNbr,
             }
           : i
       );

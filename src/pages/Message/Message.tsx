@@ -1,6 +1,5 @@
 import { Grid } from "@mui/material";
 import React, { createContext, useMemo, useEffect, useState } from "react";
-import addNotification from "react-push-notification";
 import { FirstpageMessage } from "./components/FirstpageMessage";
 import { MessageContexteType, MessageGlobalApp } from "../../types/message";
 import { useMessage } from "../../hooks/message/useMessage";
@@ -8,7 +7,6 @@ import { SecondpageMessage } from "./components/SecondpageMessage";
 import { GetDiscussionCurrentUser_getDiscussionCurrentUser } from "../../graphql/discussion/types/GetDiscussionCurrentUser";
 import { determineUserOrGroup } from "./components/PresenterMessage";
 import { login_login_data } from "../../graphql/user";
-import { MessageInput } from "../../types/graphql-types";
 
 export const MessageContext = createContext<MessageContexteType>({
   currentDiscussion: undefined,
@@ -16,8 +14,15 @@ export const MessageContext = createContext<MessageContexteType>({
 } as MessageContexteType);
 
 export const Message = (): JSX.Element => {
-  const { data, messageData, writting, refetchMessageData, user, sendMessage } =
-    useMessage();
+  const {
+    data,
+    messageData,
+    writting,
+    refetchMessageData,
+    user,
+    sendMessage,
+    listenTheme,
+  } = useMessage();
   const [currentDiscussion, setCurrentDiscussion] =
     useState<MessageGlobalApp>();
   const memoizedMessage: MessageContexteType = useMemo(
@@ -29,14 +34,6 @@ export const Message = (): JSX.Element => {
   );
 
   useEffect(() => {
-    if (data?.messageToUser) {
-      addNotification({
-        title: `${data.messageToUser.User.firstname} ${data.messageToUser.User.lastname}`,
-        message: `${data.messageToUser.messages[0].content}`,
-        native: true,
-        icon: `${data.messageToUser.User.photo}`,
-      });
-    }
     if (writting?.writeMessage) {
       setCurrentDiscussion((curr) => {
         if (curr?.id === writting.writeMessage.discussionId) {
@@ -58,7 +55,7 @@ export const Message = (): JSX.Element => {
         return curr;
       });
     }
-  }, [data, writting]);
+  }, [writting]);
 
   const handleSelect = (
     data: GetDiscussionCurrentUser_getDiscussionCurrentUser
@@ -76,6 +73,126 @@ export const Message = (): JSX.Element => {
     });
   };
 
+  const discussions = useMemo<MessageGlobalApp[]>(() => {
+    if (!messageData?.getDiscussionCurrentUser) return [];
+    if (data) {
+      return messageData.getDiscussionCurrentUser.find(
+        (i) => i.id === data.messageToUser.id
+      )
+        ? messageData.getDiscussionCurrentUser.map<MessageGlobalApp>((val) =>
+            val.id === data.messageToUser.id
+              ? {
+                  ...val,
+                  newMessageNbr: 1,
+                  messages: data.messageToUser.messages,
+                  userDiscuss: determineUserOrGroup(
+                    user as login_login_data,
+                    val.User,
+                    val.Receiver,
+                    val.DiscussGroup
+                  ),
+                  openMessage: false,
+                  writters:
+                    writting &&
+                    writting.writeMessage.discussionId === val.id &&
+                    writting.writeMessage.isWritting
+                      ? [writting.writeMessage.user]
+                      : undefined,
+                }
+              : {
+                  ...val,
+                  newMessageNbr: 0,
+                  userDiscuss: determineUserOrGroup(
+                    user as login_login_data,
+                    val.User,
+                    val.Receiver,
+                    val.DiscussGroup
+                  ),
+                  openMessage: false,
+                  writters:
+                    writting &&
+                    writting.writeMessage.discussionId === val.id &&
+                    writting.writeMessage.isWritting
+                      ? [writting.writeMessage.user]
+                      : undefined,
+                }
+          )
+        : [
+            {
+              ...data.messageToUser,
+              newMessageNbr: 1,
+              userDiscuss: determineUserOrGroup(
+                user as login_login_data,
+                data.messageToUser.User,
+                data.messageToUser.Receiver,
+                data.messageToUser.DiscussGroup
+              ),
+              openMessage: false,
+            },
+            ...messageData.getDiscussionCurrentUser.map<MessageGlobalApp>(
+              (val) => ({
+                ...val,
+                newMessageNbr: 0,
+                userDiscuss: determineUserOrGroup(
+                  user as login_login_data,
+                  val.User,
+                  val.Receiver,
+                  val.DiscussGroup
+                ),
+                openMessage: false,
+                writters:
+                  writting &&
+                  writting.writeMessage.discussionId === val.id &&
+                  writting.writeMessage.isWritting
+                    ? [writting.writeMessage.user]
+                    : undefined,
+              })
+            ),
+          ];
+    }
+    if (writting && writting.writeMessage.isWritting) {
+      return messageData.getDiscussionCurrentUser.map<MessageGlobalApp>((val) =>
+        val.id === writting.writeMessage.discussionId
+          ? {
+              ...val,
+              newMessageNbr: 0,
+              userDiscuss: determineUserOrGroup(
+                user as login_login_data,
+                val.User,
+                val.Receiver,
+                val.DiscussGroup
+              ),
+              openMessage: false,
+              writters: [writting.writeMessage.user],
+            }
+          : {
+              ...val,
+              newMessageNbr: 0,
+              userDiscuss: determineUserOrGroup(
+                user as login_login_data,
+                val.User,
+                val.Receiver,
+                val.DiscussGroup
+              ),
+              openMessage: false,
+            }
+      );
+    }
+    return messageData.getDiscussionCurrentUser.map<MessageGlobalApp>(
+      (val) => ({
+        ...val,
+        newMessageNbr: 0,
+        userDiscuss: determineUserOrGroup(
+          user as login_login_data,
+          val.User,
+          val.Receiver,
+          val.DiscussGroup
+        ),
+        openMessage: false,
+      })
+    );
+  }, [data, messageData, writting]);
+
   const handleBack = () => {
     setCurrentDiscussion(undefined);
   };
@@ -86,9 +203,8 @@ export const Message = (): JSX.Element => {
         <Grid item xs={12} sx={{ p: 2 }}>
           <MessageContext.Provider value={memoizedMessage}>
             <FirstpageMessage
-              data={data}
+              discussions={discussions}
               onSelect={handleSelect}
-              messageData={messageData}
               refetchMessageData={refetchMessageData}
             />
           </MessageContext.Provider>
@@ -100,6 +216,11 @@ export const Message = (): JSX.Element => {
               messageToUser={
                 currentDiscussion.id === data?.messageToUser.id
                   ? data.messageToUser
+                  : undefined
+              }
+              listenTheme={
+                listenTheme?.listenTheme.id === currentDiscussion.id
+                  ? listenTheme.listenTheme
                   : undefined
               }
               handleBack={handleBack}
