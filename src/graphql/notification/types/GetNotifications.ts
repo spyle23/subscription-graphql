@@ -4,22 +4,23 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL subscription operation: CommentPost
+// GraphQL query operation: GetNotifications
 // ====================================================
 
-export interface CommentPost_commentPost {
+export interface GetNotifications_getNotifications {
   __typename: "Notification";
   id: number;
   name: string;
   description: string;
-  createdAt: any;
   updatedAt: any;
+  createdAt: any;
 }
 
-export interface CommentPost {
-  commentPost: CommentPost_commentPost;
+export interface GetNotifications {
+  getNotifications: GetNotifications_getNotifications[];
 }
 
-export interface CommentPostVariables {
+export interface GetNotificationsVariables {
   userId: number;
+  cursor?: number | null;
 }

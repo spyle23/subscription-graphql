@@ -49,19 +49,15 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
     null
   );
   const [numberMsg, setNumberMsg] = useState<number>(0);
-  const { discussion, dispatchDiscussion } = useContext(DiscussionContext);
+  const { dispatchDiscussion } = useContext(DiscussionContext);
+  const [discussions, setDiscussions] = useState<MessageGlobalApp[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (
-      data?.messageToUser &&
-      !discussion.find((i) => i.id === data.messageToUser.id) &&
-      user &&
-      window.innerWidth >= 900
-    ) {
+    if (data?.messageToUser && user && window.innerWidth >= 900) {
       setNumberMsg((curr) => curr + 1);
     }
-  }, [data, user, discussion]);
+  }, [data, user]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     if (window.innerWidth < 900) {
@@ -76,125 +72,69 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
     setAnchorEl(null);
   };
 
-  const discussions = useMemo<MessageGlobalApp[]>(() => {
-    if (!messageData?.getDiscussionCurrentUser) return [];
-    if (data) {
-      return messageData.getDiscussionCurrentUser.find(
-        (i) => i.id === data.messageToUser.id
-      )
-        ? messageData.getDiscussionCurrentUser.map<MessageGlobalApp>((val) =>
-            val.id === data.messageToUser.id
-              ? {
-                  ...val,
+  useEffect(() => {
+    if (messageData?.getDiscussionCurrentUser) {
+      if (data) {
+        setDiscussions((curr) =>
+          curr.find((i) => i.id === data.messageToUser.id)
+            ? curr.map((i) =>
+                i.id === data.messageToUser.id
+                  ? {
+                      ...i,
+                      newMessageNbr: i.newMessageNbr + 1,
+                      messages: data.messageToUser.messages,
+                    }
+                  : i
+              )
+            : [
+                {
+                  ...data.messageToUser,
                   newMessageNbr: 1,
-                  messages: data.messageToUser.messages,
                   userDiscuss: determineUserOrGroup(
                     user as login_login_data,
-                    val.User,
-                    val.Receiver,
-                    val.DiscussGroup
+                    data.messageToUser.User,
+                    data.messageToUser.Receiver,
+                    data.messageToUser.DiscussGroup
                   ),
                   openMessage: false,
-                  writters:
-                    writting &&
-                    writting.writeMessage.discussionId === val.id &&
-                    writting.writeMessage.isWritting
-                      ? [writting.writeMessage.user]
-                      : undefined,
-                }
-              : {
-                  ...val,
-                  newMessageNbr: 0,
-                  userDiscuss: determineUserOrGroup(
-                    user as login_login_data,
-                    val.User,
-                    val.Receiver,
-                    val.DiscussGroup
-                  ),
-                  openMessage: false,
-                  writters:
-                    writting &&
-                    writting.writeMessage.discussionId === val.id &&
-                    writting.writeMessage.isWritting
-                      ? [writting.writeMessage.user]
-                      : undefined,
-                }
-          )
-        : [
-            {
-              ...data.messageToUser,
-              newMessageNbr: 1,
-              userDiscuss: determineUserOrGroup(
-                user as login_login_data,
-                data.messageToUser.User,
-                data.messageToUser.Receiver,
-                data.messageToUser.DiscussGroup
-              ),
-              openMessage: false,
-            },
-            ...messageData.getDiscussionCurrentUser.map<MessageGlobalApp>(
-              (val) => ({
-                ...val,
-                newMessageNbr: 0,
-                userDiscuss: determineUserOrGroup(
-                  user as login_login_data,
-                  val.User,
-                  val.Receiver,
-                  val.DiscussGroup
-                ),
-                openMessage: false,
-                writters:
-                  writting &&
-                  writting.writeMessage.discussionId === val.id &&
-                  writting.writeMessage.isWritting
-                    ? [writting.writeMessage.user]
-                    : undefined,
-              })
+                },
+                ...curr,
+              ]
+        );
+      }
+      if (writting) {
+        setDiscussions((curr) =>
+          curr.find((i) => i.id === writting.writeMessage.discussionId)
+            ? curr.map((i) =>
+                i.id === writting.writeMessage.discussionId
+                  ? {
+                      ...i,
+                      writters: writting.writeMessage.isWritting
+                        ? [writting.writeMessage.user]
+                        : undefined,
+                    }
+                  : i
+              )
+            : curr
+        );
+      }
+      if (!data && !writting) {
+        setDiscussions(
+          messageData.getDiscussionCurrentUser.map<MessageGlobalApp>((val) => ({
+            ...val,
+            newMessageNbr: 0,
+            userDiscuss: determineUserOrGroup(
+              user as login_login_data,
+              val.User,
+              val.Receiver,
+              val.DiscussGroup
             ),
-          ];
+            openMessage: false,
+          }))
+        );
+      }
     }
-    if (writting && writting.writeMessage.isWritting) {
-      return messageData.getDiscussionCurrentUser.map<MessageGlobalApp>((val) =>
-        val.id === writting.writeMessage.discussionId
-          ? {
-              ...val,
-              newMessageNbr: 0,
-              userDiscuss: determineUserOrGroup(
-                user as login_login_data,
-                val.User,
-                val.Receiver,
-                val.DiscussGroup
-              ),
-              openMessage: false,
-              writters: [writting.writeMessage.user],
-            }
-          : {
-              ...val,
-              newMessageNbr: 0,
-              userDiscuss: determineUserOrGroup(
-                user as login_login_data,
-                val.User,
-                val.Receiver,
-                val.DiscussGroup
-              ),
-              openMessage: false,
-            }
-      );
-    }
-    return messageData.getDiscussionCurrentUser.map<MessageGlobalApp>(
-      (val) => ({
-        ...val,
-        newMessageNbr: 0,
-        userDiscuss: determineUserOrGroup(
-          user as login_login_data,
-          val.User,
-          val.Receiver,
-          val.DiscussGroup
-        ),
-        openMessage: false,
-      })
-    );
-  }, [data, messageData, writting]);
+  }, [messageData, data, writting]);
 
   const handleSelect = (
     data: GetDiscussionCurrentUser_getDiscussionCurrentUser

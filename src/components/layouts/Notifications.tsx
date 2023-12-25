@@ -1,8 +1,8 @@
-import { useSubscription } from "@apollo/client";
+import { useQuery, useSubscription } from "@apollo/client";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Badge, IconButton, Popover, Typography, Box } from "@mui/material";
 import moment from "moment";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { POST_SUBSCRIPTION } from "../../graphql/notification/subscription";
 import {
   CommentPost,
@@ -12,6 +12,13 @@ import {
 import { useApplicationContext } from "../../hooks";
 import { useCurrentUser } from "../../hooks/user/useCurrentUser";
 import addNotification from "react-push-notification";
+import { GET_NOTIFICATIONS } from "../../graphql/notification/query";
+import {
+  GetNotifications,
+  GetNotificationsVariables,
+} from "../../graphql/notification/types/GetNotifications";
+import { CommentSkeleton } from "../skeleton/CommentSkeleton";
+import { Waypoint } from "react-waypoint";
 
 type NotificationType = {
   nbrNotification: number;
@@ -29,7 +36,6 @@ export const Notifications = (): JSX.Element => {
     null
   );
   const { user, dispatchSnack } = useApplicationContext();
-  const { data: userProfile, loading } = useCurrentUser(user?.id as number);
   const { data } = useSubscription<CommentPost, CommentPostVariables>(
     POST_SUBSCRIPTION,
     {
@@ -37,11 +43,34 @@ export const Notifications = (): JSX.Element => {
     }
   );
 
+  const {
+    data: listNotifications,
+    loading,
+    fetchMore,
+  } = useQuery<GetNotifications, GetNotificationsVariables>(GET_NOTIFICATIONS, {
+    variables: { userId: user?.id as number, cursor: null },
+    skip: !user?.id,
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const finaleNotifications = useMemo<NotificationType>(() => {
+    if (listNotifications?.getNotifications) {
+      return {
+        ...notifications,
+        notifications: [
+          ...notifications.notifications,
+          ...listNotifications.getNotifications,
+        ],
+      };
+    }
+    return notifications;
+  }, [listNotifications, notifications]);
+
   useEffect(() => {
     if (data) {
       dispatch((prev) => ({
         nbrNotification: prev.nbrNotification + 1,
-        notifications: [...prev.notifications, data.commentPost],
+        notifications: [data.commentPost, ...prev.notifications],
       }));
       dispatchSnack({
         open: true,
@@ -55,16 +84,6 @@ export const Notifications = (): JSX.Element => {
       });
     }
   }, [data]);
-
-  useEffect(() => {
-    if (userProfile?.notifications) {
-      const notificationsData =
-        userProfile?.notifications.length > 5
-          ? userProfile?.notifications.slice(0, 4)
-          : userProfile?.notifications;
-      dispatch((prev) => ({ ...prev, notifications: notificationsData }));
-    }
-  }, [userProfile]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorEl(event.currentTarget);
@@ -85,7 +104,7 @@ export const Notifications = (): JSX.Element => {
         color="inherit"
         onClick={handleClick}
       >
-        <Badge badgeContent={notifications.nbrNotification} color="error">
+        <Badge badgeContent={finaleNotifications.nbrNotification} color="error">
           <NotificationsIcon />
         </Badge>
       </IconButton>
@@ -104,19 +123,49 @@ export const Notifications = (): JSX.Element => {
         }}
       >
         <Box sx={{ p: 2 }}>
-          {notifications.notifications.map((notification, index) => {
+          {finaleNotifications.notifications.map((notification, index) => {
             return (
-              <Box key={index} sx={{ mb: 1 }}>
-                <Typography variant="h5">{notification.name}</Typography>
-                <Typography component="p">
-                  {notification.description} le{" "}
-                  {moment(notification.createdAt).format(
-                    "DD MMM YYYY à HH:mm:ss"
+              <Fragment key={index}>
+                <Box key={index} sx={{ mb: 1 }}>
+                  <Typography variant="h5">{notification.name}</Typography>
+                  <Typography component="p">
+                    {notification.description} le{" "}
+                    {moment(notification.createdAt).format(
+                      "DD MMM YYYY à HH:mm:ss"
+                    )}
+                  </Typography>
+                </Box>
+                {index === finaleNotifications.notifications.length - 1 &&
+                  finaleNotifications.notifications.length === 10 && (
+                    <Waypoint
+                      onEnter={() =>
+                        fetchMore({
+                          variables: {
+                            cursor:
+                              finaleNotifications.notifications[
+                                finaleNotifications.notifications.length - 1
+                              ].id,
+                          },
+                          updateQuery(
+                            previousQueryResult,
+                            { fetchMoreResult }
+                          ) {
+                            if (!fetchMoreResult) return previousQueryResult;
+                            return {
+                              getNotifications: [
+                                ...previousQueryResult.getNotifications,
+                                ...fetchMoreResult.getNotifications,
+                              ],
+                            };
+                          },
+                        })
+                      }
+                    />
                   )}
-                </Typography>
-              </Box>
+              </Fragment>
             );
           })}
+          {loading && [1, 2, 3].map((val) => <CommentSkeleton key={val} />)}
         </Box>
       </Popover>
     </div>

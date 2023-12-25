@@ -6,6 +6,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Grid,
   IconButton,
   Slide,
   TextField,
@@ -69,11 +70,11 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
     setOpen(false);
   };
   return (
-    <>
+    <Box>
       <Card
         elevation={1}
         sx={{
-          width: { xs: "100%", md: 500 },
+          width: { xs: 350, md: 500 },
           p: 2,
           display: "flex",
           alignItems: "center",
@@ -161,6 +162,6 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Box>
   );
 };

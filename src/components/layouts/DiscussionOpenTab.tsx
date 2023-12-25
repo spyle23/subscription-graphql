@@ -89,38 +89,36 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
     }
   }, [listenTheme, user]);
   return (
-    <Box
-      sx={{
-        width: "70%",
-        position: "fixed",
-        bottom: 0,
-        right: 0,
-        display: discussion.length > 0 ? "flex" : "none",
-        justifyContent: "space-between",
-      }}
-    >
-      <Grid container sx={{ width: "90%", justifyContent: "flex-end" }}>
+    <>
+      <Grid
+        container
+        sx={{
+          width: "max-content",
+          position: "fixed",
+          bottom: 0,
+          right: "100px",
+          justifyContent: "flex-end",
+          display: { xs: "none", md: "flex" },
+        }}
+      >
         {discussion
           .filter((val) => val.openMessage)
           .map((i) => (
-            <Grid item md={4} key={`${i.id}`} sx={{ p: 1 }}>
-              <DiscussionCard
-                messageToUser={
-                  i.id === data?.messageToUser.id
-                    ? data.messageToUser
-                    : undefined
-                }
-                listenTheme={
-                  i.id === listenTheme?.listenTheme.id
-                    ? listenTheme.listenTheme
-                    : undefined
-                }
-                discussion={i}
-                user={user}
-                dispatchDiscussion={dispatchDiscussion}
-                sendMessage={sendMessage}
-              />
-            </Grid>
+            <DiscussionCard
+              messageToUser={
+                i.id === data?.messageToUser.id ? data.messageToUser : undefined
+              }
+              listenTheme={
+                i.id === listenTheme?.listenTheme.id
+                  ? listenTheme.listenTheme
+                  : undefined
+              }
+              discussion={i}
+              user={user}
+              dispatchDiscussion={dispatchDiscussion}
+              sendMessage={sendMessage}
+              sx={{ width: "20vw" }}
+            />
           ))}
       </Grid>
       <Box
@@ -131,7 +129,10 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
           alignItems: "center",
           minHeight: "350px",
           py: 2,
-          width: "10%",
+          width: "100px",
+          position: "fixed",
+          right: 0,
+          bottom: 0,
         }}
       >
         {discussion
@@ -147,6 +148,6 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
             />
           ))}
       </Box>
-    </Box>
+    </>
   );
 };

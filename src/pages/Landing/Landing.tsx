@@ -20,6 +20,8 @@ import {
 } from "../../graphql/message";
 import { PostSkeleton } from "../../components/skeleton/PostSkeleton";
 import { Waypoint } from "react-waypoint";
+import { Box, Grid } from "@mui/material";
+import { Contact } from "./components/Contact";
 type CommentGen = {
   commentPost?: (postId: number, commentInput: CommentInput) => Promise<void>;
 };
@@ -53,7 +55,7 @@ export default function Landing() {
     await refetch();
   };
   return (
-    <Container>
+    <Grid container sx={{ alignItems: "center", flexDirection: "column" }}>
       <PostCreateForm createPost={handleCreatePost} />
       <CommentContext.Provider value={{ commentPost: commentPost }}>
         {allPost?.getOrderPost.map((value, index) => (
@@ -63,7 +65,7 @@ export default function Landing() {
               user={user}
               addReact={addReactToPost}
               post={value}
-              sx={{ p: 2, width: { xs: "100%", md: 500 }, my: 1 }}
+              sx={{ p: 2, width: { xs: 350, md: 500 }, my: 1 }}
             />
             {index === allPost?.getOrderPost.length - 1 &&
               allPost.getOrderPost.length === 10 && (
@@ -92,6 +94,7 @@ export default function Landing() {
         ))}
         {postLoading && [1, 2, 3, 4].map((i) => <PostSkeleton key={i} />)}
       </CommentContext.Provider>
-    </Container>
+      <Contact />
+    </Grid>
   );
 }
