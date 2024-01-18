@@ -11,12 +11,14 @@ export const LISTEN_THEME = gql`
         firstname
         id
         photo
+        status
       }
       Receiver {
         firstname
         lastname
         id
         photo
+        status
       }
       DiscussGroup {
         groupName

@@ -7,6 +7,11 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum CallStatus {
+  ENDED = "ENDED",
+  PENDING = "PENDING",
+}
+
 export enum ReactionType {
   GRR = "GRR",
   HAHA = "HAHA",

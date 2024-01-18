@@ -1,12 +1,9 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { Box, Grid, GridProps, Typography, useTheme } from "@mui/material";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
-import {
-  MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup,
-  MessagesOfCurrentUser_messagesOfCurrentUser_User,
-} from "../../../graphql/message/types/MessagesOfCurrentUser";
+import { MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup } from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { login_login_data } from "../../../graphql/user";
-import { GetDiscussionCurrentUser_getDiscussionCurrentUser } from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
+import { GetDiscussionCurrentUser_getDiscussionCurrentUser_User } from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
 import { MessageGlobalApp } from "../../../types/message";
 import { SyncLoader } from "react-spinners";
 type PresenterMessageProps = {
@@ -16,15 +13,15 @@ type PresenterMessageProps = {
 
 export const determineUserOrGroup = (
   user: login_login_data,
-  owner: MessagesOfCurrentUser_messagesOfCurrentUser_User,
-  receiver: MessagesOfCurrentUser_messagesOfCurrentUser_User | null,
+  owner: GetDiscussionCurrentUser_getDiscussionCurrentUser_User,
+  receiver: GetDiscussionCurrentUser_getDiscussionCurrentUser_User | null,
   discussGroup: MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup | null
 ) => {
   if (discussGroup) {
     return discussGroup;
   }
   return owner.id === user.id
-    ? (receiver as MessagesOfCurrentUser_messagesOfCurrentUser_User)
+    ? (receiver as GetDiscussionCurrentUser_getDiscussionCurrentUser_User)
     : owner;
 };
 
@@ -40,12 +37,6 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
     user.id === discussion.messages[0].User.id
       ? "Vous avez envoyé une pièce jointe"
       : "a envoyé une pièce jointe";
-  const displayUserMessage = determineUserOrGroup(
-    user,
-    discussion.User,
-    discussion.Receiver,
-    discussion.DiscussGroup
-  );
   const message = discussion.messages[0];
   const displayMessage =
     message.content.length > 25
@@ -73,13 +64,15 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
         xs={2}
         sx={{ display: "flex", justifyContent: "center", mr: 1 }}
       >
-        <DynamicAvatar user={displayUserMessage} />
+        <DynamicAvatar user={discussion.userDiscuss} />
       </Grid>
       <Grid item xs={9}>
         <Typography fontWeight={"bold"}>
-          {"groupName" in displayUserMessage
-            ? displayUserMessage.groupName
-            : displayUserMessage.firstname + " " + displayUserMessage.lastname}
+          {"groupName" in discussion.userDiscuss
+            ? discussion.userDiscuss.groupName
+            : discussion.userDiscuss.firstname +
+              " " +
+              discussion.userDiscuss.lastname}
         </Typography>
         {discussion.writters && discussion.writters.length > 0 ? (
           <Box

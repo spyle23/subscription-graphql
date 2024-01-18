@@ -104,6 +104,7 @@ export const MessageForm: FC<MessageFormProps> = ({
         </CustomUpload>
         <TextField
           {...register("content")}
+          variant="outlined"
           InputProps={{
             sx: {
               borderRadius: "25px !important",
@@ -112,7 +113,7 @@ export const MessageForm: FC<MessageFormProps> = ({
           onFocus={async () => await handleFocus(true)}
           onBlur={async () => await handleFocus(false)}
           placeholder="votre message ..."
-          sx={{ width: "80%" }}
+          sx={{ width: "80%", borderImage: theme, borderImageSlice: 1 }}
         />
         <IconButton type="submit">
           {colorIcons ? (

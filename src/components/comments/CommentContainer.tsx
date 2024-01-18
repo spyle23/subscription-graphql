@@ -6,7 +6,7 @@ import {
   useContext,
   Fragment,
 } from "react";
-import { useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { Box, Button, Typography } from "@mui/material";
 import {
   GetCommentByPost,
@@ -25,17 +25,17 @@ type CommentContainerProps = {
 };
 
 export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
-  const { commentPost } = useContext(CommentContext);
-  const { data, loading, error, refetch, fetchMore } = useQuery<
+  const { commentPost, data: statusUser } = useContext(CommentContext);
+  const { data, loading, refetch, fetchMore } = useQuery<
     GetCommentByPost,
     GetCommentByPostVariables
   >(POST_COMMENT, {
     variables: {
       postId: idPost,
-      cursor: null,
     },
     notifyOnNetworkStatusChange: true,
   });
+  const apolloClient = useApolloClient();
   // const { commentExec, loading: commentLoading, errorComment } = useComment();
 
   const saveComment = async (data: CommentInputData) => {
@@ -46,15 +46,31 @@ export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
     await refetch({ postId: idPost });
   };
 
-  // useEffect(() => {
-  //   if (errorComment) {
-  //     dispatchSnack({
-  //       open: true,
-  //       severity: "error",
-  //       message: errorComment,
-  //     });
-  //   }
-  // }, [errorComment]);
+  useEffect(() => {
+    if (
+      statusUser &&
+      data &&
+      data.getCommentByPost.data?.find(
+        (val) =>
+          val.User.id === statusUser.getStatusUser.id &&
+          val.User.status !== statusUser.getStatusUser.status
+      )
+    ) {
+      apolloClient.writeQuery<GetCommentByPost, GetCommentByPostVariables>({
+        query: POST_COMMENT,
+        data: {
+          getCommentByPost: {
+            ...data.getCommentByPost,
+            data: data.getCommentByPost.data.map((val) =>
+              val.User.id === statusUser.getStatusUser.id
+                ? { ...val, User: statusUser.getStatusUser }
+                : val
+            ),
+          },
+        },
+      });
+    }
+  }, [statusUser, data]);
 
   const comments = useMemo(() => data?.getCommentByPost.data, [data]);
 
@@ -68,7 +84,7 @@ export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
       }}
     >
       {comments?.map((comment, index) => (
-        <Fragment key={index} >
+        <Fragment key={index}>
           <CommentPresenter key={comment.id} {...comment} />
           {index === comments?.length - 1 && comments?.length === 10 && (
             <Waypoint

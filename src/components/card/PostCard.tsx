@@ -22,7 +22,6 @@ import LikeIcon from "../../assets/likeicon.png";
 import { motion } from "framer-motion";
 import { IReactions } from "../../types/IReactions";
 import { reactions } from "../../constants/reactions";
-import { DisplayMedia } from "../media/DisplayMedia";
 import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 import { ContainerDisplay } from "../media/ContainerDisplay";
 

@@ -17,7 +17,6 @@ import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
-import { login_login_data } from "../../graphql/user";
 
 export const UserMenu: FC = (): JSX.Element => {
   const { user, logout } = useApplicationContext();
@@ -37,6 +36,7 @@ export const UserMenu: FC = (): JSX.Element => {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+  if (!user) return <></>;
   return (
     <div>
       <IconButton
@@ -45,7 +45,7 @@ export const UserMenu: FC = (): JSX.Element => {
         edge="end"
         onClick={handleClick}
       >
-        <DynamicAvatar user={user as login_login_data} />
+        <DynamicAvatar user={{ ...user, status: true }} />
       </IconButton>
       <Popover
         id={id}
@@ -88,8 +88,6 @@ export const UserMenu: FC = (): JSX.Element => {
             <ListItemButton
               onClick={() => {
                 logout();
-                navigate("/subscription-graphql/auth/login");
-                window.location.reload();
               }}
             >
               <ListItemIcon>

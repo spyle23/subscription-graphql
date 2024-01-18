@@ -11,12 +11,14 @@ export const DISCUSSION_CURRENT_USER = gql`
         firstname
         id
         photo
+        status
       }
       Receiver {
         firstname
         lastname
         id
         photo
+        status
       }
       DiscussGroup {
         groupName

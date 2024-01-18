@@ -13,6 +13,7 @@ export interface WriteMessage_writeMessage_user {
   id: number;
   lastname: string | null;
   firstname: string | null;
+  status: boolean;
 }
 
 export interface WriteMessage_writeMessage {

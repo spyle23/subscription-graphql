@@ -30,6 +30,7 @@ export const POST_ORDER = gql`
         firstname
         photo
         id
+        status
       }
       reactions {
         reactionType

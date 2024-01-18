@@ -13,6 +13,7 @@ export const POST_COMMENT = gql`
           lastname
           photo
           id
+          status
         }
         files {
           name

@@ -18,12 +18,13 @@ export const GET_REQUEST = gql`
 `;
 
 export const GET_FRIEND = gql`
-  query GetFriendOfCurrentUser($userId: Float!, $cursor: Float) {
-    getFriendOfCurrentUser(userId: $userId, cursor: $cursor) {
+  query GetFriendOfCurrentUser($userId: Float!, $cursor: Float, $status: Boolean) {
+    getFriendOfCurrentUser(userId: $userId, cursor: $cursor, status: $status) {
       lastname
       photo
       id
       firstname
+      status
     }
   }
 `;

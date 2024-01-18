@@ -1,4 +1,8 @@
-import { GetDiscussionCurrentUser_getDiscussionCurrentUser } from "../graphql/discussion/types/GetDiscussionCurrentUser";
+import {
+  GetDiscussionCurrentUser_getDiscussionCurrentUser,
+  GetDiscussionCurrentUser_getDiscussionCurrentUser_DiscussGroup,
+  GetDiscussionCurrentUser_getDiscussionCurrentUser_User,
+} from "../graphql/discussion/types/GetDiscussionCurrentUser";
 import { MessageToUser } from "../graphql/message";
 import {
   MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup,
@@ -30,8 +34,8 @@ export type ActionMessageType = {
 export type MessageGlobalApp = {
   openMessage: boolean;
   newMessageNbr: number;
-  writters?: MessagesOfCurrentUser_messagesOfCurrentUser_User[];
+  writters?: GetDiscussionCurrentUser_getDiscussionCurrentUser_User[];
   userDiscuss:
-    | MessagesOfCurrentUser_messagesOfCurrentUser_User
-    | MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup;
+    | GetDiscussionCurrentUser_getDiscussionCurrentUser_User
+    | GetDiscussionCurrentUser_getDiscussionCurrentUser_DiscussGroup;
 } & GetDiscussionCurrentUser_getDiscussionCurrentUser;

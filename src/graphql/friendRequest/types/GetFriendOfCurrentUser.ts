@@ -13,6 +13,7 @@ export interface GetFriendOfCurrentUser_getFriendOfCurrentUser {
   photo: string | null;
   id: number;
   firstname: string | null;
+  status: boolean;
 }
 
 export interface GetFriendOfCurrentUser {
@@ -22,4 +23,5 @@ export interface GetFriendOfCurrentUser {
 export interface GetFriendOfCurrentUserVariables {
   userId: number;
   cursor?: number | null;
+  status?: boolean | null;
 }

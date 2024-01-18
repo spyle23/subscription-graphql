@@ -81,6 +81,10 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
                 i.id === data.messageToUser.id
                   ? {
                       ...i,
+                      userDiscuss:
+                        "status" in i.userDiscuss
+                          ? { ...i.userDiscuss, status: true }
+                          : i.userDiscuss,
                       newMessageNbr: i.newMessageNbr + 1,
                       messages: data.messageToUser.messages,
                     }
@@ -118,23 +122,47 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
             : curr
         );
       }
-      if (!data && !writting) {
-        setDiscussions(
-          messageData.getDiscussionCurrentUser.map<MessageGlobalApp>((val) => ({
-            ...val,
-            newMessageNbr: 0,
-            userDiscuss: determineUserOrGroup(
-              user as login_login_data,
-              val.User,
-              val.Receiver,
-              val.DiscussGroup
-            ),
-            openMessage: false,
-          }))
-        );
-      }
+      setDiscussions((curr) => {
+        let distance =
+          messageData?.getDiscussionCurrentUser.length - curr.length;
+        if (
+          distance > 0 &&
+          distance < messageData.getDiscussionCurrentUser.length
+        ) {
+          const arrays = messageData.getDiscussionCurrentUser
+            .slice(curr.length)
+            .map<MessageGlobalApp>((val) => ({
+              ...val,
+              newMessageNbr: 0,
+              userDiscuss: determineUserOrGroup(
+                user as login_login_data,
+                val.User,
+                val.Receiver,
+                val.DiscussGroup
+              ),
+              openMessage: false,
+            }));
+          return [...curr, ...arrays];
+        } else if (distance === messageData.getDiscussionCurrentUser.length) {
+          return messageData.getDiscussionCurrentUser.map<MessageGlobalApp>(
+            (val) => ({
+              ...val,
+              newMessageNbr: 0,
+              userDiscuss: determineUserOrGroup(
+                user as login_login_data,
+                val.User,
+                val.Receiver,
+                val.DiscussGroup
+              ),
+              openMessage: false,
+            })
+          );
+        }
+        return curr;
+      });
     }
   }, [messageData, data, writting]);
+
 
   const handleSelect = (
     data: GetDiscussionCurrentUser_getDiscussionCurrentUser

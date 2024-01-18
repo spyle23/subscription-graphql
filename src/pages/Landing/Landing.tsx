@@ -12,7 +12,7 @@ import { useReactPost } from "../../hooks/post/useReactPost";
 import { useApplicationContext } from "../../hooks";
 import { Fragment, createContext, useCallback, useEffect } from "react";
 import { useComment } from "../../hooks/comment/useComment";
-import { useSubscription } from "@apollo/client";
+import { useApolloClient, useSubscription } from "@apollo/client";
 import {
   LISTEN_MESSAGE,
   MessageToUser,
@@ -22,7 +22,18 @@ import { PostSkeleton } from "../../components/skeleton/PostSkeleton";
 import { Waypoint } from "react-waypoint";
 import { Box, Grid } from "@mui/material";
 import { Contact } from "./components/Contact";
+import { GET_FRIEND_STATUS } from "../../graphql/user/subscription";
+import {
+  GetStatusUser,
+  GetStatusUserVariables,
+} from "../../graphql/user/types/GetStatusUser";
+import { POST_ORDER } from "../../graphql/post";
+import {
+  GetOrderPost,
+  GetOrderPostVariables,
+} from "../../graphql/post/types/GetOrderPost";
 type CommentGen = {
+  data?: GetStatusUser;
   commentPost?: (postId: number, commentInput: CommentInput) => Promise<void>;
 };
 export const CommentContext = createContext<CommentGen>({});
@@ -33,12 +44,17 @@ export default function Landing() {
   const { createPost } = usePostUser();
   const { addReact } = useReactPost();
   const { commentExec, loading: commentLoading, errorComment } = useComment();
+  const apolloClient = useApolloClient();
   const addReactToPost = useCallback(
     async (postId: number, reactionType: ReactionInput) => {
       await addReact(postId, user?.id as number, reactionType);
       await refetch();
     },
     [user]
+  );
+  const { data } = useSubscription<GetStatusUser, GetStatusUserVariables>(
+    GET_FRIEND_STATUS,
+    { variables: { userId: user?.id as number }, skip: !user?.id }
   );
 
   const commentPost = useCallback(
@@ -54,10 +70,33 @@ export default function Landing() {
     await createPost(data, id);
     await refetch();
   };
+
+  useEffect(() => {
+    if (
+      data &&
+      allPost &&
+      allPost.getOrderPost.find(
+        (a) =>
+          a.user.id === data.getStatusUser.id &&
+          a.user.status !== data.getStatusUser.status
+      )
+    ) {
+      apolloClient.writeQuery<GetOrderPost, GetOrderPostVariables>({
+        query: POST_ORDER,
+        data: {
+          getOrderPost: allPost.getOrderPost.map((val) =>
+            val.user.id === data.getStatusUser.id
+              ? { ...val, user: data.getStatusUser }
+              : val
+          ),
+        },
+      });
+    }
+  }, [data, allPost]);
   return (
     <Grid container sx={{ alignItems: "center", flexDirection: "column" }}>
       <PostCreateForm createPost={handleCreatePost} />
-      <CommentContext.Provider value={{ commentPost: commentPost }}>
+      <CommentContext.Provider value={{ commentPost: commentPost, data }}>
         {allPost?.getOrderPost.map((value, index) => (
           <Fragment key={value.id}>
             <PostCard
@@ -94,7 +133,7 @@ export default function Landing() {
         ))}
         {postLoading && [1, 2, 3, 4].map((i) => <PostSkeleton key={i} />)}
       </CommentContext.Provider>
-      <Contact />
+      <Contact data={data} user={user} />
     </Grid>
   );
 }

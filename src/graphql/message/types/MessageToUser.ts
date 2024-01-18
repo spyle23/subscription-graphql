@@ -13,6 +13,7 @@ export interface MessageToUser_messageToUser_User {
   firstname: string | null;
   id: number;
   photo: string | null;
+  status: boolean;
 }
 
 export interface MessageToUser_messageToUser_Receiver {
@@ -21,6 +22,7 @@ export interface MessageToUser_messageToUser_Receiver {
   lastname: string | null;
   id: number;
   photo: string | null;
+  status: boolean;
 }
 
 export interface MessageToUser_messageToUser_DiscussGroup {

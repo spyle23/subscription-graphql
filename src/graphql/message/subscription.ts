@@ -11,12 +11,14 @@ export const LISTEN_MESSAGE = gql`
         firstname
         id
         photo
+        status
       }
       Receiver {
         firstname
         lastname
         id
         photo
+        status
       }
       DiscussGroup {
         groupName
@@ -58,6 +60,7 @@ export const WRITING_MESSAGE = gql`
         id
         lastname
         firstname
+        status
       }
     }
   }

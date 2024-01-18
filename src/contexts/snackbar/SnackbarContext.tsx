@@ -101,7 +101,7 @@ export const SnackbarCustomProvider: FC<{
       <SnackbarProvider maxSnack={10}>{children}</SnackbarProvider>
       <Snackbar
         open={open}
-        autoHideDuration={5000}
+        autoHideDuration={1000}
         onClose={handleClose}
         anchorOrigin={{
           horizontal: "right",

@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface GetStatusUser_getStatusUser {
-  __typename: "UserWithStatus";
+  __typename: "User";
   status: boolean;
   lastname: string | null;
   firstname: string | null;

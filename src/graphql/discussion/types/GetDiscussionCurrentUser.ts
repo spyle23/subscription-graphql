@@ -13,6 +13,7 @@ export interface GetDiscussionCurrentUser_getDiscussionCurrentUser_User {
   firstname: string | null;
   id: number;
   photo: string | null;
+  status: boolean;
 }
 
 export interface GetDiscussionCurrentUser_getDiscussionCurrentUser_Receiver {
@@ -21,6 +22,7 @@ export interface GetDiscussionCurrentUser_getDiscussionCurrentUser_Receiver {
   lastname: string | null;
   id: number;
   photo: string | null;
+  status: boolean;
 }
 
 export interface GetDiscussionCurrentUser_getDiscussionCurrentUser_DiscussGroup {

@@ -13,7 +13,6 @@ import {
 } from "../../graphql/message";
 import { ClosedDiscussion } from "../card/ClosedDiscussion";
 import { determineUserOrGroup } from "../../pages/Message/components/PresenterMessage";
-import { login_login_data } from "../../graphql/user";
 import { ListenTheme } from "../../graphql/discussion/types/ListenTheme";
 
 type DiscussionOpenTabProps = {
@@ -59,6 +58,7 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
       }
     }
   }, [data, user]);
+
   useEffect(() => {
     if (writting?.writeMessage) {
       dispatchDiscussion({
@@ -105,6 +105,7 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
           .filter((val) => val.openMessage)
           .map((i) => (
             <DiscussionCard
+              key={i.id}
               messageToUser={
                 i.id === data?.messageToUser.id ? data.messageToUser : undefined
               }

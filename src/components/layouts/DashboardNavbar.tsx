@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   AppBar,
   Box,
@@ -11,11 +11,16 @@ import {
 } from "@mui/material";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import SearchIcon from "@mui/icons-material/Search";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import AccountCircle from "@mui/icons-material/AccountCircle";
+import GroupIcon from "@mui/icons-material/Group";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
+import { useSubscription } from "@apollo/client";
+import { REQUEST_NOTIF } from "../../graphql/friendRequest/subscription";
+import {
+  SendRequestNotif,
+  SendRequestNotifVariables,
+} from "../../graphql/friendRequest/types/SendRequestNotif";
+import { useApplicationContext } from "../../hooks";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -69,6 +74,18 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
   utilisateur,
 }): JSX.Element => {
   const navigate = useNavigate();
+  const { user } = useApplicationContext();
+  const { data } = useSubscription<SendRequestNotif, SendRequestNotifVariables>(
+    REQUEST_NOTIF,
+    { variables: { userId: user?.id as number }, skip: !user?.id }
+  );
+  const [nbrInvit, setNbrInvit] = useState<number>(0);
+
+  useEffect(() => {
+    if (data) {
+      setNbrInvit((curr) => curr + 1);
+    }
+  }, [data]);
   return (
     <AppBar>
       <Toolbar
@@ -101,16 +118,19 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
           >
             <HomeIcon />
           </IconButton>
-          {/* <IconButton
+          <IconButton
             size="large"
-            aria-label="show 4 new mails"
+            aria-label="invitations"
             color="inherit"
-            onClick={() => navigate("/subscription-graphql/landing/messages")}
+            onClick={() => {
+              setNbrInvit(0);
+              navigate("/subscription-graphql/landing/friend-requests");
+            }}
           >
-            <Badge badgeContent={4} color="error">
-              <MailIcon />
+            <Badge badgeContent={nbrInvit} color="error">
+              <GroupIcon />
             </Badge>
-          </IconButton> */}
+          </IconButton>
           {message}
           {notification}
           {utilisateur}

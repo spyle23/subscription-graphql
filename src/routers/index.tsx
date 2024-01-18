@@ -5,6 +5,8 @@ import Landing from "../pages/Landing/Landing";
 import { Message } from "../pages/Message/Message";
 import { PrivateRoute } from "./PrivateRoute";
 import { Profile } from "../pages/Profile/Profile";
+import FriendRequest from "../pages/FriendRequest/FriendRequest";
+import VideoCall from "../pages/VideoCall";
 
 const PrivateRouter = (): JSX.Element => {
   return (
@@ -12,6 +14,7 @@ const PrivateRouter = (): JSX.Element => {
       <Route index element={<Landing />} />
       <Route path="messages" element={<Message />} />
       <Route path="profil" element={<Profile />} />
+      <Route path="friend-requests" element={<FriendRequest />} />
     </Routes>
   );
 };
@@ -19,8 +22,14 @@ const PrivateRouter = (): JSX.Element => {
 export const MainRouter = (): JSX.Element => {
   return (
     <Routes>
-      <Route path="/subscription-graphql/" element={<Navigate to="landing" />} />
-      <Route path="/subscription-graphql/auth/*" element={<AuthenticationRoute />} />
+      <Route
+        path="/subscription-graphql/"
+        element={<Navigate to="landing" />}
+      />
+      <Route
+        path="/subscription-graphql/auth/*"
+        element={<AuthenticationRoute />}
+      />
       <Route
         path="/subscription-graphql/landing/*"
         element={
@@ -28,6 +37,14 @@ export const MainRouter = (): JSX.Element => {
             <ContainerWithMenu>
               <PrivateRouter />
             </ContainerWithMenu>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/subscription-graphql/call/*"
+        element={
+          <PrivateRoute>
+            <VideoCall />
           </PrivateRoute>
         }
       />

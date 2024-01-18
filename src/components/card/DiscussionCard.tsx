@@ -69,20 +69,23 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
     loading,
     fetchMore,
   } = useQuery<MessageTwoUser, MessageTwoUserVariables>(MESSAGE_TWO_USER, {
-    variables: { discussionId: discussion.id, cursor: null },
+    variables: { discussionId: discussion.id },
     skip: !discussion.id,
     notifyOnNetworkStatusChange: true,
   });
 
   useEffect(() => {
-    if (scrollRef.current && messages?.messageTwoUser) {
-      console.log("srcollRef useEffect", scrollRef.current?.scrollTop);
+    if (
+      scrollRef.current &&
+      messages?.messageTwoUser &&
+      discussion.openMessage
+    ) {
       scrollRef.current.scrollTop =
-        messages.messageTwoUser.length === 10
+        messages.messageTwoUser.length === 20
           ? scrollRef.current?.scrollHeight
-          : 608;
+          : 308;
     }
-  }, [messages]);
+  }, [messages, discussion]);
   const apolloClient = useApolloClient();
 
   useEffect(() => {

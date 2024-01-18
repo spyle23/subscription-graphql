@@ -13,6 +13,7 @@ export interface GetCommentByPost_getCommentByPost_data_User {
   lastname: string | null;
   photo: string | null;
   id: number;
+  status: boolean;
 }
 
 export interface GetCommentByPost_getCommentByPost_data_files {

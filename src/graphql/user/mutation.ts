@@ -51,3 +51,9 @@ export const DELETE_FRIEND = gql`
     deleteFriend(receiverId: $receiverId, userId: $userId)
   }
 `;
+
+export const STATUS = gql`
+  mutation ChangeStatus($status: Boolean!, $userId: Float!) {
+    changeStatus(status: $status, userId: $userId)
+  }
+`;

@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, SxProps, Theme, Typography } from "@mui/material";
 import { ContainerMessage } from "./ContainerMessage";
 import { useState, FC } from "react";
 import AddIcon from "@mui/icons-material/Add";
@@ -39,6 +39,7 @@ type FirstpageMessageProps = {
     variables?: Partial<GetDiscussionCurrentUserVariables> | undefined
   ) => Promise<ApolloQueryResult<GetDiscussionCurrentUser>>;
   onClose?: () => void;
+  sx?: SxProps<Theme>
 };
 
 export const FirstpageMessage: FC<FirstpageMessageProps> = ({
@@ -48,6 +49,7 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
   fetchMore,
   refetchMessageData,
   onClose,
+  sx
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   return (
@@ -69,6 +71,7 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
         fetchMore={fetchMore}
         selectDiscussion={onSelect}
         onClose={onClose}
+        sx={sx}
       />
       <NewMessageModal
         open={open}

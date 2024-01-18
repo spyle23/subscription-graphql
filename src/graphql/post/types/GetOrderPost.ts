@@ -15,6 +15,7 @@ export interface GetOrderPost_getOrderPost_user {
   firstname: string | null;
   photo: string | null;
   id: number;
+  status: boolean;
 }
 
 export interface GetOrderPost_getOrderPost_reactions {

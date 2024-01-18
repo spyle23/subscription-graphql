@@ -61,14 +61,22 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
     fetchMore,
     loading,
   } = useQuery<MessageTwoUser, MessageTwoUserVariables>(MESSAGE_TWO_USER, {
-    variables: { discussionId: currentDiscussion.id, cursor: null },
+    variables: { discussionId: currentDiscussion.id },
     skip: !currentDiscussion.id,
+    notifyOnNetworkStatusChange: true
   });
   useEffect(() => {
-    if (scrollRef.current && messages?.messageTwoUser) {
-      scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
+    if (
+      scrollRef.current &&
+      messages?.messageTwoUser &&
+      currentDiscussion.openMessage
+    ) {
+      scrollRef.current.scrollTop =
+        messages.messageTwoUser.length === 20
+          ? scrollRef.current?.scrollHeight
+          : 308;
     }
-  }, [messages]);
+  }, [messages, currentDiscussion]);
   useEffect(() => {
     if (
       messageToUser &&
@@ -132,12 +140,12 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
               message={message}
               user={user}
             />
-            {index === 1 && messages.messageTwoUser.length === 10 && (
+            {index === 0 && (
               <Waypoint
                 onEnter={() =>
                   fetchMore({
                     variables: {
-                      cursor: messages.messageTwoUser[1].id,
+                      cursor: messages.messageTwoUser[0].id,
                     },
                     updateQuery(previousQueryResult, { fetchMoreResult }) {
                       if (!fetchMoreResult) return previousQueryResult;

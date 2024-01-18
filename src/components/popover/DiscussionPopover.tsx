@@ -14,6 +14,13 @@ import { FC, useState } from "react";
 import { MessageGlobalApp } from "../../types/message";
 import { ThemeModal } from "../modal/ThemeModal";
 import { CustomIcon } from "../CustomIcon/CustomIcon";
+import { useMutation } from "@apollo/client";
+import {
+  CallUser,
+  CallUserVariables,
+} from "../../graphql/videoCall/types/CallUser";
+import { CALL_USER } from "../../graphql/videoCall";
+import { useApplicationContext } from "../../hooks";
 
 type DiscussionPopoverProps = {
   theme: string;
@@ -27,9 +34,26 @@ export const DiscussionPopover: FC<DiscussionPopoverProps> = ({
   currentDiscussion,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const { user } = useApplicationContext();
   const [changeTheme, setChangeTheme] = useState(false);
   const open = Boolean(anchorEl);
   const id = open ? "discussion-popover" : undefined;
+  const [exec] = useMutation<CallUser, CallUserVariables>(CALL_USER);
+  const callUser = async (discussionId: number) => {
+    if (!user) return null;
+    const { data } = await exec({
+      variables: { discussionId, userId: user.id },
+    });
+    if (data) {
+      const url =
+        import.meta.env.VITE_CLIENT_URI + `/call?token=${data.callUser}`;
+      window.open(
+        url,
+        "_blank",
+        `width=${window.screen.width}, height=${window.screen.height}`
+      );
+    }
+  };
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorEl(event.currentTarget);
   };
@@ -102,7 +126,7 @@ export const DiscussionPopover: FC<DiscussionPopoverProps> = ({
             </ListItemIcon>
             <ListItemText primary="Modifier le thème" />
           </ListItemButton>
-          <ListItemButton>
+          <ListItemButton onClick={() => callUser(currentDiscussion.id)}>
             <ListItemIcon>
               {colorIcons ? (
                 <CustomIcon

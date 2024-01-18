@@ -13,6 +13,7 @@ export interface ListenTheme_listenTheme_User {
   firstname: string | null;
   id: number;
   photo: string | null;
+  status: boolean;
 }
 
 export interface ListenTheme_listenTheme_Receiver {
@@ -21,6 +22,7 @@ export interface ListenTheme_listenTheme_Receiver {
   lastname: string | null;
   id: number;
   photo: string | null;
+  status: boolean;
 }
 
 export interface ListenTheme_listenTheme_DiscussGroup {

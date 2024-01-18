@@ -1,4 +1,4 @@
-import { LOCALSTORAGE } from "../constants";
+import { CALL, LOCALSTORAGE } from "../constants";
 import { login_login_data as IUser } from "../graphql/user/types/login";
 
 export const AuthStorage = {
@@ -16,7 +16,7 @@ export const AuthStorage = {
     return undefined;
   },
   clearToken: (callback: () => void) => {
-    if (typeof window !== undefined) localStorage.removeItem(LOCALSTORAGE);
+    if (typeof window !== undefined) localStorage.clear();
     callback();
   },
 };
@@ -39,7 +39,17 @@ export const LocalStorage = {
     return undefined;
   },
   clearToken: (callback: () => void) => {
-    if (typeof window !== undefined) localStorage.removeItem(LOCALSTORAGE);
+    localStorage.clear();
     callback();
+  },
+  setCall: (call: string, callback?: (data: string) => void) => {
+    if (typeof window !== undefined) {
+      localStorage.setItem(CALL, call);
+      return callback && callback(call);
+    }
+    return undefined;
+  },
+  getCall: () => {
+    return localStorage.getItem(CALL);
   },
 };
