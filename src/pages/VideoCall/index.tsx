@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useSubscription } from "@apollo/client";
+import {
+  useApolloClient,
+  useMutation,
+  useQuery,
+  useSubscription,
+} from "@apollo/client";
 import { Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import {
@@ -44,7 +49,9 @@ const VideoCall = () => {
   const { user } = useApplicationContext();
   const peersRef = useRef<IPeer[]>([]);
   const userVideo = useRef<HTMLVideoElement | null>(null);
+  const friendVideo = useRef<HTMLVideoElement | null>(null);
   const token = useMemo(() => location.search.split("=")[1], [location.search]);
+  const [nbr, setNbr] = useState<number>(0);
   const [callers, setCallers] = useState<IPeer[]>([]);
   const [sendSignal] = useMutation<SendSignal, SendSignalVariables>(
     SEND_SIGNAL
@@ -106,11 +113,7 @@ const VideoCall = () => {
     userId: number,
     receiverId: number
   ) => {
-    const peer = new SimplePeer({
-      initiator: false,
-      trickle: false,
-      stream,
-    });
+    const peer = new SimplePeer({ initiator: false, trickle: false, stream });
     peer.on("signal", async (signal) => {
       await returnSignal({
         variables: {
@@ -120,10 +123,31 @@ const VideoCall = () => {
         },
       });
     });
+    console.log("connect send signal");
     peer.signal(JSON.parse(signal));
 
     return peer;
   };
+
+  useEffect(() => {
+    if (
+      listenReturnSignal &&
+      nbr === 0 &&
+      callers.find(
+        (val) => val.userId === listenReturnSignal.lisenReturnSignal.receiverId
+      )
+    ) {
+      const index = callers.findIndex(
+        (val) => val.userId === listenReturnSignal.lisenReturnSignal.receiverId
+      );
+      if (index !== -1) {
+        callers[index].peer.signal(
+          JSON.parse(listenReturnSignal.lisenReturnSignal.signal)
+        );
+      }
+      setNbr(1);
+    }
+  }, [listenReturnSignal, nbr, callers]);
 
   useEffect(() => {
     navigator.mediaDevices
@@ -132,13 +156,21 @@ const VideoCall = () => {
         if (userVideo.current) {
           userVideo.current.srcObject = stream;
         }
-        if (listenSendSignal) {
+        if (
+          listenSendSignal &&
+          !peersRef.current.find(
+            (i) => i.userId === listenSendSignal.lisenSendSignal.receiverId
+          )
+        ) {
           const peer = addPeer(
             listenSendSignal.lisenSendSignal.signal,
             stream,
             listenSendSignal.lisenSendSignal.userId,
             listenSendSignal.lisenSendSignal.receiverId
           );
+          peer.on("connect", () => {
+            console.log("connecté remote");
+          });
           peersRef.current.push({
             peer,
             userId: listenSendSignal.lisenSendSignal.userId,
@@ -152,42 +184,20 @@ const VideoCall = () => {
           ]);
           return;
         }
-        if (data && user) {
-          console.log("data", data.getVideoCall.members);
+        if (data && data.getVideoCall.members.length > 0 && user) {
           const peers: IPeer[] = [];
           data.getVideoCall.members.forEach((val) => {
             const peer = createPeer(stream, user.id, val.id);
-            peersRef.current.push({ peer, userId: val.id });
+            peer.on("connect", () => {
+              console.log("connecté");
+            });
             peers.push({ peer, userId: val.id });
+            peersRef.current.push({ peer, userId: val.id });
           });
           setCallers(peers);
         }
       });
   }, [listenSendSignal, user, data]);
-
-  useEffect(() => {
-    if (listenReturnSignal) {
-      const item = peersRef.current.find(
-        (a) => a.userId === listenReturnSignal.lisenReturnSignal.userId
-      );
-      if (item) {
-        item.peer.signal(
-          JSON.parse(listenReturnSignal.lisenReturnSignal.signal)
-        );
-      }
-    }
-  }, [listenReturnSignal]);
-
-  useEffect(() => {
-    if (userVideo.current) {
-      console.log("userVideo",typeof userVideo.current.onloadedmetadata);
-      userVideo.current.onloadedmetadata = (e) => {
-        console.log("Video metadata:", e);
-        // Play the video once metadata is loaded
-        userVideo.current?.play();
-      };
-    };
-  }, [userVideo.current]);
 
   return (
     <Box>
@@ -197,9 +207,9 @@ const VideoCall = () => {
         muted
         playsInline
         style={{ width: "200px" }}
-      ></video>
-      {callers.map((val, index) => (
-        <UserMedia key={index} peer={val.peer} />
+      />
+      {callers.map((val) => (
+        <UserMedia key={val.userId} peer={val.peer} />
       ))}
     </Box>
   );
