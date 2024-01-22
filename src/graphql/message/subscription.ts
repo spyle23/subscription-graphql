@@ -32,6 +32,7 @@ export const LISTEN_MESSAGE = gql`
           lastname
           firstname
           photo
+          status
         }
         content
         files {

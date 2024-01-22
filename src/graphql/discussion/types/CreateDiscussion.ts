@@ -38,6 +38,7 @@ export interface CreateDiscussion_createDiscussion_messages_User {
   lastname: string | null;
   firstname: string | null;
   photo: string | null;
+  status: boolean;
 }
 
 export interface CreateDiscussion_createDiscussion_messages_files {

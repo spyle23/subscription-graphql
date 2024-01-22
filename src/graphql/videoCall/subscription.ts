@@ -34,9 +34,15 @@ export const LISTEN_CALL = gql`
 export const LISTEN_SEND_SIGNAL = gql`
   subscription LisenSendSignal($userId: Float!) {
     lisenSendSignal(userId: $userId) {
-      userId
-      receiverId
       signal
+      receiverId
+      user {
+        id
+        firstname
+        lastname
+        photo
+        status
+      }
     }
   }
 `;
@@ -44,9 +50,15 @@ export const LISTEN_SEND_SIGNAL = gql`
 export const LISTEN_RETURN_SIGNAL = gql`
   subscription LisenReturnSignal($userId: Float!) {
     lisenReturnSignal(userId: $userId) {
-      userId
-      receiverId
       signal
+      receiverId
+      user {
+        id
+        firstname
+        lastname
+        photo
+        status
+      }
     }
   }
 `;
@@ -66,5 +78,27 @@ export const LISTEN_LEAVE_CALL = gql`
 export const LISTEN_DENIED_CALL = gql`
   subscription Subscription($userId: Float!) {
     deniedCall(userId: $userId)
+  }
+`;
+
+export const LISTEN_TOOGLE_DEVICES = gql`
+  subscription ListenToogleDevices($userId: Float!) {
+    listenToogleDevices(userId: $userId) {
+      userId
+      audio
+      video
+    }
+  }
+`;
+
+export const JOIN_ROOM = gql`
+  subscription JoinRoom($userId: Float!) {
+    joinRoom(userId: $userId) {
+      id
+      status
+      lastname
+      firstname
+      photo
+    }
   }
 `;

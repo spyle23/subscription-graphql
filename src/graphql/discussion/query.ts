@@ -32,6 +32,7 @@ export const DISCUSSION_CURRENT_USER = gql`
           lastname
           firstname
           photo
+          status
         }
         content
         files {

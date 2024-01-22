@@ -1,9 +1,10 @@
-import { Avatar, Box, BoxProps } from "@mui/material";
+import { Avatar, Box, BoxProps, SxProps, Theme } from "@mui/material";
 import { usePhotoUrl } from "../../hooks/application/usePhotoUrl";
 import profile from "../../assets/profil.png";
 
 type DynamicAvatarProps<T> = {
   user: T;
+  avatarSx?: SxProps<Theme>;
 } & BoxProps;
 
 export const DynamicAvatar = <
@@ -13,6 +14,7 @@ export const DynamicAvatar = <
 >({
   user,
   sx,
+  avatarSx,
   ...props
 }: DynamicAvatarProps<T>) => {
   if (!user) return null;
@@ -25,7 +27,7 @@ export const DynamicAvatar = <
       <Avatar
         alt={"profile"}
         src={url ? usePhotoUrl(url) : profile}
-        sx={{ width: 36, height: 36 }}
+        sx={{ width: 36, height: 36, ...avatarSx }}
       />
       {"firstname" in user && user.status && (
         <Box

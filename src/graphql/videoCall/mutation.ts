@@ -23,7 +23,11 @@ export const SEND_SIGNAL = gql`
 `;
 
 export const RETURN_SIGNAL = gql`
-  mutation ReturnSignal($receiverId: Float!, $signal: String!, $userId: Float!) {
+  mutation ReturnSignal(
+    $receiverId: Float!
+    $signal: String!
+    $userId: Float!
+  ) {
     returnSignal(receiverId: $receiverId, signal: $signal, userId: $userId)
   }
 `;
@@ -31,5 +35,16 @@ export const RETURN_SIGNAL = gql`
 export const LEAVE_CALL = gql`
   mutation LeaveCall($token: String!, $userId: Float!) {
     leaveCall(token: $token, userId: $userId)
+  }
+`;
+
+export const TOOGLE_DEVICES = gql`
+  mutation ToogleDevices(
+    $video: Boolean!
+    $audio: Boolean!
+    $token: String!
+    $userId: Float!
+  ) {
+    toogleDevices(video: $video, audio: $audio, token: $token, userId: $userId)
   }
 `;

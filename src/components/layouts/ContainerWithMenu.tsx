@@ -1,6 +1,6 @@
 import { styled } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { FC, useCallback, useContext, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { UserMenu } from "./UserMenu";
 import { DashboardNavbar } from "./DashboardNavbar";
 import { Notifications } from "./Notifications";
@@ -24,6 +24,7 @@ import {
   HandleCallMutation,
   HandleCallMutationVariables,
 } from "../../graphql/videoCall/types/HandleCallMutation";
+import sonnerie from "../../assets/Sonnerie.mp3";
 
 type ContainerWithMenuProps = {
   children: React.ReactNode;
@@ -41,6 +42,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
 }): JSX.Element => {
   const options = useMessage();
   const location = useLocation();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { writting, data, sendMessage, listenTheme, user } = options;
   const [exec] = useMutation<ChangeStatus, ChangeStatusVariables>(STATUS);
   const { data: listenCall } = useSubscription<ListenCall, ListenCallVariables>(
@@ -54,7 +56,14 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
   const [openCaller, setOpenCaller] = useState<boolean>(false);
 
   useEffect(() => {
-    if (listenCall) {
+    if (audioRef.current) {
+      audioRef.current.src = sonnerie;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (listenCall && audioRef.current) {
+      audioRef.current.play();
       setOpenCaller(true);
     }
   }, [listenCall]);
@@ -92,6 +101,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
         `width=${window.screen.width}, height=${window.screen.height}`
       );
     }
+    audioRef.current?.pause()
     setOpenCaller(false);
   };
 
@@ -128,6 +138,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
               onClose={() => setOpenCaller(false)}
             />
           )}
+          <audio ref={audioRef} loop  />
         </Box>
       </DashboardLayoutRoot>
       <DashboardNavbar

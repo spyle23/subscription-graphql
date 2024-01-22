@@ -30,6 +30,7 @@ export const SIGNUP = gql`
         email
         firstname
         lastname
+        status
         photo
         civilite
         createdAt

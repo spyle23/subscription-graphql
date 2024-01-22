@@ -38,6 +38,7 @@ export interface MessageToUser_messageToUser_messages_User {
   lastname: string | null;
   firstname: string | null;
   photo: string | null;
+  status: boolean;
 }
 
 export interface MessageToUser_messageToUser_messages_files {

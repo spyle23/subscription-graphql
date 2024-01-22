@@ -32,6 +32,7 @@ export const CREATE_DISCUSSION = gql`
           lastname
           firstname
           photo
+          status
         }
         content
         files {

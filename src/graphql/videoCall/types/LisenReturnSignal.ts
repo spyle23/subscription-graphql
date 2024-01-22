@@ -7,11 +7,20 @@
 // GraphQL subscription operation: LisenReturnSignal
 // ====================================================
 
+export interface LisenReturnSignal_lisenReturnSignal_user {
+  __typename: "User";
+  id: number;
+  firstname: string | null;
+  lastname: string | null;
+  photo: string | null;
+  status: boolean;
+}
+
 export interface LisenReturnSignal_lisenReturnSignal {
   __typename: "SendSignalType";
-  userId: number;
-  receiverId: number;
   signal: string;
+  receiverId: number;
+  user: LisenReturnSignal_lisenReturnSignal_user;
 }
 
 export interface LisenReturnSignal {
