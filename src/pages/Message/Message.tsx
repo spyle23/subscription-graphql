@@ -13,7 +13,7 @@ export const MessageContext = createContext<MessageContexteType>({
   setCurrentDiscussion: (val) => {},
 } as MessageContexteType);
 
-export const Message = (): JSX.Element => {
+const Message = (): JSX.Element => {
   const {
     data,
     messageData,
@@ -87,7 +87,7 @@ export const Message = (): JSX.Element => {
                       ...i,
                       userDiscuss:
                         "firstname" in i.userDiscuss
-                          ? { ...i.userDiscuss, status: true }
+                          ? { ...i.userDiscuss, status: i.userDiscuss.status }
                           : i.userDiscuss,
                       newMessageNbr: i.newMessageNbr + 1,
                       messages: data.messageToUser.messages,
@@ -211,3 +211,5 @@ export const Message = (): JSX.Element => {
     </Grid>
   );
 };
+
+export default Message;

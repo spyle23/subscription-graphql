@@ -13,6 +13,7 @@ import {
   MessageTwoUserVariables,
 } from "../../graphql/message";
 import { useApolloClient, useQuery } from "@apollo/client";
+import { Writting } from "../animation/Writting";
 
 type ClosedDiscussionProps = {
   i: MessageGlobalApp;
@@ -69,7 +70,11 @@ export const ClosedDiscussion: FC<ClosedDiscussionProps> = React.memo(
         }}
       >
         <Badge badgeContent={i.newMessageNbr} color="error">
-          <DynamicAvatar user={i.userDiscuss} sx={{ mr: 0 }} />
+          <DynamicAvatar
+            user={i.userDiscuss}
+            sx={{ mr: 0 }}
+            avatarSx={{ width: 46, height: 46 }}
+          />
         </Badge>
         <CancelOutlinedIcon
           onClick={() =>
@@ -86,12 +91,18 @@ export const ClosedDiscussion: FC<ClosedDiscussionProps> = React.memo(
           }}
         />
         {i.writters && i.writters.length > 0 && (
-          <SyncLoader
-            color={theme.palette.primary.main}
-            loading
-            size={3}
-            style={{ position: "absolute", bottom: 0, left: 0 }}
-          />
+          <Box
+            sx={{
+              borderRadius: "20px",
+              backgroundColor: "lightgray",
+              width: "max-content",
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+            }}
+          >
+            <Writting dotColor={theme.palette.primary.main} />
+          </Box>
         )}
       </Box>
     );

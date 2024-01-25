@@ -15,6 +15,7 @@ export interface SendMessageDiscoussGroup_sendMessageDiscoussGroup_User {
   firstname: string | null;
   id: number;
   photo: string | null;
+  status: boolean;
 }
 
 export interface SendMessageDiscoussGroup_sendMessageDiscoussGroup_Receiver {
@@ -23,6 +24,7 @@ export interface SendMessageDiscoussGroup_sendMessageDiscoussGroup_Receiver {
   lastname: string | null;
   id: number;
   photo: string | null;
+  status: boolean;
 }
 
 export interface SendMessageDiscoussGroup_sendMessageDiscoussGroup_DiscussGroup {
@@ -38,6 +40,7 @@ export interface SendMessageDiscoussGroup_sendMessageDiscoussGroup_messages_User
   lastname: string | null;
   firstname: string | null;
   photo: string | null;
+  status: boolean;
 }
 
 export interface SendMessageDiscoussGroup_sendMessageDiscoussGroup_messages_files {

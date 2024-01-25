@@ -69,6 +69,7 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
     setUploadPicture(false);
     setOpen(false);
   };
+  if (!user) return <></>;
   return (
     <Box>
       <Card
@@ -81,7 +82,7 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
         }}
       >
         <IconButton>
-          <DynamicAvatar user={user as login_login_data} />
+          <DynamicAvatar user={user} />
         </IconButton>
         <TextField
           fullWidth

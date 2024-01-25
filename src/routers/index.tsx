@@ -1,21 +1,29 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ContainerWithMenu } from "../components/layouts/ContainerWithMenu";
-import { AuthenticationRoute } from "../pages/Authentication/AuthenticationRoute";
-import Landing from "../pages/Landing/Landing";
-import { Message } from "../pages/Message/Message";
 import { PrivateRoute } from "./PrivateRoute";
-import { Profile } from "../pages/Profile/Profile";
-import FriendRequest from "../pages/FriendRequest/FriendRequest";
-import VideoCall from "../pages/VideoCall";
+import React, { Suspense } from "react";
+import { CircularProgress } from "@mui/material";
+const VideoCall = React.lazy(() => import("../pages/VideoCall"));
+const Landing = React.lazy(() => import("../pages/Landing/Landing"));
+const Message = React.lazy(() => import("../pages/Message/Message"));
+const Profile = React.lazy(() => import("../pages/Profile/Profile"));
+const FriendRequest = React.lazy(
+  () => import("../pages/FriendRequest/FriendRequest")
+);
+const AuthenticationRoute = React.lazy(
+  () => import("../pages/Authentication/AuthenticationRoute")
+);
 
 const PrivateRouter = (): JSX.Element => {
   return (
-    <Routes>
-      <Route index element={<Landing />} />
-      <Route path="messages" element={<Message />} />
-      <Route path="profil" element={<Profile />} />
-      <Route path="friend-requests" element={<FriendRequest />} />
-    </Routes>
+    <Suspense fallback={<CircularProgress />}>
+      <Routes>
+        <Route index element={<Landing />} />
+        <Route path="messages" element={<Message />} />
+        <Route path="profil/:id/*" element={<Profile />} />
+        <Route path="friend-requests" element={<FriendRequest />} />
+      </Routes>
+    </Suspense>
   );
 };
 
@@ -28,7 +36,11 @@ export const MainRouter = (): JSX.Element => {
       />
       <Route
         path="/subscription-graphql/auth/*"
-        element={<AuthenticationRoute />}
+        element={
+          <Suspense fallback={<CircularProgress />}>
+            <AuthenticationRoute />
+          </Suspense>
+        }
       />
       <Route
         path="/subscription-graphql/landing/*"
@@ -44,7 +56,9 @@ export const MainRouter = (): JSX.Element => {
         path="/subscription-graphql/call/*"
         element={
           <PrivateRoute>
-            <VideoCall />
+            <Suspense fallback={<CircularProgress />}>
+              <VideoCall />
+            </Suspense>
           </PrivateRoute>
         }
       />

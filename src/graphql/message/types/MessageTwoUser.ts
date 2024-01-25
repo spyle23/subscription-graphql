@@ -13,6 +13,7 @@ export interface MessageTwoUser_messageTwoUser_User {
   lastname: string | null;
   firstname: string | null;
   photo: string | null;
+  status: boolean;
 }
 
 export interface MessageTwoUser_messageTwoUser_files {

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
-import { Box, Grid, IconButton } from "@mui/material";
+import { Box, Grid, IconButton, Tooltip } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import {
   GetVideoCall,
@@ -414,10 +414,7 @@ const VideoCall = () => {
                 alignItems: "center",
               }}
             >
-              <DynamicAvatar
-                user={{ ...user, status: true }}
-                avatarSx={{ width: 56, height: 56 }}
-              />
+              <DynamicAvatar user={user} avatarSx={{ width: 56, height: 56 }} />
             </Box>
           )}
         </Grid>
@@ -447,7 +444,14 @@ const VideoCall = () => {
           ))}
         </Grid>
       </Grid>
-      <Box sx={{ display: "flex", justifyContent: "center", position: "sticky", bottom: "16px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          position: "sticky",
+          bottom: "16px",
+        }}
+      >
         <Box
           sx={{
             width: { xs: "90%", md: "50%" },
@@ -458,26 +462,41 @@ const VideoCall = () => {
             justifyContent: "center",
           }}
         >
-          <IconButton onClick={toogleVoice} sx={{ mr: 1 }}>
-            {audio ? (
-              <KeyboardVoiceIcon sx={{ fill: "white" }} />
-            ) : (
-              <MicOffIcon sx={{ fill: "white" }} />
-            )}
-          </IconButton>
-          <IconButton onClick={toogleCam} sx={{ mr: 1 }}>
-            {video ? (
-              <VideocamIcon sx={{ fill: "white" }} />
-            ) : (
-              <VideocamOffIcon sx={{ fill: "white" }} />
-            )}
-          </IconButton>
-          <IconButton sx={{ mr: 1 }}>
-            <PresentToAllIcon sx={{ fill: "white" }} />
-          </IconButton>
-          <IconButton onClick={endCall} sx={{ backgroundColor: "red", mr: 1 }}>
-            <CallEndIcon sx={{ fill: "white" }} />
-          </IconButton>
+          <Tooltip
+            title={`${audio ? "désactiver le micro" : "activer le micro"}`}
+          >
+            <IconButton onClick={toogleVoice} sx={{ mr: 1 }}>
+              {audio ? (
+                <KeyboardVoiceIcon sx={{ fill: "white" }} />
+              ) : (
+                <MicOffIcon sx={{ fill: "white" }} />
+              )}
+            </IconButton>
+          </Tooltip>
+          <Tooltip
+            title={`${video ? "désactiver la camera" : "activer la caméra"}`}
+          >
+            <IconButton onClick={toogleCam} sx={{ mr: 1 }}>
+              {video ? (
+                <VideocamIcon sx={{ fill: "white" }} />
+              ) : (
+                <VideocamOffIcon sx={{ fill: "white" }} />
+              )}
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="partager son écran">
+            <IconButton sx={{ mr: 1 }}>
+              <PresentToAllIcon sx={{ fill: "white" }} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Racrocher">
+            <IconButton
+              onClick={endCall}
+              sx={{ backgroundColor: "red", mr: 1 }}
+            >
+              <CallEndIcon sx={{ fill: "white" }} />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
     </Box>

@@ -45,7 +45,7 @@ export const UserMenu: FC = (): JSX.Element => {
         edge="end"
         onClick={handleClick}
       >
-        <DynamicAvatar user={{ ...user, status: true }} />
+        <DynamicAvatar user={user} />
       </IconButton>
       <Popover
         id={id}
@@ -78,7 +78,9 @@ export const UserMenu: FC = (): JSX.Element => {
           >
             <Divider />
             <ListItemButton
-              onClick={() => navigate("/subscription-graphql/landing/profil")}
+              onClick={() =>
+                navigate(`/subscription-graphql/landing/profil/${user.id}`)
+              }
             >
               <ListItemIcon>
                 <AccountCircleIcon />

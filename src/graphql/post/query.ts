@@ -1,23 +1,31 @@
 import { gql } from "@apollo/client";
 
 export const POST_BY_USER = gql`
-  query PostByUser($userId: Float!) {
-    postByUser(userId: $userId) {
-      reactions {
-        reactionType
-        userId
-        id
-      }
-      files {
-        name
-        extension
-        id
-        url
-      }
+  query PostByUser($userId: Float!, $cursor: Float) {
+    postByUser(userId: $userId, cursor: $cursor) {
+      id
       description
       createdAt
       updatedAt
-      id
+      nbComments
+      user {
+        lastname
+        firstname
+        photo
+        id
+        status
+      }
+      reactions {
+        id
+        reactionType
+        userId
+      }
+      files {
+        id
+        name
+        url
+        extension
+      }
     }
   }
 `;

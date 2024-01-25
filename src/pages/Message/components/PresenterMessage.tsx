@@ -1,11 +1,14 @@
 import { FC } from "react";
 import { Box, Grid, GridProps, Typography, useTheme } from "@mui/material";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
-import { MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup } from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { login_login_data } from "../../../graphql/user";
-import { GetDiscussionCurrentUser_getDiscussionCurrentUser_User } from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
+import {
+  GetDiscussionCurrentUser_getDiscussionCurrentUser_DiscussGroup,
+  GetDiscussionCurrentUser_getDiscussionCurrentUser_User,
+} from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
 import { MessageGlobalApp } from "../../../types/message";
 import { SyncLoader } from "react-spinners";
+import { Writting } from "../../../components/animation/Writting";
 type PresenterMessageProps = {
   user?: login_login_data;
   discussion: MessageGlobalApp;
@@ -15,7 +18,7 @@ export const determineUserOrGroup = (
   user: login_login_data,
   owner: GetDiscussionCurrentUser_getDiscussionCurrentUser_User,
   receiver: GetDiscussionCurrentUser_getDiscussionCurrentUser_User | null,
-  discussGroup: MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup | null
+  discussGroup: GetDiscussionCurrentUser_getDiscussionCurrentUser_DiscussGroup | null
 ) => {
   if (discussGroup) {
     return discussGroup;
@@ -77,13 +80,13 @@ export const PresenterMessage: FC<PresenterMessageProps> = ({
         {discussion.writters && discussion.writters.length > 0 ? (
           <Box
             sx={{
-              p: 1,
+              px: 1,
               borderRadius: "20px",
               backgroundColor: "lightgray",
               width: "max-content",
             }}
           >
-            <SyncLoader color={theme.palette.primary.main} loading size={5} />
+            <Writting dotColor={theme.palette.primary.main} />
           </Box>
         ) : (
           <Box

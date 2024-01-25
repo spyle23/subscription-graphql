@@ -9,29 +9,40 @@ import { ReactionType } from "./../../../types/graphql-types";
 // GraphQL query operation: PostByUser
 // ====================================================
 
+export interface PostByUser_postByUser_user {
+  __typename: "User";
+  lastname: string | null;
+  firstname: string | null;
+  photo: string | null;
+  id: number;
+  status: boolean;
+}
+
 export interface PostByUser_postByUser_reactions {
   __typename: "Reaction";
+  id: number;
   reactionType: ReactionType;
   userId: number;
-  id: number;
 }
 
 export interface PostByUser_postByUser_files {
   __typename: "FileExt";
-  name: string;
-  extension: string;
   id: number;
+  name: string;
   url: string;
+  extension: string;
 }
 
 export interface PostByUser_postByUser {
   __typename: "PostDisplay";
-  reactions: PostByUser_postByUser_reactions[] | null;
-  files: PostByUser_postByUser_files[];
+  id: number;
   description: string;
   createdAt: any;
   updatedAt: any;
-  id: number;
+  nbComments: number;
+  user: PostByUser_postByUser_user;
+  reactions: PostByUser_postByUser_reactions[] | null;
+  files: PostByUser_postByUser_files[];
 }
 
 export interface PostByUser {
@@ -40,4 +51,5 @@ export interface PostByUser {
 
 export interface PostByUserVariables {
   userId: number;
+  cursor?: number | null;
 }

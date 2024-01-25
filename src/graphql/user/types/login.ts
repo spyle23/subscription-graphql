@@ -14,6 +14,7 @@ export interface login_login_data {
   email: string;
   firstname: string | null;
   lastname: string | null;
+  status: boolean;
   photo: string | null;
   civilite: string | null;
   createdAt: any;

@@ -23,12 +23,14 @@ export const SEND_MESSAGE = gql`
         firstname
         id
         photo
+        status
       }
       Receiver {
         firstname
         lastname
         id
         photo
+        status
       }
       DiscussGroup {
         groupName
@@ -42,6 +44,7 @@ export const SEND_MESSAGE = gql`
           lastname
           firstname
           photo
+          status
         }
         content
         files {

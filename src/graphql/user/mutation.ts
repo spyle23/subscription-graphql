@@ -11,6 +11,7 @@ export const LOGIN = gql`
         email
         firstname
         lastname
+        status
         photo
         civilite
         createdAt

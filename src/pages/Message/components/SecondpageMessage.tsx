@@ -1,17 +1,10 @@
-import {
-  Box,
-  BoxProps,
-  CircularProgress,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, BoxProps, CircularProgress, Typography } from "@mui/material";
 import { FC, Fragment, useEffect, useMemo, useRef } from "react";
 import { HeaderMessage } from "./HeaderMessage";
 import { MessageItem } from "./MessageItem";
 import { MessageInput } from "../../../types/graphql-types";
 import { useApplicationContext } from "../../../hooks";
 import { MessageForm } from "./MessageForm";
-import { WriteMessage } from "../../../graphql/message/types/WriteMessage";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
 import { SyncLoader } from "react-spinners";
 import { MessageGlobalApp } from "../../../types/message";
@@ -25,6 +18,7 @@ import {
 } from "../../../graphql/message";
 import { ListenTheme_listenTheme } from "../../../graphql/discussion/types/ListenTheme";
 import { Waypoint } from "react-waypoint";
+import { Writting } from "../../../components/animation/Writting";
 
 type SecondpageMessageProps = {
   currentDiscussion: MessageGlobalApp;
@@ -63,7 +57,7 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
   } = useQuery<MessageTwoUser, MessageTwoUserVariables>(MESSAGE_TWO_USER, {
     variables: { discussionId: currentDiscussion.id },
     skip: !currentDiscussion.id,
-    notifyOnNetworkStatusChange: true
+    notifyOnNetworkStatusChange: true,
   });
   useEffect(() => {
     if (
@@ -189,7 +183,7 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
               {currentDiscussion.writters.map((val) => (
                 <DynamicAvatar user={val} sx={{ mr: 1 }} />
               ))}
-              <SyncLoader color={currentDiscussion.theme} loading size={5} />
+              <Writting dotColor={currentDiscussion.theme} />
             </Box>
           )}
       </Box>

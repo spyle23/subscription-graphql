@@ -24,6 +24,7 @@ import { IReactions } from "../../types/IReactions";
 import { reactions } from "../../constants/reactions";
 import { DynamicAvatar } from "../Avatar/DynamicAvatar";
 import { ContainerDisplay } from "../media/ContainerDisplay";
+import { useNavigate } from "react-router-dom";
 
 type PostCardProps = {
   post: GetOrderPost_getOrderPost;
@@ -44,6 +45,7 @@ export const PostCard: FC<PostCardProps> = ({
   ...cardProps
 }) => {
   const [showComment, setShowComment] = useState<boolean>(false);
+  const navigate = useNavigate();
   const [show, setShow] = useState<boolean>(false);
   const userReact = useMemo(
     () => post?.reactions?.find((react) => react.userId === user?.id),
@@ -93,7 +95,17 @@ export const PostCard: FC<PostCardProps> = ({
           avatar={<DynamicAvatar user={post.user} />}
           title={
             <>
-              <Typography variant="h5">{displayName}</Typography>
+              <Typography
+                onClick={() =>
+                  navigate(
+                    `/subscription-graphql/landing/profil/${post.user.id}`
+                  )
+                }
+                variant="h5"
+                sx={{ cursor: "pointer" }}
+              >
+                {displayName}
+              </Typography>
               <Typography>
                 {moment(new Date(post?.updatedAt || post?.createdAt))
                   .startOf("second")

@@ -34,6 +34,7 @@ import { extractColorFromGradient } from "../../utils/theme";
 import { CustomIcon } from "../CustomIcon/CustomIcon";
 import { ListenTheme_listenTheme } from "../../graphql/discussion/types/ListenTheme";
 import { Waypoint } from "react-waypoint";
+import { Writting } from "../animation/Writting";
 
 type DiscussionCardProps = {
   discussion: MessageGlobalApp;
@@ -276,7 +277,7 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
             {discussion.writters.map((val) => (
               <DynamicAvatar key={val.id} user={val} sx={{ mr: 1 }} />
             ))}
-            <SyncLoader color={discussion.theme} loading size={5} />
+            <Writting dotColor={discussion.theme} />
           </Box>
         )}
       </CardContent>

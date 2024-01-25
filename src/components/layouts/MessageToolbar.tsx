@@ -1,18 +1,10 @@
 import MailIcon from "@mui/icons-material/Mail";
-import { Badge, IconButton, Popover, Typography, Box } from "@mui/material";
-import React, { useEffect, useMemo, useState, useContext, FC } from "react";
+import { Badge, IconButton, Popover, Box } from "@mui/material";
+import React, { useEffect, useState, useContext, FC } from "react";
 import { FirstpageMessage } from "../../pages/Message/components/FirstpageMessage";
 import { DiscussionContext } from "../../contexts/message";
-import {
-  MessageToUser,
-  MessageTwoUser,
-  MessageTwoUserVariables,
-} from "../../graphql/message";
+import { MessageToUser } from "../../graphql/message";
 import { ApolloQueryResult } from "@apollo/client";
-import {
-  MessagesOfCurrentUser,
-  MessagesOfCurrentUserVariables,
-} from "../../graphql/message/types/MessagesOfCurrentUser";
 import { determineUserOrGroup } from "../../pages/Message/components/PresenterMessage";
 import { login_login_data } from "../../graphql/user";
 import { WriteMessage } from "../../graphql/message/types/WriteMessage";
@@ -83,7 +75,7 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
                       ...i,
                       userDiscuss:
                         "status" in i.userDiscuss
-                          ? { ...i.userDiscuss, status: true }
+                          ? { ...i.userDiscuss, status: i.userDiscuss.status }
                           : i.userDiscuss,
                       newMessageNbr: i.newMessageNbr + 1,
                       messages: data.messageToUser.messages,
@@ -162,7 +154,6 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
       });
     }
   }, [messageData, data, writting]);
-
 
   const handleSelect = (
     data: GetDiscussionCurrentUser_getDiscussionCurrentUser

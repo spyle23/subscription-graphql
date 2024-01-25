@@ -1,12 +1,7 @@
-import { useCallback, FC } from "react";
-import { Box, IconButton, TextField, useTheme } from "@mui/material";
-import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import { FC } from "react";
+import { Box, IconButton, TextField } from "@mui/material";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { useForm } from "react-hook-form";
-import { useFileUploader } from "../../../hooks/application/useFileUploader";
-import { useFileDeleter } from "../../../hooks/application/useFileDeleter";
-import { useDropzone } from "react-dropzone";
 import { MessageInput } from "../../../types/graphql-types";
 import { useMutation } from "@apollo/client";
 import {
@@ -24,6 +19,8 @@ import { ContainerDisplay } from "../../../components/media/ContainerDisplay";
 import { MessageGlobalApp } from "../../../types/message";
 import { CustomIcon } from "../../../components/CustomIcon/CustomIcon";
 import { extractColorFromGradient } from "../../../utils/theme";
+import { makeStyles } from "@mui/styles";
+import { DefaultTheme } from "@mui/system";
 
 type MessageFormProps = {
   theme: string;
@@ -38,6 +35,26 @@ type MessageFormProps = {
   user?: login_login_data;
 };
 
+type StyleProps = {
+  hoverColor: string;
+  focusedColor: string;
+};
+
+const useStyles = makeStyles<DefaultTheme, StyleProps, "customTextField">(
+  (theme) => ({
+    customTextField: (props) => ({
+      "& .MuiOutlinedInput-root": {
+        "&:hover fieldset.Mui-OutlinedInput-notchedOutline": {
+          borderColor: props.hoverColor || "initial",
+        },
+        "&.Mui-focused fieldset.Mui-OutlinedInput-notchedOutline": {
+          borderColor: props.focusedColor || "initial",
+        },
+      },
+    }),
+  })
+);
+
 export const MessageForm: FC<MessageFormProps> = ({
   sendMessage,
   theme,
@@ -49,7 +66,10 @@ export const MessageForm: FC<MessageFormProps> = ({
   const [writeMessage] = useMutation<WrittingCheck, WrittingCheckVariables>(
     WRITTING_CHECK
   );
-
+  const classes = useStyles({
+    hoverColor: discussion.theme,
+    focusedColor: discussion.theme,
+  });
   const colorIcons = extractColorFromGradient(theme);
 
   const handleFocus = async (isWritting: boolean) => {
@@ -105,6 +125,7 @@ export const MessageForm: FC<MessageFormProps> = ({
         <TextField
           {...register("content")}
           variant="outlined"
+          className={classes.customTextField}
           InputProps={{
             sx: {
               borderRadius: "25px !important",
@@ -113,7 +134,11 @@ export const MessageForm: FC<MessageFormProps> = ({
           onFocus={async () => await handleFocus(true)}
           onBlur={async () => await handleFocus(false)}
           placeholder="votre message ..."
-          sx={{ width: "80%", borderImage: theme, borderImageSlice: 1 }}
+          sx={{
+            width: "80%",
+            borderImage: theme,
+            borderImageSlice: 1,
+          }}
         />
         <IconButton type="submit">
           {colorIcons ? (

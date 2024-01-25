@@ -9,6 +9,7 @@ export const MESSAGE_TWO_USER = gql`
         lastname
         firstname
         photo
+        status
       }
       content
       files {

@@ -1,5 +1,5 @@
 import { FC, memo, useEffect, useMemo, useRef, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import { IPeer } from "..";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
 import MicOffIcon from "@mui/icons-material/MicOff";
@@ -82,14 +82,18 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val, devices }) => {
         >
           <DynamicAvatar user={user} avatarSx={{ width: 56, height: 56 }} />
           {!mediaDevice.audio && (
-            <MicOffIcon
-              sx={{
-                fill: "white",
-                position: "absolute",
-                bottom: "10px",
-                left: "10px",
-              }}
-            />
+            <Tooltip
+              title={`${user.firstname} ${user.lastname} a coupé son micro`}
+            >
+              <MicOffIcon
+                sx={{
+                  fill: "white",
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "10px",
+                }}
+              />
+            </Tooltip>
           )}
         </Box>
       )}

@@ -4,10 +4,6 @@ import {
   GetDiscussionCurrentUser_getDiscussionCurrentUser_User,
 } from "../graphql/discussion/types/GetDiscussionCurrentUser";
 import { MessageToUser } from "../graphql/message";
-import {
-  MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup,
-  MessagesOfCurrentUser_messagesOfCurrentUser_User,
-} from "../graphql/message/types/MessagesOfCurrentUser";
 import { WriteMessage_writeMessage } from "../graphql/message/types/WriteMessage";
 
 export type MessageContexteType = {

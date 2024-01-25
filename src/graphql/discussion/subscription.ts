@@ -32,6 +32,7 @@ export const LISTEN_THEME = gql`
           lastname
           firstname
           photo
+          status
         }
         content
         files {

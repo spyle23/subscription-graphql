@@ -38,6 +38,7 @@ export interface ListenTheme_listenTheme_messages_User {
   lastname: string | null;
   firstname: string | null;
   photo: string | null;
+  status: boolean;
 }
 
 export interface ListenTheme_listenTheme_messages_files {
