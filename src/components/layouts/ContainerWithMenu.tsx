@@ -33,7 +33,6 @@ type ContainerWithMenuProps = {
 const DashboardLayoutRoot = styled("div")(() => ({
   display: "flex",
   flex: "1 1 auto",
-  width: "100vw",
   paddingTop: 64,
 }));
 
@@ -56,13 +55,8 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
   const [openCaller, setOpenCaller] = useState<boolean>(false);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.src = sonnerie;
-    }
-  }, []);
-
-  useEffect(() => {
     if (listenCall && audioRef.current) {
+      console.log(audioRef.current);
       audioRef.current.play();
       setOpenCaller(true);
     }
@@ -101,7 +95,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
         `width=${window.screen.width}, height=${window.screen.height}`
       );
     }
-    audioRef.current?.pause()
+    audioRef.current?.pause();
     setOpenCaller(false);
   };
 
@@ -138,7 +132,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
               onClose={() => setOpenCaller(false)}
             />
           )}
-          <audio ref={audioRef} loop  />
+          <audio src={sonnerie} ref={audioRef} loop />
         </Box>
       </DashboardLayoutRoot>
       <DashboardNavbar

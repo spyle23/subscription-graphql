@@ -10,6 +10,7 @@ import {
 import AdjustIcon from "@mui/icons-material/Adjust";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import VideocamIcon from "@mui/icons-material/Videocam";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { FC, useState } from "react";
 import { MessageGlobalApp } from "../../types/message";
 import { ThemeModal } from "../modal/ThemeModal";
@@ -21,6 +22,7 @@ import {
 } from "../../graphql/videoCall/types/CallUser";
 import { CALL_USER } from "../../graphql/videoCall";
 import { useApplicationContext } from "../../hooks";
+import { useNavigate } from "react-router-dom";
 
 type DiscussionPopoverProps = {
   theme: string;
@@ -36,6 +38,7 @@ export const DiscussionPopover: FC<DiscussionPopoverProps> = ({
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { user } = useApplicationContext();
   const [changeTheme, setChangeTheme] = useState(false);
+  const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const id = open ? "discussion-popover" : undefined;
   const [exec] = useMutation<CallUser, CallUserVariables>(CALL_USER);
@@ -143,6 +146,33 @@ export const DiscussionPopover: FC<DiscussionPopoverProps> = ({
             </ListItemIcon>
             <ListItemText primary="Appel vidéo" />
           </ListItemButton>
+          {"firstname" in currentDiscussion.userDiscuss && (
+            <ListItemButton
+              onClick={() =>
+                navigate(
+                  `/subscription-graphql/landing/profil/${currentDiscussion.userDiscuss.id}`
+                )
+              }
+            >
+              <ListItemIcon>
+                {colorIcons ? (
+                  <CustomIcon
+                    color1={colorIcons[0]}
+                    color2={colorIcons[1]}
+                    type={
+                      theme.split("-")[0] === "linear" ? "linear" : "radial"
+                    }
+                    id={`AccountBoxIcon`}
+                  >
+                    <AccountBoxIcon sx={{ fill: `url(#AccountBoxIcon)` }} />
+                  </CustomIcon>
+                ) : (
+                  <AccountBoxIcon sx={{ fill: theme }} />
+                )}
+              </ListItemIcon>
+              <ListItemText primary="Voir le profil" />
+            </ListItemButton>
+          )}
         </List>
       </Popover>
       <ThemeModal

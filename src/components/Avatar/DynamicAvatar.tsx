@@ -1,6 +1,7 @@
 import { Avatar, Box, BoxProps, SxProps, Theme } from "@mui/material";
 import { usePhotoUrl } from "../../hooks/application/usePhotoUrl";
 import profile from "../../assets/profil.png";
+import defaultGroup from "../../assets/defaultGroup.jpg";
 
 type DynamicAvatarProps<T> = {
   user: T;
@@ -18,7 +19,12 @@ export const DynamicAvatar = <
   ...props
 }: DynamicAvatarProps<T>) => {
   if (!user) return null;
-  const url = "groupName" in user ? user.coverPhoto : user.photo;
+  const urlGroup =
+    "groupName" in user && user.coverPhoto
+      ? usePhotoUrl(user.coverPhoto)
+      : defaultGroup;
+  const urlUser =
+    "firstname" in user && user.photo ? usePhotoUrl(user.photo) : profile;
   return (
     <Box
       sx={{ mr: 1, position: "relative", height: "max-content", ...sx }}
@@ -26,7 +32,7 @@ export const DynamicAvatar = <
     >
       <Avatar
         alt={"profile"}
-        src={url ? usePhotoUrl(url) : profile}
+        src={"groupName" in user ? urlGroup : urlUser}
         sx={{ width: 36, height: 36, ...avatarSx }}
       />
       {"firstname" in user && user.status && (

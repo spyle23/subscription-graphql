@@ -11,6 +11,7 @@ import { FC } from "react";
 import { GetRequest_getRequest_User } from "../../../graphql/friendRequest/types/GetRequest";
 import { usePhotoUrl } from "../../../hooks/application/usePhotoUrl";
 import defaultProfil from "../../../assets/profil.png";
+import { useNavigate } from "react-router-dom";
 
 type InvitationCardProps = {
   user: GetRequest_getRequest_User;
@@ -23,9 +24,14 @@ export const InvitationCard: FC<InvitationCardProps> = ({
   actions,
   ...props
 }) => {
+  const navigate = useNavigate();
   return (
     <Card elevation={1} sx={{ borderRadius: "15px", ...sx }} {...props}>
       <CardMedia
+        onClick={() =>
+          navigate(`/subscription-graphql/landing/profil/${user.id}`)
+        }
+        sx={{ cursor: "pointer" }}
         component="img"
         height="209"
         src={user.photo ? usePhotoUrl(user.photo) : defaultProfil}
@@ -35,9 +41,7 @@ export const InvitationCard: FC<InvitationCardProps> = ({
           {user.firstname + " " + user.lastname}
         </Typography>
       </CardContent>
-      <CardActions sx={{ justifyContent: "center" }} >
-        {actions}
-      </CardActions>
+      <CardActions sx={{ justifyContent: "center" }}>{actions}</CardActions>
     </Card>
   );
 };

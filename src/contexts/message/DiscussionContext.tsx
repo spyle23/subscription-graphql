@@ -31,6 +31,7 @@ const reducerMessageGlobal = (
               theme:
                 i.theme !== action.value.theme ? action.value.theme : i.theme,
               messages: action.value.messages,
+              openMessage: action.value.openMessage,
               newMessageNbr:
                 i.theme !== action.value.theme
                   ? 0

@@ -21,17 +21,21 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val, devices }) => {
     [devices]
   );
   const { peer, user } = val;
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const audioRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     peer.on("stream", (stream) => {
+      console.log("str", stream);
       if (ref.current && "srcObject" in ref.current) {
         ref.current.srcObject = stream;
       }
     });
     peer.on("data", (data) => {
       const dataString = new TextDecoder("utf-8").decode(data);
-      console.log(JSON.parse(dataString).isSpeaking);
-      setIsSpeaking(JSON.parse(dataString).isSpeaking);
+      if (audioRef.current) {
+        JSON.parse(dataString).isSpeaking
+          ? audioRef.current.classList.add("is-speaking")
+          : audioRef.current.classList.remove("is-speaking");
+      }
     });
   }, []);
 
@@ -68,7 +72,8 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val, devices }) => {
       </Box>
       {!mediaDevice.video && (
         <Box
-          className={`${isSpeaking ? "is-speaking" : ""}`}
+          ref={audioRef}
+          // className={`${isSpeaking ? "is-speaking" : ""}`}
           sx={{
             backgroundColor: "lightgrey",
             display: "flex",

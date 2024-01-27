@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Card,
+  CircularProgress,
   Container,
   Grid,
   IconButton,
@@ -24,28 +25,43 @@ import { Upload_upload } from "../../graphql/file";
 import profilImage from "../../assets/profil.png";
 import { Route, Routes, useParams } from "react-router-dom";
 import { Profile_profile_relation } from "../../graphql/user";
-import { UserInfo } from "./components/UserInfo";
-import { UserFriends } from "./components/UserFriends";
-import { ContainerPost } from "./components/ContainerPost";
-import { ProfileInfoSkeleton } from "../../components/skeleton/ProfileInfoSkeleton";
-import { FriendSkeleton } from "../../components/skeleton/FriendSkeleton";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PeopleIcon from "@mui/icons-material/People";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import { UserAbout } from "./UserAbout";
 import { ProfilFriends } from "./ProfilFriends";
+import {
+  HandleFriendRequest,
+  HandleFriendRequestVariables,
+} from "../../graphql/friendRequest/types/HandleFriendRequest";
+import {
+  HANDLE_FRIEND_REQUEST,
+  SEND_FRIEND_REQUEST,
+} from "../../graphql/friendRequest/mutations";
+import { useMutation } from "@apollo/client";
+import {
+  SendFriendRequest,
+  SendFriendRequestVariables,
+} from "../../graphql/friendRequest/types/SendFriendRequest";
 
-const determineText = (relation?: Profile_profile_relation | null) => {
+const determineText = (
+  relation?: Profile_profile_relation | null,
+  userId?: number,
+  relationUserId?: number
+) => {
   switch (relation?.status) {
     case RequestStatus.PENDING:
       return {
-        label: "Invitation envoyée",
+        label:
+          userId === relationUserId
+            ? "Invitation envoyée"
+            : "Confirmer l'invitation",
         icon: <HowToRegIcon sx={{ fill: "white" }} />,
       };
     case RequestStatus.ACCEPTED:
       return {
         label: "Ami",
-        icon: <PeopleIcon sx={{ fill: "white" }} />,
+        icon: <PeopleIcon color="primary" />,
       };
     default:
       return {
@@ -59,6 +75,14 @@ const Profile = (): JSX.Element => {
   const theme = useTheme();
   const { id } = useParams();
   const { user, setUser } = useApplicationContext();
+  const [responseRequest, { loading: responseLoading }] = useMutation<
+    HandleFriendRequest,
+    HandleFriendRequestVariables
+  >(HANDLE_FRIEND_REQUEST);
+  const [sendRequest, { loading: sendLoading }] = useMutation<
+    SendFriendRequest,
+    SendFriendRequestVariables
+  >(SEND_FRIEND_REQUEST);
   const {
     data: userInfo,
     refetch,
@@ -84,6 +108,30 @@ const Profile = (): JSX.Element => {
     if (user && newUser.profile) {
       setUser({ ...user, photo: newUser.profile?.user.photo });
     }
+  };
+  const { icon, label } = determineText(
+    userInfo?.relation,
+    user?.id,
+    userInfo?.relation?.userId
+  );
+  const handleRequestFriend = async () => {
+    if (!user || !userInfo?.user) return;
+    if (userInfo.relation) {
+      await responseRequest({
+        variables: {
+          friendRequestId: userInfo.relation?.id,
+          status:
+            label === "Confirmer l'invitation"
+              ? RequestStatus.ACCEPTED
+              : RequestStatus.DENIED,
+        },
+      });
+    } else {
+      await sendRequest({
+        variables: { userId: user?.id, receiverId: userInfo.user.id },
+      });
+    }
+    await refetch();
   };
   return (
     <Container>
@@ -134,11 +182,25 @@ const Profile = (): JSX.Element => {
       </Typography>
       {id && parseFloat(id) !== user?.id && (
         <Box sx={{ display: "flex", justifyContent: "center", my: 1 }}>
-          <Button variant="contained" sx={{ textTransform: "none" }}>
-            <Typography sx={{ color: "white", mr: 1 }}>
-              {determineText(userInfo?.relation).label}
-            </Typography>
-            {determineText(userInfo?.relation).icon}
+          <Button
+            onClick={handleRequestFriend}
+            variant={label === "Ami" ? "outlined" : "contained"}
+            sx={{ textTransform: "none" }}
+          >
+            {sendLoading || responseLoading ? (
+              <CircularProgress sx={{ fill: "white" }} />
+            ) : (
+              <Typography
+                sx={{
+                  color: (theme) =>
+                    label === "Ami" ? theme.palette.primary.main : "white",
+                  mr: 1,
+                }}
+              >
+                {label}
+              </Typography>
+            )}
+            {icon}
           </Button>
         </Box>
       )}

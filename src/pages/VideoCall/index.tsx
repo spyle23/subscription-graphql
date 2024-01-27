@@ -73,11 +73,13 @@ const VideoCall = () => {
   const { user, dispatchSnack } = useApplicationContext();
   const [video, setVideo] = useState<boolean>(true);
   const [audio, setAudio] = useState<boolean>(true);
-  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  // const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const audioRef = useRef<HTMLDivElement | null>(null);
   const peersRef = useRef<IPeer[]>([]);
   const userVideo = useRef<HTMLVideoElement | null>(null);
   const token = useMemo(() => location.search.split("=")[1], [location.search]);
   const [nbr, setNbr] = useState<number>(0);
+  const [nbrListen, setNbrListen] = useState<number>(0);
   const [callers, setCallers] = useState<IPeer[]>([]);
   const [sendSignal] = useMutation<SendSignal, SendSignalVariables>(
     SEND_SIGNAL
@@ -227,7 +229,7 @@ const VideoCall = () => {
   }, [listenReturnSignal, nbr, callers]);
 
   useEffect(() => {
-    if (audio) {
+    if (audio && !video) {
       let mediaStream: MediaStream;
       let audioContext: AudioContext;
 
@@ -259,7 +261,14 @@ const VideoCall = () => {
             peersRef.current.forEach((val) => {
               val.peer.send(JSON.stringify({ isSpeaking: average > 50 }));
             });
-            setIsSpeaking(average > 50);
+            // setIsSpeaking(average > 50);
+            if (audioRef.current) {
+              if (average > 50) {
+                audioRef.current.classList.add("is-speaking");
+              } else {
+                audioRef.current.classList.remove("is-speaking");
+              }
+            }
 
             requestAnimationFrame(detectSpeaking);
           };
@@ -280,7 +289,7 @@ const VideoCall = () => {
         }
       };
     }
-  }, [audio]);
+  }, [audio, video]);
 
   useEffect(() => {
     navigator.mediaDevices
@@ -291,11 +300,10 @@ const VideoCall = () => {
         }
         if (
           listenSendSignal &&
-          !peersRef.current.find(
-            (i) => i.user.id === listenSendSignal.lisenSendSignal.receiverId
+          !callers.find(
+            (i) => i.user.id === listenSendSignal.lisenSendSignal.user.id
           )
         ) {
-          console.log("item");
           const peer = addPeer(
             listenSendSignal.lisenSendSignal.signal,
             stream,
@@ -316,9 +324,13 @@ const VideoCall = () => {
               user: listenSendSignal.lisenSendSignal.user,
             },
           ]);
-          return;
-        }
-        if (data && data.getVideoCall.members.length > 0 && user) {
+          setNbrListen(1);
+        } else if (
+          data &&
+          data.getVideoCall.members.length > 0 &&
+          user &&
+          nbrListen === 0
+        ) {
           const peers: IPeer[] = [];
           data.getVideoCall.members.forEach((val) => {
             const peer = createPeer(stream, user.id, val.id);
@@ -329,9 +341,10 @@ const VideoCall = () => {
             peersRef.current.push({ peer, user: val });
           });
           setCallers(peers);
+          setNbrListen(1);
         }
       });
-  }, [listenSendSignal, user, data]);
+  }, [listenSendSignal, user, data, callers, nbrListen]);
 
   useEffect(() => {
     if (video) {
@@ -380,6 +393,16 @@ const VideoCall = () => {
     setVideo((curr) => !curr);
   };
 
+  const handleScreen = () => {
+    navigator.mediaDevices
+      .getDisplayMedia({ video: true, audio: true })
+      .then((str) => {
+        peersRef.current.forEach((val) => {
+          val.peer.addStream(str);
+        });
+      });
+  };
+
   return (
     <Box>
       <Grid container>
@@ -403,7 +426,7 @@ const VideoCall = () => {
             />
           ) : (
             <Box
-              className={`${isSpeaking && audio ? "is-speaking" : ""}`}
+              ref={audioRef}
               sx={{
                 width: { xs: "80%", md: "100%" },
                 height: { xs: "200px", md: "100%" },
@@ -485,7 +508,7 @@ const VideoCall = () => {
             </IconButton>
           </Tooltip>
           <Tooltip title="partager son écran">
-            <IconButton sx={{ mr: 1 }}>
+            <IconButton onClick={handleScreen} sx={{ mr: 1 }}>
               <PresentToAllIcon sx={{ fill: "white" }} />
             </IconButton>
           </Tooltip>

@@ -131,8 +131,8 @@ export default function Landing() {
               )}
           </Fragment>
         ))}
-        {postLoading && [1, 2, 3, 4].map((i) => <PostSkeleton key={i} />)}
       </CommentContext.Provider>
+      {postLoading && [1, 2, 3, 4].map((i) => <PostSkeleton key={i} />)}
       <Contact data={data} user={user} />
     </Grid>
   );

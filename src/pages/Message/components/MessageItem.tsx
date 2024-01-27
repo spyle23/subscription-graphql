@@ -1,5 +1,12 @@
 import { FC } from "react";
-import { Box, Card, CardProps, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardProps,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { login_login_data } from "../../../graphql/user";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
 import { MessageTwoUser_messageTwoUser } from "../../../graphql/message";
@@ -39,10 +46,21 @@ export const MessageItem: FC<MessageItemProps> = ({
             <MoreVertIcon />
           </IconButton>
         )}
-        <DynamicAvatar
-          user={message.User}
-          sx={{ display: user?.id === message.User.id ? "none" : "block" }}
-        />
+        <Tooltip
+          placement="top"
+          title={
+            message.discussGroupId
+              ? `${message.User.firstname} ${message.User.lastname}`
+              : undefined
+          }
+        >
+          <Box>
+            <DynamicAvatar
+              user={message.User}
+              sx={{ display: user?.id === message.User.id ? "none" : "block" }}
+            />
+          </Box>
+        </Tooltip>
         <Card
           elevation={1}
           {...props}

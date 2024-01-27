@@ -77,7 +77,7 @@ export const CommentContainer: FC<CommentContainerProps> = ({ idPost }) => {
   return (
     <Box
       sx={{
-        width: { xs: "100%", md: 500 },
+        width: { xs: "95%", md: 500 },
         height: comments?.length && comments.length > 2 ? 300 : "max-content",
         overflowY: "auto",
         position: "relative",
