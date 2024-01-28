@@ -8,31 +8,30 @@ import "../index.css";
 
 type UserMediaProps = {
   val: IPeer;
-  devices?: ListenToogleDevices_listenToogleDevices;
 };
 
-export const UserMedia: FC<UserMediaProps> = memo(({ val, devices }) => {
+export const UserMedia: FC<UserMediaProps> = memo(({ val }) => {
   const ref = useRef<HTMLVideoElement | null>(null);
-  const mediaDevice = useMemo(
-    () =>
-      devices
-        ? { audio: devices.audio, video: devices.video }
-        : { audio: true, video: true },
-    [devices]
-  );
+  const [audio, setAudio] = useState(true);
+  const [video, setVideo] = useState(true);
   const { peer, user } = val;
   const audioRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    peer.on("stream", (stream) => {
+  peer.on("stream", (stream) => {
+    if (ref.current) {
       console.log("str", stream);
-      if (ref.current && "srcObject" in ref.current) {
-        ref.current.srcObject = stream;
-      }
-    });
+      ref.current.srcObject = stream;
+    }
+  });
+  useEffect(() => {
     peer.on("data", (data) => {
       const dataString = new TextDecoder("utf-8").decode(data);
-      if (audioRef.current) {
-        JSON.parse(dataString).isSpeaking
+      const valueObject = JSON.parse(dataString);
+      if ("audio" in valueObject) {
+        setAudio(valueObject.audio);
+      } else if ("video" in valueObject) {
+        setVideo(valueObject.video);
+      } else if (audioRef.current && "isSpeaking" in valueObject) {
+        valueObject.isSpeaking
           ? audioRef.current.classList.add("is-speaking")
           : audioRef.current.classList.remove("is-speaking");
       }
@@ -56,10 +55,10 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val, devices }) => {
           sx={{
             borderRadius: "15px",
             height: { xs: undefined, md: "300px" },
-            display: mediaDevice.video ? "block" : "none",
+            display: video ? "block" : "none",
           }}
         />
-        {!mediaDevice.audio && (
+        {!audio && (
           <MicOffIcon
             sx={{
               fill: "white",
@@ -70,10 +69,9 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val, devices }) => {
           />
         )}
       </Box>
-      {!mediaDevice.video && (
+      {!video && (
         <Box
           ref={audioRef}
-          // className={`${isSpeaking ? "is-speaking" : ""}`}
           sx={{
             backgroundColor: "lightgrey",
             display: "flex",
@@ -86,7 +84,7 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val, devices }) => {
           }}
         >
           <DynamicAvatar user={user} avatarSx={{ width: 56, height: 56 }} />
-          {!mediaDevice.audio && (
+          {!audio && (
             <Tooltip
               title={`${user.firstname} ${user.lastname} a coupé son micro`}
             >

@@ -55,10 +55,6 @@ import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import { DynamicAvatar } from "../../components/Avatar/DynamicAvatar";
 import "./index.css";
 import {
-  ToogleDevices,
-  ToogleDevicesVariables,
-} from "../../graphql/videoCall/types/ToogleDevices";
-import {
   ListenToogleDevices,
   ListenToogleDevicesVariables,
 } from "../../graphql/videoCall/types/ListenToogleDevices";
@@ -73,27 +69,15 @@ const VideoCall = () => {
   const { user, dispatchSnack } = useApplicationContext();
   const [video, setVideo] = useState<boolean>(true);
   const [audio, setAudio] = useState<boolean>(true);
-  // const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const audioRef = useRef<HTMLDivElement | null>(null);
   const peersRef = useRef<IPeer[]>([]);
   const userVideo = useRef<HTMLVideoElement | null>(null);
   const token = useMemo(() => location.search.split("=")[1], [location.search]);
-  const [nbr, setNbr] = useState<number>(0);
   const [nbrListen, setNbrListen] = useState<number>(0);
   const [callers, setCallers] = useState<IPeer[]>([]);
   const [sendSignal] = useMutation<SendSignal, SendSignalVariables>(
     SEND_SIGNAL
   );
-  const [toogleDevices] = useMutation<ToogleDevices, ToogleDevicesVariables>(
-    TOOGLE_DEVICES
-  );
-  const { data: listenToogleDevices } = useSubscription<
-    ListenToogleDevices,
-    ListenToogleDevicesVariables
-  >(LISTEN_TOOGLE_DEVICES, {
-    variables: { userId: user?.id as number },
-    skip: !user?.id,
-  });
   const [exec] = useMutation<LeaveCall, LeaveCallVariables>(LEAVE_CALL);
   const { data: listenLeaveCall } = useSubscription<
     LisenLeaveCall,
@@ -191,7 +175,7 @@ const VideoCall = () => {
 
   useEffect(() => {
     if (listenLeaveCall) {
-      peersRef.current.filter(
+      peersRef.current = [...peersRef.current].filter(
         (a) => a.user.id !== listenLeaveCall.lisenLeaveCall.id
       );
       setCallers((curr) =>
@@ -211,11 +195,11 @@ const VideoCall = () => {
   useEffect(() => {
     if (
       listenReturnSignal &&
-      nbr === 0 &&
-      callers.find(
+      peersRef.current.find(
         (val) => val.user.id === listenReturnSignal.lisenReturnSignal.receiverId
       )
     ) {
+      console.log("listenReturn Signal");
       const index = callers.findIndex(
         (val) => val.user.id === listenReturnSignal.lisenReturnSignal.receiverId
       );
@@ -224,9 +208,8 @@ const VideoCall = () => {
           JSON.parse(listenReturnSignal.lisenReturnSignal.signal)
         );
       }
-      setNbr(1);
     }
-  }, [listenReturnSignal, nbr, callers]);
+  }, [listenReturnSignal]);
 
   useEffect(() => {
     if (audio && !video) {
@@ -300,7 +283,7 @@ const VideoCall = () => {
         }
         if (
           listenSendSignal &&
-          !callers.find(
+          !peersRef.current.find(
             (i) => i.user.id === listenSendSignal.lisenSendSignal.user.id
           )
         ) {
@@ -324,7 +307,6 @@ const VideoCall = () => {
               user: listenSendSignal.lisenSendSignal.user,
             },
           ]);
-          setNbrListen(1);
         } else if (
           data &&
           data.getVideoCall.members.length > 0 &&
@@ -344,7 +326,7 @@ const VideoCall = () => {
           setNbrListen(1);
         }
       });
-  }, [listenSendSignal, user, data, callers, nbrListen]);
+  }, [listenSendSignal, user, data, nbrListen]);
 
   useEffect(() => {
     if (video) {
@@ -369,11 +351,9 @@ const VideoCall = () => {
     window.close();
   };
 
-  const toogleVoice = async () => {
-    await toogleDevices({
-      variables: { token, userId: user.id, audio: !audio, video },
-    });
+  const toogleVoice = () => {
     peersRef.current.map((val) => {
+      val.peer.send(JSON.stringify({ audio: !audio }));
       val.peer.streams[0].getAudioTracks().forEach((track) => {
         track.enabled = !audio;
       });
@@ -381,11 +361,9 @@ const VideoCall = () => {
     setAudio((curr) => !curr);
   };
 
-  const toogleCam = async () => {
-    await toogleDevices({
-      variables: { token, userId: user.id, audio, video: !video },
-    });
+  const toogleCam = () => {
     peersRef.current.map((val) => {
+      val.peer.send(JSON.stringify({ video: !video }));
       val.peer.streams[0].getVideoTracks().forEach((track) => {
         track.enabled = !video;
       });
@@ -449,21 +427,13 @@ const VideoCall = () => {
             p: 1,
             overflowY: "auto",
             display: "flex",
+            flexFlow: "row wrap",
             justifyContent: "center",
             height: { md: "90vh" },
           }}
         >
           {callers.map((val) => (
-            <UserMedia
-              key={val.user.id}
-              val={val}
-              devices={
-                listenToogleDevices &&
-                listenToogleDevices.listenToogleDevices.userId === val.user.id
-                  ? listenToogleDevices.listenToogleDevices
-                  : undefined
-              }
-            />
+            <UserMedia key={val.user.id} val={val} />
           ))}
         </Grid>
       </Grid>
