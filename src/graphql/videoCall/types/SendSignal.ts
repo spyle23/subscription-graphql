@@ -15,4 +15,6 @@ export interface SendSignalVariables {
   receiverId: number;
   signal: string;
   userId: number;
+  audio: boolean;
+  video: boolean;
 }

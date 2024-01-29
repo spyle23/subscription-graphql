@@ -1,9 +1,8 @@
-import { FC, memo, useEffect, useMemo, useRef, useState } from "react";
+import { FC, memo, useEffect, useRef, useState } from "react";
 import { Box, Tooltip } from "@mui/material";
 import { IPeer } from "..";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
 import MicOffIcon from "@mui/icons-material/MicOff";
-import { ListenToogleDevices_listenToogleDevices } from "../../../graphql/videoCall/types/ListenToogleDevices";
 import "../index.css";
 
 type UserMediaProps = {
@@ -12,16 +11,33 @@ type UserMediaProps = {
 
 export const UserMedia: FC<UserMediaProps> = memo(({ val }) => {
   const ref = useRef<HTMLVideoElement | null>(null);
+  const { peer, user, audio: defaultAudio, video: defaultVideo } = val;
+  const [stream, setStream] = useState<MediaStream>();
   const [audio, setAudio] = useState(true);
   const [video, setVideo] = useState(true);
-  const { peer, user } = val;
-  const audioRef = useRef<HTMLDivElement | null>(null);
-  peer.on("stream", (stream) => {
-    if (ref.current) {
-      console.log("str", stream);
-      ref.current.srcObject = stream;
+  useEffect(() => {
+    if (stream) {
+      stream.getAudioTracks().forEach((track) => {
+        track.enabled = audio;
+      });
+      stream.getVideoTracks().forEach((track) => {
+        track.enabled = video;
+      });
     }
-  });
+  }, [audio, video, stream]);
+  useEffect(() => {
+    setAudio(defaultAudio);
+    setVideo(defaultVideo);
+  }, [defaultAudio, defaultVideo]);
+  const audioRef = useRef<HTMLDivElement | null>(null);
+  if (!stream) {
+    peer.on("stream", (str) => {
+      if (ref.current) {
+        ref.current.srcObject = str;
+        setStream(str);
+      }
+    });
+  }
   useEffect(() => {
     peer.on("data", (data) => {
       const dataString = new TextDecoder("utf-8").decode(data);
@@ -39,7 +55,7 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val }) => {
   }, []);
 
   return (
-    <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+    <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mb: 1 }}>
       <Box
         sx={{
           position: "relative",

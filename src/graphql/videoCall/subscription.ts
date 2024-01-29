@@ -36,6 +36,8 @@ export const LISTEN_SEND_SIGNAL = gql`
     lisenSendSignal(userId: $userId) {
       signal
       receiverId
+      audio
+      video
       user {
         id
         firstname
@@ -52,6 +54,8 @@ export const LISTEN_RETURN_SIGNAL = gql`
     lisenReturnSignal(userId: $userId) {
       signal
       receiverId
+      audio
+      video
       user {
         id
         firstname
@@ -78,16 +82,6 @@ export const LISTEN_LEAVE_CALL = gql`
 export const LISTEN_DENIED_CALL = gql`
   subscription Subscription($userId: Float!) {
     deniedCall(userId: $userId)
-  }
-`;
-
-export const LISTEN_TOOGLE_DEVICES = gql`
-  subscription ListenToogleDevices($userId: Float!) {
-    listenToogleDevices(userId: $userId) {
-      userId
-      audio
-      video
-    }
   }
 `;
 

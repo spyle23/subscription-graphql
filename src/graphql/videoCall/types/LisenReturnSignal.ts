@@ -20,6 +20,8 @@ export interface LisenReturnSignal_lisenReturnSignal {
   __typename: "SendSignalType";
   signal: string;
   receiverId: number;
+  audio: boolean;
+  video: boolean;
   user: LisenReturnSignal_lisenReturnSignal_user;
 }
 

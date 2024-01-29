@@ -12,10 +12,8 @@ import {
   LISTEN_LEAVE_CALL,
   LISTEN_RETURN_SIGNAL,
   LISTEN_SEND_SIGNAL,
-  LISTEN_TOOGLE_DEVICES,
   RETURN_SIGNAL,
   SEND_SIGNAL,
-  TOOGLE_DEVICES,
 } from "../../graphql/videoCall";
 import { useApplicationContext } from "../../hooks";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -54,14 +52,12 @@ import MicOffIcon from "@mui/icons-material/MicOff";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import { DynamicAvatar } from "../../components/Avatar/DynamicAvatar";
 import "./index.css";
-import {
-  ListenToogleDevices,
-  ListenToogleDevicesVariables,
-} from "../../graphql/videoCall/types/ListenToogleDevices";
 
 export type IPeer = {
   user: LisenSendSignal_lisenSendSignal_user;
   peer: SimplePeer.Instance;
+  audio: boolean;
+  video: boolean;
 };
 
 const VideoCall = () => {
@@ -128,6 +124,8 @@ const VideoCall = () => {
       await sendSignal({
         variables: {
           signal: JSON.stringify(signal),
+          audio,
+          video,
           receiverId,
           userId,
         },
@@ -148,6 +146,8 @@ const VideoCall = () => {
       await returnSignal({
         variables: {
           signal: JSON.stringify(signal),
+          audio,
+          video,
           receiverId,
           userId,
         },
@@ -208,6 +208,17 @@ const VideoCall = () => {
           JSON.parse(listenReturnSignal.lisenReturnSignal.signal)
         );
       }
+      setCallers((curr) =>
+        curr.map((i) =>
+          i.user.id === listenReturnSignal.lisenReturnSignal.receiverId
+            ? {
+                ...i,
+                audio: listenReturnSignal.lisenReturnSignal.audio,
+                video: listenReturnSignal.lisenReturnSignal.video,
+              }
+            : i
+        )
+      );
     }
   }, [listenReturnSignal]);
 
@@ -299,12 +310,16 @@ const VideoCall = () => {
           peersRef.current.push({
             peer,
             user: listenSendSignal.lisenSendSignal.user,
+            audio: listenSendSignal.lisenSendSignal.audio,
+            video: listenSendSignal.lisenSendSignal.video,
           });
           setCallers((val) => [
             ...val,
             {
               peer,
               user: listenSendSignal.lisenSendSignal.user,
+              audio: listenSendSignal.lisenSendSignal.audio,
+              video: listenSendSignal.lisenSendSignal.video,
             },
           ]);
         } else if (
@@ -319,8 +334,13 @@ const VideoCall = () => {
             peer.on("connect", () => {
               console.log("connecté");
             });
-            peers.push({ peer, user: val });
-            peersRef.current.push({ peer, user: val });
+            peers.push({ peer, user: val, audio: true, video: true });
+            peersRef.current.push({
+              peer,
+              user: val,
+              audio: true,
+              video: true,
+            });
           });
           setCallers(peers);
           setNbrListen(1);

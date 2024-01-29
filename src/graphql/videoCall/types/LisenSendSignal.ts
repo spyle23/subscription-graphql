@@ -20,6 +20,8 @@ export interface LisenSendSignal_lisenSendSignal {
   __typename: "SendSignalType";
   signal: string;
   receiverId: number;
+  audio: boolean;
+  video: boolean;
   user: LisenSendSignal_lisenSendSignal_user;
 }
 
