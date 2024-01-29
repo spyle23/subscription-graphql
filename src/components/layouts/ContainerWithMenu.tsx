@@ -56,7 +56,6 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
 
   useEffect(() => {
     if (listenCall && audioRef.current) {
-      console.log(audioRef.current);
       audioRef.current.play();
       setOpenCaller(true);
     }

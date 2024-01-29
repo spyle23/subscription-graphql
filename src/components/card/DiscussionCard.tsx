@@ -275,7 +275,21 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
         {discussion.writters && discussion.writters.length > 0 && (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             {discussion.writters.map((val) => (
-              <DynamicAvatar key={val.id} user={val} sx={{ mr: 1 }} />
+              <DynamicAvatar
+                key={val.id}
+                user={val}
+                sx={{ mr: 1 }}
+                avatarSx={{
+                  width:
+                    discussion.writters && discussion.writters.length > 3
+                      ? 24
+                      : 36,
+                  height:
+                    discussion.writters && discussion.writters.length > 3
+                      ? 24
+                      : 36,
+                }}
+              />
             ))}
             <Writting dotColor={discussion.theme} />
           </Box>

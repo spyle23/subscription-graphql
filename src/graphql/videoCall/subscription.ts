@@ -84,15 +84,3 @@ export const LISTEN_DENIED_CALL = gql`
     deniedCall(userId: $userId)
   }
 `;
-
-export const JOIN_ROOM = gql`
-  subscription JoinRoom($userId: Float!) {
-    joinRoom(userId: $userId) {
-      id
-      status
-      lastname
-      firstname
-      photo
-    }
-  }
-`;

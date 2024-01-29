@@ -7,6 +7,7 @@ const VideoCall = React.lazy(() => import("../pages/VideoCall"));
 const Landing = React.lazy(() => import("../pages/Landing/Landing"));
 const Message = React.lazy(() => import("../pages/Message/Message"));
 const Profile = React.lazy(() => import("../pages/Profile/Profile"));
+const NotFound = React.lazy(() => import("../pages/NotFound"));
 const FriendRequest = React.lazy(
   () => import("../pages/FriendRequest/FriendRequest")
 );
@@ -22,6 +23,7 @@ const PrivateRouter = (): JSX.Element => {
         <Route path="messages" element={<Message />} />
         <Route path="profil/:id/*" element={<Profile />} />
         <Route path="friend-requests" element={<FriendRequest />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   );
@@ -62,6 +64,7 @@ export const MainRouter = (): JSX.Element => {
           </PrivateRoute>
         }
       />
+      <Route path="/subscription-graphql/*" element={<NotFound />} />
     </Routes>
   );
 };

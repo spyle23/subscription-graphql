@@ -39,9 +39,26 @@ import {
   GetDiscussionCurrentUser,
   GetDiscussionCurrentUserVariables,
 } from "../../graphql/discussion/types/GetDiscussionCurrentUser";
+import { DynamicAvatar } from "../Avatar/DynamicAvatar";
+import {
+  GetFriendOfCurrentUser,
+  GetFriendOfCurrentUserVariables,
+  GetFriendOfCurrentUser_getFriendOfCurrentUser,
+} from "../../graphql/friendRequest/types/GetFriendOfCurrentUser";
+import { GET_FRIEND } from "../../graphql/friendRequest/query";
+import { Waypoint } from "react-waypoint";
+import { CommentSkeleton } from "../skeleton/CommentSkeleton";
+import { SendMessageDiscoussGroup_sendMessageDiscoussGroup } from "../../graphql/message";
 
 type NewMessageModalProps = {
   open: boolean;
+  sendMessage: (
+    data: MessageInput,
+    userId: number,
+    discussionId: number,
+    receiverId?: number | null | undefined,
+    discussGroupId?: number | null | undefined
+  ) => Promise<SendMessageDiscoussGroup_sendMessageDiscoussGroup | undefined>;
   refetchMessage: (
     variables?: Partial<GetDiscussionCurrentUserVariables> | undefined
   ) => Promise<ApolloQueryResult<GetDiscussionCurrentUser>>;
@@ -50,22 +67,35 @@ type NewMessageModalProps = {
 
 export const NewMessageModal: FC<NewMessageModalProps> = ({
   open,
+  sendMessage,
   onClose,
   refetchMessage,
 }): JSX.Element => {
   const theme = useTheme();
   const { user } = useApplicationContext();
-  const { sendMessage } = useSendMessage();
-  const { data: allUser } = useQuery<AllUser>(ALL_USER);
+  const {
+    data: friends,
+    loading,
+    fetchMore,
+  } = useQuery<GetFriendOfCurrentUser, GetFriendOfCurrentUserVariables>(
+    GET_FRIEND,
+    {
+      variables: { userId: user?.id as number, cursor: null },
+      skip: !user?.id,
+      notifyOnNetworkStatusChange: true,
+    }
+  );
   const { createGroup, data: groupeCreated } = useCreateGroup();
   const [exec, { data }] = useMutation<
     CreateDiscussion,
     CreateDiscussionVariables
   >(CREATE_DISCUSSION);
-  const { register, reset, getValues, watch, onFinished } =
+  const { register, reset, getValues, watch, onFinished, dropFile } =
     useUploadForm<MessageInput>();
   const [step, setStep] = useState<number>(0);
-  const [selected, setSelected] = useState<AllUser_allUser[]>([]);
+  const [selected, setSelected] = useState<
+    GetFriendOfCurrentUser_getFriendOfCurrentUser[]
+  >([]);
 
   const handleDefineStep = async () => {
     if (step === 0) {
@@ -91,8 +121,8 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
       ? messageInput
       : { ...messageInput, files: [] };
     await sendMessage(
-      user?.id as number,
       newMessageInput,
+      user?.id as number,
       groupeCreated
         ? groupeCreated.createDiscussGroup.Discussion.id
         : (data?.createDiscussion.id as number),
@@ -108,7 +138,9 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
     setStep(0);
   };
 
-  const handleSelect = (user: AllUser_allUser) => {
+  const handleSelect = (
+    user: GetFriendOfCurrentUser_getFriendOfCurrentUser
+  ) => {
     setSelected((prevSelected) => {
       if (prevSelected.find((select) => select.id === user.id)) {
         return prevSelected.filter((select) => select.id !== user.id);
@@ -119,7 +151,10 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle sx={{ width: { xs: 300, md: 600 } }}>
+      <DialogTitle
+        variant="h4"
+        sx={{ width: { xs: 300, md: 600 }, textAlign: "center" }}
+      >
         nouveau message
         <IconButton
           aria-label="close"
@@ -139,33 +174,56 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
             <Typography>
               Choisissez le(s) personne(s) à qui vous voulez envoyer un message
             </Typography>
-            <Box>
-              {allUser?.allUser?.map((user) => (
-                <Box key={user.id} sx={{ my: 1 }}>
+            <Box sx={{ height: 350, overflowY: "auto" }}>
+              {friends?.getFriendOfCurrentUser.map((a, index) => (
+                <Box key={a.id} sx={{ my: 1 }}>
                   <FormControlLabel
                     control={<Checkbox />}
-                    onChange={(
-                      event: React.SyntheticEvent<Element, Event>,
-                      checked: boolean
-                    ) => {
-                      handleSelect(user);
+                    onChange={() => {
+                      handleSelect(a);
                     }}
                     label={
                       <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Avatar src={user.photo || ""} sx={{ mr: 1 }} />
+                        <DynamicAvatar user={a} />
                         <Typography>
-                          {user.firstname + " " + user.lastname}
+                          {a.firstname + " " + a.lastname}
                         </Typography>
                       </Box>
                     }
                   />
+                  {index === friends?.getFriendOfCurrentUser.length - 1 &&
+                    friends?.getFriendOfCurrentUser.length === 10 && (
+                      <Waypoint
+                        onEnter={() =>
+                          fetchMore({
+                            variables: {
+                              userId: user?.id as number,
+                              cursor: friends?.getFriendOfCurrentUser[index].id,
+                            },
+                            updateQuery(
+                              previousQueryResult,
+                              { fetchMoreResult }
+                            ) {
+                              if (!fetchMoreResult) return previousQueryResult;
+                              return {
+                                getFriendOfCurrentUser: [
+                                  ...previousQueryResult.getFriendOfCurrentUser,
+                                  ...fetchMoreResult.getFriendOfCurrentUser,
+                                ],
+                              };
+                            },
+                          })
+                        }
+                      />
+                    )}
                 </Box>
               ))}
+              {loading && [1, 2, 3].map((val) => <CommentSkeleton key={val} />)}
             </Box>
           </Box>
         ) : (
           <Box>
-            <Box sx={{ display: "flex" }}>
+            <Box sx={{ display: "flex", my: 1 }}>
               <CustomUpload onFinished={onFinished}>
                 <IconButton>
                   <CollectionsIcon sx={{ fill: theme.palette.primary.main }} />
@@ -182,7 +240,7 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
                 sx={{ width: "80%" }}
               />
             </Box>
-            <ContainerDisplay data={watch().files} />
+            <ContainerDisplay data={watch().files} deleteFile={dropFile} />
           </Box>
         )}
       </DialogContent>

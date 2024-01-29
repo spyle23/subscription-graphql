@@ -3,8 +3,15 @@ import { Badge, IconButton, Popover, Box } from "@mui/material";
 import React, { useEffect, useState, useContext, FC } from "react";
 import { FirstpageMessage } from "../../pages/Message/components/FirstpageMessage";
 import { DiscussionContext } from "../../contexts/message";
-import { MessageToUser } from "../../graphql/message";
-import { ApolloQueryResult } from "@apollo/client";
+import {
+  MessageToUser,
+  SendMessageDiscoussGroup_sendMessageDiscoussGroup,
+} from "../../graphql/message";
+import {
+  ApolloQueryResult,
+  FetchMoreQueryOptions,
+  OperationVariables,
+} from "@apollo/client";
 import { determineUserOrGroup } from "../../pages/Message/components/PresenterMessage";
 import { login_login_data } from "../../graphql/user";
 import { WriteMessage } from "../../graphql/message/types/WriteMessage";
@@ -15,12 +22,33 @@ import {
   GetDiscussionCurrentUser_getDiscussionCurrentUser,
 } from "../../graphql/discussion/types/GetDiscussionCurrentUser";
 import { MessageGlobalApp } from "../../types/message";
+import { MessageInput } from "../../types/graphql-types";
 
 type MessageToolbarProps = {
   user?: login_login_data;
   data: MessageToUser | undefined;
   loading: boolean;
-  fetchMore: any;
+  sendMessage: (
+    data: MessageInput,
+    userId: number,
+    discussionId: number,
+    receiverId?: number | null | undefined,
+    discussGroupId?: number | null | undefined
+  ) => Promise<SendMessageDiscoussGroup_sendMessageDiscoussGroup | undefined>;
+  fetchMore: <
+    TFetchData = GetDiscussionCurrentUser,
+    TFetchVars extends OperationVariables = GetDiscussionCurrentUserVariables
+  >(
+    fetchMoreOptions: FetchMoreQueryOptions<TFetchVars, TFetchData> & {
+      updateQuery?: (
+        previousQueryResult: GetDiscussionCurrentUser,
+        options: {
+          fetchMoreResult: TFetchData;
+          variables: TFetchVars;
+        }
+      ) => GetDiscussionCurrentUser;
+    }
+  ) => Promise<ApolloQueryResult<TFetchData>>;
   writting?: WriteMessage;
   messageData: GetDiscussionCurrentUser | undefined;
   refetchMessageData: (
@@ -32,6 +60,7 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
   user,
   writting,
   loading,
+  sendMessage,
   fetchMore,
   refetchMessageData,
   messageData,
@@ -150,7 +179,21 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
             })
           );
         }
-        return curr;
+        return curr.map((val) => {
+          for (let discussionItem of messageData.getDiscussionCurrentUser) {
+            if (
+              discussionItem.id === val.id &&
+              discussionItem.messages[0].id > val.messages[0].id
+            ) {
+              return {
+                ...val,
+                newMessageNbr: 0,
+                messages: discussionItem.messages,
+              };
+            }
+          }
+          return val;
+        });
       });
     }
   }, [messageData, data, writting]);
@@ -209,6 +252,7 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
             fetchMore={fetchMore}
             discussions={discussions}
             onSelect={handleSelect}
+            sendMessage={sendMessage}
             refetchMessageData={refetchMessageData}
             onClose={handleClose}
           />

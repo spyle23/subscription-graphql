@@ -15,10 +15,19 @@ import {
   GetDiscussionCurrentUser_getDiscussionCurrentUser,
 } from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
 import { MessageGlobalApp } from "../../../types/message";
+import { MessageInput } from "../../../types/graphql-types";
+import { SendMessageDiscoussGroup_sendMessageDiscoussGroup } from "../../../graphql/message";
 
 type FirstpageMessageProps = {
   discussions: MessageGlobalApp[];
   loading: boolean;
+  sendMessage: (
+    data: MessageInput,
+    userId: number,
+    discussionId: number,
+    receiverId?: number | null | undefined,
+    discussGroupId?: number | null | undefined
+  ) => Promise<SendMessageDiscoussGroup_sendMessageDiscoussGroup | undefined>;
   fetchMore: <
     TFetchData = GetDiscussionCurrentUser,
     TFetchVars extends OperationVariables = GetDiscussionCurrentUserVariables
@@ -39,17 +48,18 @@ type FirstpageMessageProps = {
     variables?: Partial<GetDiscussionCurrentUserVariables> | undefined
   ) => Promise<ApolloQueryResult<GetDiscussionCurrentUser>>;
   onClose?: () => void;
-  sx?: SxProps<Theme>
+  sx?: SxProps<Theme>;
 };
 
 export const FirstpageMessage: FC<FirstpageMessageProps> = ({
   discussions,
   onSelect,
+  sendMessage,
   loading,
   fetchMore,
   refetchMessageData,
   onClose,
-  sx
+  sx,
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   return (
@@ -75,6 +85,7 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
       />
       <NewMessageModal
         open={open}
+        sendMessage={sendMessage}
         onClose={() => setOpen(false)}
         refetchMessage={refetchMessageData}
       />

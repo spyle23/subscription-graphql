@@ -27,6 +27,7 @@ type ContactProps = {
 };
 
 export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
+  const [cursor, setCursor] = useState<number | null>(null);
   const {
     data: friends,
     loading,
@@ -34,7 +35,7 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
   } = useQuery<GetFriendOfCurrentUser, GetFriendOfCurrentUserVariables>(
     GET_FRIEND,
     {
-      variables: { userId: user?.id as number, status: true },
+      variables: { userId: user?.id as number, status: true, cursor: null },
       skip: !user?.id,
       notifyOnNetworkStatusChange: true,
     }
@@ -61,7 +62,7 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
         GetFriendOfCurrentUserVariables
       >({
         query: GET_FRIEND,
-        variables: { userId: user.id, status: true },
+        variables: { userId: user.id, status: true, cursor: cursor },
         data: {
           getFriendOfCurrentUser: data.getStatusUser.status
             ? [data.getStatusUser, ...friends.getFriendOfCurrentUser]
@@ -71,7 +72,7 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
         },
       });
     }
-  }, [data, user, friends]);
+  }, [data, user, friends, cursor]);
   const handleSelect = async (val: GetStatusUser_getStatusUser) => {
     if (!user) return;
     const { data } = await exec({
@@ -104,7 +105,6 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
         right: "10px",
         display: { xs: "none", md: "block" },
         width: "25vw",
-        height: "85vh",
         bottom: "10px",
         p: 1,
       }}
@@ -112,7 +112,7 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
       <Typography variant="h3" sx={{ textAlign: "center", my: 1 }}>
         Contacts
       </Typography>
-      <Box sx={{ height: "90%", overflowY: "auto" }}>
+      <Box sx={{ height: "78vh", overflowY: "auto" }}>
         {friends?.getFriendOfCurrentUser
           .filter((i) => i.status)
           .map((val) => (
@@ -134,11 +134,23 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
               <Typography>{val.firstname + " " + val.lastname}</Typography>
             </Box>
           ))}
-        {friends?.getFriendOfCurrentUser.length === 10 && (
+        {friends && friends.getFriendOfCurrentUser.length % 10 === 0 && (
           <Box
-            onClick={() =>
+            onClick={() => {
+              setCursor(
+                friends.getFriendOfCurrentUser[
+                  friends.getFriendOfCurrentUser.length - 1
+                ].id
+              );
               fetchMore({
-                variables: { userId: user?.id as number, status: true },
+                variables: {
+                  userId: user?.id as number,
+                  status: true,
+                  cursor:
+                    friends.getFriendOfCurrentUser[
+                      friends.getFriendOfCurrentUser.length - 1
+                    ].id,
+                },
                 updateQuery: (previousQueryResult, { fetchMoreResult }) => {
                   if (!fetchMoreResult) return previousQueryResult;
                   return {
@@ -148,8 +160,8 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
                     ],
                   };
                 },
-              })
-            }
+              });
+            }}
             sx={{
               display: "flex",
               justifyContent: "center",

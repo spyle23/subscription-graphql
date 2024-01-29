@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
-import { Box, Grid, IconButton, Tooltip } from "@mui/material";
+import { Box, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import {
   GetVideoCall,
@@ -7,7 +7,6 @@ import {
 } from "../../graphql/videoCall/types/GetVideoCall";
 import {
   GET_VIDEO_CALL,
-  JOIN_ROOM,
   LEAVE_CALL,
   LISTEN_LEAVE_CALL,
   LISTEN_RETURN_SIGNAL,
@@ -51,6 +50,7 @@ import PresentToAllIcon from "@mui/icons-material/PresentToAll";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import { DynamicAvatar } from "../../components/Avatar/DynamicAvatar";
+import videoGroup from "../../assets/group-video.png";
 import "./index.css";
 
 export type IPeer = {
@@ -99,7 +99,7 @@ const VideoCall = () => {
     variables: { userId: user?.id as number },
     skip: !user?.id,
   });
-  const { data } = useQuery<GetVideoCall, GetVideoCallVariables>(
+  const { data, error } = useQuery<GetVideoCall, GetVideoCallVariables>(
     GET_VIDEO_CALL,
     {
       variables: {
@@ -286,66 +286,75 @@ const VideoCall = () => {
   }, [audio, video]);
 
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        if (userVideo.current) {
-          userVideo.current.srcObject = stream;
-        }
-        if (
-          listenSendSignal &&
-          !peersRef.current.find(
-            (i) => i.user.id === listenSendSignal.lisenSendSignal.user.id
-          )
-        ) {
-          const peer = addPeer(
-            listenSendSignal.lisenSendSignal.signal,
-            stream,
-            listenSendSignal.lisenSendSignal.user.id,
-            listenSendSignal.lisenSendSignal.receiverId
-          );
-          peer.on("connect", () => {
-            console.log("connecté remote");
-          });
-          peersRef.current.push({
-            peer,
-            user: listenSendSignal.lisenSendSignal.user,
-            audio: listenSendSignal.lisenSendSignal.audio,
-            video: listenSendSignal.lisenSendSignal.video,
-          });
-          setCallers((val) => [
-            ...val,
-            {
+    if (data) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          if (userVideo.current) {
+            userVideo.current.srcObject = stream;
+          }
+          if (
+            listenSendSignal &&
+            !peersRef.current.find(
+              (i) => i.user.id === listenSendSignal.lisenSendSignal.user.id
+            )
+          ) {
+            const peer = addPeer(
+              listenSendSignal.lisenSendSignal.signal,
+              stream,
+              listenSendSignal.lisenSendSignal.user.id,
+              listenSendSignal.lisenSendSignal.receiverId
+            );
+            peer.on("connect", () => {
+              console.log("connecté remote");
+            });
+            peersRef.current.push({
               peer,
               user: listenSendSignal.lisenSendSignal.user,
               audio: listenSendSignal.lisenSendSignal.audio,
               video: listenSendSignal.lisenSendSignal.video,
-            },
-          ]);
-        } else if (
-          data &&
-          data.getVideoCall.members.length > 0 &&
-          user &&
-          nbrListen === 0
-        ) {
-          const peers: IPeer[] = [];
-          data.getVideoCall.members.forEach((val) => {
-            const peer = createPeer(stream, user.id, val.id);
-            peer.on("connect", () => {
-              console.log("connecté");
             });
-            peers.push({ peer, user: val, audio: true, video: true });
-            peersRef.current.push({
-              peer,
-              user: val,
-              audio: true,
-              video: true,
+            setCallers((val) => [
+              ...val,
+              {
+                peer,
+                user: listenSendSignal.lisenSendSignal.user,
+                audio: listenSendSignal.lisenSendSignal.audio,
+                video: listenSendSignal.lisenSendSignal.video,
+              },
+            ]);
+            dispatchSnack({
+              open: true,
+              severity: "info",
+              message: `${listenSendSignal.lisenSendSignal.user.firstname} ${listenSendSignal.lisenSendSignal.user.lastname}`,
+              subtitle: "a rejoin le call",
+              withImage: true,
+              photo: listenSendSignal.lisenSendSignal.user.photo ?? undefined,
             });
-          });
-          setCallers(peers);
-          setNbrListen(1);
-        }
-      });
+          } else if (
+            data.getVideoCall.members.length > 0 &&
+            user &&
+            nbrListen === 0
+          ) {
+            const peers: IPeer[] = [];
+            data.getVideoCall.members.forEach((val) => {
+              const peer = createPeer(stream, user.id, val.id);
+              peer.on("connect", () => {
+                console.log("connecté");
+              });
+              peers.push({ peer, user: val, audio: true, video: true });
+              peersRef.current.push({
+                peer,
+                user: val,
+                audio: true,
+                video: true,
+              });
+            });
+            setCallers(peers);
+            setNbrListen(1);
+          }
+        });
+    }
   }, [listenSendSignal, user, data, nbrListen]);
 
   useEffect(() => {
@@ -400,6 +409,19 @@ const VideoCall = () => {
         });
       });
   };
+
+  if (!data && error) {
+    return (
+      <Box>
+        <Typography variant="h4" sx={{ textAlign: "center" }}>
+          {error.message}
+        </Typography>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Box component="img" src={videoGroup} sx={{ width: "60%" }} />
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box>

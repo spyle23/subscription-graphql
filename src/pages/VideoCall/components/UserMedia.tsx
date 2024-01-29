@@ -55,12 +55,15 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val }) => {
   }, []);
 
   return (
-    <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mb: 1 }}>
+    <Box
+      sx={{ width: "100%", display: "flex", justifyContent: "center", mb: 1 }}
+    >
       <Box
         sx={{
           position: "relative",
           height: "max-content",
           width: "max-content",
+          display: video ? "block" : "none",
         }}
       >
         <Box
@@ -71,7 +74,6 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val }) => {
           sx={{
             borderRadius: "15px",
             height: { xs: undefined, md: "300px" },
-            display: video ? "block" : "none",
           }}
         />
         {!audio && (
