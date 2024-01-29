@@ -9,13 +9,19 @@ import { UserChoose, DiscussGroupInput } from "./../../../types/graphql-types";
 // GraphQL mutation operation: CreateDiscussGroup
 // ====================================================
 
-export interface CreateDiscussGroup_createDiscussGroup {
-  __typename: "DiscussGroup";
+export interface CreateDiscussGroup_createDiscussGroup_Discussion {
+  __typename: "Discussion";
   id: number;
+  theme: string;
+  userId: number;
+}
+
+export interface CreateDiscussGroup_createDiscussGroup {
+  __typename: "DiscussGroupDiscussion";
   groupName: string;
   coverPhoto: string | null;
-  createdAt: any;
-  updatedAt: any;
+  id: number;
+  Discussion: CreateDiscussGroup_createDiscussGroup_Discussion;
 }
 
 export interface CreateDiscussGroup {
@@ -23,6 +29,7 @@ export interface CreateDiscussGroup {
 }
 
 export interface CreateDiscussGroupVariables {
+  userId: number;
   userChoose: UserChoose;
   data: DiscussGroupInput;
 }

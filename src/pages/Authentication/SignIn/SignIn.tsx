@@ -17,8 +17,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { loginVariables } from "../../../graphql/user";
 import { useApplicationContext } from "../../../hooks";
-import { GraphQLError } from "graphql";
-import { ApolloError } from "@apollo/client";
 
 export const SignIn = (): JSX.Element => {
   const [show, setShow] = useState<boolean>(false);

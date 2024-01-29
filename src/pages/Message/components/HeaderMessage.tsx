@@ -1,20 +1,23 @@
-import { AppBar, Avatar, Box, Toolbar, Typography, useTheme } from "@mui/material";
+import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import { FC } from "react";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
-import {
-  MessagesOfCurrentUser_messagesOfCurrentUser_Receiver,
-  MessagesOfCurrentUser_messagesOfCurrentUser_User,
-  MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup,
-} from "../../../graphql/message/types/MessagesOfCurrentUser";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { extractColorFromGradient } from "../../../utils/theme";
+import { CustomIcon } from "../../../components/CustomIcon/CustomIcon";
+import { DiscussionPopover } from "../../../components/popover/DiscussionPopover";
+import { MessageGlobalApp } from "../../../types/message";
 
 type HeaderMessageProps = {
-  data?:
-    | MessagesOfCurrentUser_messagesOfCurrentUser_User
-    | MessagesOfCurrentUser_messagesOfCurrentUser_Receiver | null;
-  group?: MessagesOfCurrentUser_messagesOfCurrentUser_DiscussGroup | null;
+  discussion: MessageGlobalApp;
+  handleBack: () => void;
 };
 
-export const HeaderMessage: FC<HeaderMessageProps> = ({ data, group }) => {
+export const HeaderMessage: FC<HeaderMessageProps> = ({
+  discussion,
+  handleBack,
+}) => {
+  const { theme, userDiscuss } = discussion;
+  const colorIcons = extractColorFromGradient(theme);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -22,11 +25,32 @@ export const HeaderMessage: FC<HeaderMessageProps> = ({ data, group }) => {
         sx={{ backgroundColor: "inherit", svg: { fill: "inherit" } }}
       >
         <Toolbar>
-          <Box sx={{ display: "flex" }}>
-            { data ?  <DynamicAvatar user={data} /> : <Avatar sx={{ mr: 2 }} src={ group?.coverPhoto || "" } />}
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <IconButton sx={{ mr: 2 }} onClick={handleBack}>
+              {colorIcons ? (
+                <CustomIcon
+                  color1={colorIcons[0]}
+                  color2={colorIcons[1]}
+                  type={theme.split("-")[0] === "linear" ? "linear" : "radial"}
+                  id={`ArrowBackIcon`}
+                >
+                  <ArrowBackIcon sx={{ fill: `url(#ArrowBackIcon)` }} />
+                </CustomIcon>
+              ) : (
+                <ArrowBackIcon sx={{ fill: theme }} />
+              )}
+            </IconButton>
+            <DynamicAvatar sx={{ mr: 2 }} user={userDiscuss} />
             <Typography variant="h4">
-              {data ? data.firstname + " "+ data.lastname : group?.groupName}
+              {"groupName" in userDiscuss
+                ? userDiscuss.groupName
+                : `${userDiscuss.firstname} ${userDiscuss.lastname}`}
             </Typography>
+            <DiscussionPopover
+              colorIcons={colorIcons}
+              theme={theme}
+              currentDiscussion={discussion}
+            />
           </Box>
         </Toolbar>
       </AppBar>

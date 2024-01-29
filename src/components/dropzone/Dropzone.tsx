@@ -3,12 +3,13 @@ import { FC, useCallback } from "react";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import { useDropzone } from "react-dropzone";
 import { useFileUploader } from "../../hooks/application/useFileUploader";
+import { Upload_upload } from "../../graphql/file";
 
 type DropzoneProps = {
   message?: string;
   btnSx?: SxProps<Theme>;
   loading?: boolean;
-  onFinished?: (file?: string, name?: string) => void;
+  onFinished?: (data: Upload_upload[]) => void;
   acceptedType?: string;
 };
 
@@ -20,19 +21,9 @@ export const Dropzone: FC<DropzoneProps> = ({
 }) => {
   const theme = useTheme();
   const { uploadFile } = useFileUploader();
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(acceptedFiles[0]);
-    reader.onload = async () => {
-      const file = await uploadFile({
-        data: reader.result?.toString() || "",
-        type: acceptedFiles[0].type,
-        name: acceptedFiles[0].name,
-      });
-      if (file) {
-        onFinished && onFinished(file, acceptedFiles[0].name);
-      }
-    };
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    const files = await uploadFile(acceptedFiles);
+    onFinished && onFinished(files ?? []);
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

@@ -1,20 +1,64 @@
 import { gql } from "@apollo/client";
 
 export const SEND_MESSAGE = gql`
-  mutation SendMessageDiscussGroup(
+  mutation SendMessageDiscoussGroup(
+    $discussionId: Float!
     $userId: Float!
     $messageInput: MessageInput!
     $receiverId: Float
     $discussGroupId: Float
   ) {
     sendMessageDiscoussGroup(
+      discussionId: $discussionId
       userId: $userId
       messageInput: $messageInput
       receiverId: $receiverId
       discussGroupId: $discussGroupId
     ) {
-      message
-      success
+      theme
+      createdAt
+      updatedAt
+      User {
+        lastname
+        firstname
+        id
+        photo
+        status
+      }
+      Receiver {
+        firstname
+        lastname
+        id
+        photo
+        status
+      }
+      DiscussGroup {
+        groupName
+        coverPhoto
+        id
+      }
+      messages {
+        id
+        User {
+          id
+          lastname
+          firstname
+          photo
+          status
+        }
+        content
+        files {
+          name
+          extension
+          url
+          id
+        }
+        receiverId
+        discussGroupId
+        createdAt
+        updatedAt
+      }
+      id
     }
   }
 `;
@@ -36,5 +80,22 @@ export const MODIFY_MESSAGE = gql`
       newMessage: $newMessage
       messageId: $messageId
     )
+  }
+`;
+
+export const WRITTING_CHECK = gql`
+  mutation WrittingCheck(
+    $isWritting: Boolean!
+    $userId: Float!
+    $discussionId: Float!
+  ) {
+    writtingCheck(
+      isWritting: $isWritting
+      userId: $userId
+      discussionId: $discussionId
+    ) {
+      success
+      message
+    }
   }
 `;

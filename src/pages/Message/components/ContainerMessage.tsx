@@ -1,81 +1,96 @@
-import { useQuery, useSubscription } from "@apollo/client";
 import { Box, BoxProps } from "@mui/material";
-import React, { FC, useContext, useMemo } from "react";
-import {
-  LISTEN_MESSAGE,
-  MESSAGES_CURRENT_USER,
-  MessageToUser,
-  MessageToUserVariables,
-  MessageToUser_messageToUser,
-  SEND_MESSAGE,
-} from "../../../graphql/message";
-import {
-  MessagesOfCurrentUser,
-  MessagesOfCurrentUserVariables,
-  MessagesOfCurrentUser_messagesOfCurrentUser,
-} from "../../../graphql/message/types/MessagesOfCurrentUser";
-import { login_login_data } from "../../../graphql/user";
+import React, { FC, Fragment, useEffect } from "react";
 import { useApplicationContext } from "../../../hooks";
-import { MessageContext } from "../Message";
-import { determineUserOrGroup, PresenterMessage } from "./PresenterMessage";
+import { PresenterMessage } from "./PresenterMessage";
+import {
+  GetDiscussionCurrentUser,
+  GetDiscussionCurrentUserVariables,
+  GetDiscussionCurrentUser_getDiscussionCurrentUser,
+} from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
+import { MessageGlobalApp } from "../../../types/message";
+import { Waypoint } from "react-waypoint";
+import {
+  ApolloQueryResult,
+  FetchMoreQueryOptions,
+  OperationVariables,
+} from "@apollo/client";
+import { CommentSkeleton } from "../../../components/skeleton/CommentSkeleton";
 
 type ContainerMessageProps = {
-  messageData?: MessagesOfCurrentUser;
+  discussions: MessageGlobalApp[];
+  loading: boolean;
+  fetchMore: <
+    TFetchData = GetDiscussionCurrentUser,
+    TFetchVars extends OperationVariables = GetDiscussionCurrentUserVariables
+  >(
+    fetchMoreOptions: FetchMoreQueryOptions<TFetchVars, TFetchData> & {
+      updateQuery?: (
+        previousQueryResult: GetDiscussionCurrentUser,
+        options: {
+          fetchMoreResult: TFetchData;
+          variables: TFetchVars;
+        }
+      ) => GetDiscussionCurrentUser;
+    }
+  ) => Promise<ApolloQueryResult<TFetchData>>;
+  selectDiscussion: (
+    data: GetDiscussionCurrentUser_getDiscussionCurrentUser
+  ) => void;
+  onClose?: () => void;
 } & BoxProps;
 
 export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
-  ({ messageData, sx, ...props }) => {
+  ({
+    discussions,
+    loading,
+    fetchMore,
+    selectDiscussion,
+    onClose,
+    sx,
+    ...props
+  }) => {
     const { user } = useApplicationContext();
-    const { dispatch } = useContext(MessageContext);
-
-    const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
-      LISTEN_MESSAGE,
-      { variables: { userId: user?.id as number } }
-    );
-
-    const messageCurrent = useMemo(() => {
-      const current = data?.messageToUser
-        ? messageData?.messagesOfCurrentUser.map((item) => {
-            if (
-              (item.Receiver?.id == user?.id || item.User.id == user?.id) &&
-              (item.Receiver?.id === data?.messageToUser.userId ||
-                item.User?.id === data?.messageToUser.userId)
-            ) {
-              return data?.messageToUser;
-            }
-            return item;
-          })
-        : messageData?.messagesOfCurrentUser;
-      return current;
-    }, [messageData, data]);
 
     const handleClickMessage = (
-      value:
-        | MessagesOfCurrentUser_messagesOfCurrentUser
-        | MessageToUser_messageToUser
+      value: GetDiscussionCurrentUser_getDiscussionCurrentUser
     ) => {
-      dispatch({
-        type: "select message",
-        value: value,
-        userDiscuss: determineUserOrGroup(user as login_login_data, value),
-      });
+      selectDiscussion(value);
+      onClose && onClose();
     };
 
     return (
-      <Box sx={{ height: "80vh", overflowY: "auto", p: 2, ...sx }} {...props}>
-        {messageCurrent?.map((value, index) => (
-          <PresenterMessage
-            key={index}
-            message={value}
-            isNewMessage={
-              data?.messageToUser && value.id === data?.messageToUser.id
-                ? true
-                : false
-            }
-            user={user}
-            onClick={() => handleClickMessage(value)}
-          />
+      <Box sx={{ height: "450px ", overflowY: "auto", p: 1, ...sx }} {...props}>
+        {discussions.map((value, index) => (
+          <Fragment key={value.id}>
+            <PresenterMessage
+              key={value.id}
+              discussion={value}
+              user={user}
+              onClick={() => handleClickMessage(value)}
+            />
+            {index === discussions.length - 1 && discussions.length === 10 && (
+              <Waypoint
+                onEnter={() =>
+                  fetchMore({
+                    variables: {
+                      cursor: discussions[discussions.length - 1].id,
+                    },
+                    updateQuery(previousQueryResult, { fetchMoreResult }) {
+                      if (!fetchMoreResult) return previousQueryResult;
+                      return {
+                        getDiscussionCurrentUser: [
+                          ...previousQueryResult.getDiscussionCurrentUser,
+                          ...fetchMoreResult.getDiscussionCurrentUser,
+                        ],
+                      };
+                    },
+                  })
+                }
+              />
+            )}
+          </Fragment>
         ))}
+        {loading && [1, 2, 3].map((val) => <CommentSkeleton key={val} />)}
       </Box>
     );
   }

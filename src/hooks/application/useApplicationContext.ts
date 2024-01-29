@@ -16,13 +16,17 @@ import {
   loginVariables,
   login_login_data,
 } from "../../graphql/user/types/login";
-import { LOGIN, SIGNUP } from "../../graphql/user/mutation";
+import { LOGIN, SIGNUP, STATUS } from "../../graphql/user/mutation";
 import {
   signup,
   signupVariables,
   signup_signup_data,
 } from "../../graphql/user";
 import { SignupInput } from "../../types/graphql-types";
+import {
+  ChangeStatus,
+  ChangeStatusVariables,
+} from "../../graphql/user/types/ChangeStatus";
 
 export const useApplicationContext = (): UseApplicationType &
   IApplicationContext &
@@ -30,19 +34,22 @@ export const useApplicationContext = (): UseApplicationType &
   const { setToken } = useContext(TokenContext);
   const contexts = useContext(ApplicationContext);
   const snackbarContexts = useContext(SnackbarContext);
+  const [exec] = useMutation<ChangeStatus, ChangeStatusVariables>(STATUS);
   // const navigate = useNavigate();
 
   const [userAuthStatus, setUserAuthStatus] = useState<UserAuthStateEnum>(
     UserAuthStateEnum.WAITING
   );
   const { user, setUser } = contexts;
-  const loadUser = useCallback((): void => {
+  const loadUser = useCallback(async () => {
     if (user) {
       setUserAuthStatus(UserAuthStateEnum.AUTHENTICATED);
+      LocalStorage.authenticate(user);
     }
     if (!user) {
       const checkuser = LocalStorage.isAuth();
       if (checkuser) {
+        await exec({ variables: { status: true, userId: checkuser.id } });
         setUserAuthStatus(UserAuthStateEnum.AUTHENTICATED);
         setUser(checkuser);
       } else {
@@ -55,8 +62,10 @@ export const useApplicationContext = (): UseApplicationType &
     loadUser();
   }, [loadUser]);
 
-  const logout = (): void => {
-    AuthStorage.clearToken(() => {
+  const logout = async () => {
+    if (!user) return;
+    await exec({ variables: { status: false, userId: user.id } });
+    LocalStorage.clearToken(() => {
       setUser(undefined);
       setToken(undefined);
       // navigate("/subscription-graphql/auth/login");

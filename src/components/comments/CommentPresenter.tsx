@@ -4,6 +4,8 @@ import moment from "moment";
 import { FC } from "react";
 import { GetCommentByPost_getCommentByPost_data as IComment } from "../../graphql/comment/types/GetCommentByPost";
 import { DynamicAvatar } from "../Avatar/DynamicAvatar";
+import { DisplayMedia } from "../media/DisplayMedia";
+import { ContainerDisplay } from "../media/ContainerDisplay";
 
 const determineDate = (date1: any, date2: any): Date => {
   const veryDate1 = new Date(date1);
@@ -24,7 +26,7 @@ export const CommentPresenter: FC<IComment> = ({
   createdAt,
   updatedAt,
   content,
-  image,
+  files,
   User,
 }) => {
   return (
@@ -37,15 +39,13 @@ export const CommentPresenter: FC<IComment> = ({
           </Typography>
           <Typography sx={{ fontSize: "0.7em" }}>
             {moment(determineDate(createdAt, updatedAt))
-              .startOf("hour")
+              .startOf("second")
               .fromNow()}
           </Typography>
         </Box>
         <Box sx={{ width: 200 }}>
           <Typography>{content}</Typography>
-          {image && (
-            <img src={image} alt="image_comment" style={{ width: "100%" }} />
-          )}
+          <ContainerDisplay data={files} />
         </Box>
       </Card>
     </Box>

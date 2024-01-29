@@ -2,9 +2,10 @@
 import Snackbar from "@mui/material/Snackbar";
 import React, { createContext, FC, Reducer, useReducer } from "react";
 import MuiAlert, { AlertColor, AlertProps } from "@mui/material/Alert";
-import { Box, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import { SnackbarProvider } from "notistack";
-import { AccountCircle } from "@mui/icons-material";
+import profile from "../../assets/profil.png";
+import { usePhotoUrl } from "../../hooks/application/usePhotoUrl";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -101,7 +102,7 @@ export const SnackbarCustomProvider: FC<{
       <SnackbarProvider maxSnack={10}>{children}</SnackbarProvider>
       <Snackbar
         open={open}
-        autoHideDuration={5000}
+        autoHideDuration={1000}
         onClose={handleClose}
         anchorOrigin={{
           horizontal: "right",
@@ -114,17 +115,11 @@ export const SnackbarCustomProvider: FC<{
           sx={{ width: "100%", zIndex: 999999999 }}
           icon={
             withImage ? (
-              photo ? (
-                <img
-                  src={photo}
-                  alt=""
-                  width={40}
-                  height={40}
-                  style={{ objectFit: "cover", alignSelf: "center" }}
-                />
-              ) : (
-                <AccountCircle />
-              )
+              <Avatar
+                alt={"photo"}
+                src={photo ? usePhotoUrl(photo) : profile}
+                sx={{ width: 36, height: 36 }}
+              />
             ) : undefined
           }
         >

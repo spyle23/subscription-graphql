@@ -36,6 +36,7 @@ export const UserMenu: FC = (): JSX.Element => {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+  if (!user) return <></>;
   return (
     <div>
       <IconButton
@@ -57,7 +58,7 @@ export const UserMenu: FC = (): JSX.Element => {
         }}
         transformOrigin={{
           vertical: "top",
-          horizontal: "center",
+          horizontal: "right",
         }}
       >
         <Box sx={{ p: 2 }}>
@@ -77,7 +78,9 @@ export const UserMenu: FC = (): JSX.Element => {
           >
             <Divider />
             <ListItemButton
-              onClick={() => navigate("/subscription-graphql/landing/profil")}
+              onClick={() =>
+                navigate(`/subscription-graphql/landing/profil/${user.id}`)
+              }
             >
               <ListItemIcon>
                 <AccountCircleIcon />
@@ -87,8 +90,6 @@ export const UserMenu: FC = (): JSX.Element => {
             <ListItemButton
               onClick={() => {
                 logout();
-                navigate("/subscription-graphql/auth/login");
-                window.location.reload();
               }}
             >
               <ListItemIcon>

@@ -1,0 +1,17 @@
+/* CSS Animation for the user card */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}   
+
+/* Apply the animation to the user card when in-call */
+.is-speaking {
+  animation: pulse 1s infinite;
+}

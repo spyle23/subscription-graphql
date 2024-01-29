@@ -11,17 +11,11 @@ import { ReactionType } from "./../../../types/graphql-types";
 
 export interface GetOrderPost_getOrderPost_user {
   __typename: "User";
-  firstname: string | null;
   lastname: string | null;
-  id: number;
+  firstname: string | null;
   photo: string | null;
-}
-
-export interface GetOrderPost_getOrderPost_comments {
-  __typename: "Comment";
-  content: string;
-  image: string | null;
   id: number;
+  status: boolean;
 }
 
 export interface GetOrderPost_getOrderPost_reactions {
@@ -30,18 +24,30 @@ export interface GetOrderPost_getOrderPost_reactions {
   userId: number;
 }
 
+export interface GetOrderPost_getOrderPost_files {
+  __typename: "FileExt";
+  name: string;
+  extension: string;
+  id: number;
+  url: string;
+}
+
 export interface GetOrderPost_getOrderPost {
   __typename: "PostDisplay";
-  description: string;
-  image: string | null;
-  id: number;
   user: GetOrderPost_getOrderPost_user;
-  comments: GetOrderPost_getOrderPost_comments[] | null;
   reactions: GetOrderPost_getOrderPost_reactions[] | null;
+  nbComments: number;
+  description: string;
+  id: number;
+  files: GetOrderPost_getOrderPost_files[];
   createdAt: any;
   updatedAt: any;
 }
 
 export interface GetOrderPost {
   getOrderPost: GetOrderPost_getOrderPost[];
+}
+
+export interface GetOrderPostVariables {
+  cursor?: number | null;
 }

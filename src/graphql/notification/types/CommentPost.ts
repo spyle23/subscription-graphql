@@ -9,6 +9,7 @@
 
 export interface CommentPost_commentPost {
   __typename: "Notification";
+  id: number;
   name: string;
   description: string;
   createdAt: any;

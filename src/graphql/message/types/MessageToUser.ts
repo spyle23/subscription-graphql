@@ -9,38 +9,68 @@
 
 export interface MessageToUser_messageToUser_User {
   __typename: "User";
-  firstname: string | null;
   lastname: string | null;
-  photo: string | null;
+  firstname: string | null;
   id: number;
+  photo: string | null;
+  status: boolean;
 }
 
 export interface MessageToUser_messageToUser_Receiver {
   __typename: "User";
-  id: number;
   firstname: string | null;
   lastname: string | null;
+  id: number;
   photo: string | null;
+  status: boolean;
 }
 
 export interface MessageToUser_messageToUser_DiscussGroup {
   __typename: "GroupWithMembers";
-  id: number;
   groupName: string;
   coverPhoto: string | null;
+  id: number;
+}
+
+export interface MessageToUser_messageToUser_messages_User {
+  __typename: "User";
+  id: number;
+  lastname: string | null;
+  firstname: string | null;
+  photo: string | null;
+  status: boolean;
+}
+
+export interface MessageToUser_messageToUser_messages_files {
+  __typename: "FileExt";
+  name: string;
+  extension: string;
+  url: string;
+  id: number;
+}
+
+export interface MessageToUser_messageToUser_messages {
+  __typename: "MessageWithRecepter";
+  id: number;
+  User: MessageToUser_messageToUser_messages_User;
+  content: string;
+  files: MessageToUser_messageToUser_messages_files[];
+  receiverId: number | null;
+  discussGroupId: number | null;
+  createdAt: any;
+  updatedAt: any;
 }
 
 export interface MessageToUser_messageToUser {
-  __typename: "MessageWithRecepter";
-  content: string;
-  image: string | null;
-  userId: number;
+  __typename: "DiscussionExtend";
+  theme: string;
+  createdAt: any;
+  updatedAt: any;
   User: MessageToUser_messageToUser_User;
-  id: number;
-  receiverId: number | null;
-  discussGroupId: number | null;
   Receiver: MessageToUser_messageToUser_Receiver | null;
   DiscussGroup: MessageToUser_messageToUser_DiscussGroup | null;
+  messages: MessageToUser_messageToUser_messages[];
+  id: number;
 }
 
 export interface MessageToUser {

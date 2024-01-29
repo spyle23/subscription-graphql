@@ -1,20 +1,27 @@
 import { gql } from "@apollo/client";
 
 export const POST_COMMENT = gql`
-  query GetCommentByPost($postId: Float!) {
-    getCommentByPost(postId: $postId) {
+  query GetCommentByPost($postId: Float!, $cursor: Float) {
+    getCommentByPost(postId: $postId, cursor: $cursor) {
       success
       message
       data {
-        image
+        id
         content
         User {
           firstname
           lastname
           photo
+          id
+          status
         }
-        createdAt
+        files {
+          name
+          extension
+          url
+        }
         updatedAt
+        createdAt
       }
     }
   }

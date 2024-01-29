@@ -5,10 +5,11 @@ import {
   InMemoryCache,
 } from "@apollo/client";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
-import { HttpLink, split } from "@apollo/client/core";
+import { ApolloLink, HttpLink, split } from "@apollo/client/core";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
 import { AuthStorage } from "./utils/AuthStorage";
+import { createUploadLink } from "apollo-upload-client";
 
 export const apolloClient = (
   token?: string
@@ -35,6 +36,14 @@ export const apolloClient = (
     })
   );
 
+  const uploadLink = createUploadLink({
+    uri: API_URI,
+    fetch,
+    headers: {
+      authorization: `Bearer ${token || user?.token}`,
+    },
+  });
+
   const splitLink = split(
     ({ query }) => {
       const definition = getMainDefinition(query);
@@ -47,8 +56,25 @@ export const apolloClient = (
     httpLink
   );
 
+  const link = ApolloLink.split(
+    (operation) => {
+      const definition = getMainDefinition(operation.query);
+      return (
+        definition.kind === 'OperationDefinition' &&
+        definition.operation === 'mutation' &&
+        !!definition.selectionSet?.selections.find(
+          (selection) =>
+            selection.kind === 'Field' &&
+            selection.name.value === 'upload'
+        )
+      );
+    },
+    uploadLink as any,
+    splitLink
+  );
+
   const client = new ApolloClient({
-    link: splitLink,
+    link: link,
     cache: new InMemoryCache(),
   });
 

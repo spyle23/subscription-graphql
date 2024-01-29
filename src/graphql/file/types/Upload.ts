@@ -3,16 +3,21 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { UploadInput } from "./../../../types/graphql-types";
-
 // ====================================================
 // GraphQL mutation operation: Upload
 // ====================================================
 
+export interface Upload_upload {
+  __typename: "FileExt";
+  name: string;
+  url: string;
+  extension: string;
+}
+
 export interface Upload {
-  upload: string;
+  upload: Upload_upload[];
 }
 
 export interface UploadVariables {
-  data: UploadInput;
+  data: any[];
 }

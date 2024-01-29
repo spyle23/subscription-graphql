@@ -11,6 +11,7 @@ export const LOGIN = gql`
         email
         firstname
         lastname
+        status
         photo
         civilite
         createdAt
@@ -30,6 +31,7 @@ export const SIGNUP = gql`
         email
         firstname
         lastname
+        status
         photo
         civilite
         createdAt
@@ -43,5 +45,17 @@ export const SIGNUP = gql`
 export const UPDATE_INFO = gql`
   mutation UpdateUser($updateUserInput: UpdateUserInput!, $userId: Float!) {
     updateUser(updateUserInput: $updateUserInput, userId: $userId)
+  }
+`;
+
+export const DELETE_FRIEND = gql`
+  mutation DeleteFriend($receiverId: Float!, $userId: Float!) {
+    deleteFriend(receiverId: $receiverId, userId: $userId)
+  }
+`;
+
+export const STATUS = gql`
+  mutation ChangeStatus($status: Boolean!, $userId: Float!) {
+    changeStatus(status: $status, userId: $userId)
   }
 `;

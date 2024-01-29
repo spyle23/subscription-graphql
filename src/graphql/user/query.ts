@@ -14,23 +14,30 @@ export const ALL_USER = gql`
 `;
 
 export const PROFILE = gql`
-  query Profile($userId: Float!) {
-    profile(userId: $userId) {
-      id
-      email
-      firstname
-      lastname
-      photo
-      civilite
-      Post {
-        description
-        image
-      }
-      notifications {
-        name
-        description
+  query Profile($viewerId: Float!, $profilId: Float!) {
+    profile(viewerId: $viewerId, profilId: $profilId) {
+      user {
+        id
+        email
+        firstname
+        lastname
+        photo
+        civilite
         createdAt
         updatedAt
+      }
+      friends {
+        id
+        status
+        firstname
+        lastname
+        photo
+      }
+      relation {
+        id
+        status
+        receiverId
+        userId
       }
     }
   }

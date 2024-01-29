@@ -1,68 +1,120 @@
 import { FC } from "react";
-import { Avatar, Box, Grid, GridProps, Typography } from "@mui/material";
+import { Box, Grid, GridProps, Typography, useTheme } from "@mui/material";
 import { DynamicAvatar } from "../../../components/Avatar/DynamicAvatar";
-import { MessagesOfCurrentUser_messagesOfCurrentUser } from "../../../graphql/message/types/MessagesOfCurrentUser";
 import { login_login_data } from "../../../graphql/user";
-import { MessageToUser_messageToUser } from "../../../graphql/message";
+import {
+  GetDiscussionCurrentUser_getDiscussionCurrentUser_DiscussGroup,
+  GetDiscussionCurrentUser_getDiscussionCurrentUser_User,
+} from "../../../graphql/discussion/types/GetDiscussionCurrentUser";
+import { MessageGlobalApp } from "../../../types/message";
+import { SyncLoader } from "react-spinners";
+import { Writting } from "../../../components/animation/Writting";
 type PresenterMessageProps = {
   user?: login_login_data;
-  isNewMessage: boolean;
-  message:
-    | MessagesOfCurrentUser_messagesOfCurrentUser
-    | MessageToUser_messageToUser;
+  discussion: MessageGlobalApp;
 } & GridProps;
 
 export const determineUserOrGroup = (
   user: login_login_data,
-  message:
-    | MessagesOfCurrentUser_messagesOfCurrentUser
-    | MessageToUser_messageToUser
+  owner: GetDiscussionCurrentUser_getDiscussionCurrentUser_User,
+  receiver: GetDiscussionCurrentUser_getDiscussionCurrentUser_User | null,
+  discussGroup: GetDiscussionCurrentUser_getDiscussionCurrentUser_DiscussGroup | null
 ) => {
-  if (message.Receiver?.id === user.id) {
-    return message.User;
+  if (discussGroup) {
+    return discussGroup;
   }
-  return message.Receiver;
+  return owner.id === user.id
+    ? (receiver as GetDiscussionCurrentUser_getDiscussionCurrentUser_User)
+    : owner;
 };
 
 export const PresenterMessage: FC<PresenterMessageProps> = ({
-  message,
+  discussion,
   user,
-  isNewMessage,
   sx,
   ...props
 }) => {
+  const theme = useTheme();
   if (!user) return <></>;
   const uploadMessage =
-    user.id === message.User.id
+    user.id === discussion.messages[0].User.id
       ? "Vous avez envoyé une pièce jointe"
       : "a envoyé une pièce jointe";
-  const displayUserMessage = determineUserOrGroup(user, message);
+  const message = discussion.messages[0];
+  const displayMessage =
+    message.content.length > 25
+      ? `${message.content.substring(0, 25)}...`
+      : message.content;
+  const displayMessageUser =
+    user.id === discussion.messages[0].User.id
+      ? `vous: ${displayMessage}`
+      : displayMessage;
   return (
     <Grid
       container
-      sx={{ p: 1, cursor: "pointer", ":hover": { background: "grey" }, ...sx }}
+      sx={{
+        p: 1,
+        cursor: "pointer",
+        alignItems: "center",
+        borderRadius: "15px",
+        ":hover": { backgroundColor: "lightgrey" },
+        ...sx,
+      }}
       {...props}
     >
-      <Grid item xs={1} sx={{ display: "flex", justifyContent: "center" }}>
-        {displayUserMessage ? (
-          <DynamicAvatar user={displayUserMessage} />
-        ) : (
-          <Avatar
-            sx={{ mr:2 }}
-            alt={message.DiscussGroup?.groupName || "profile"}
-            src={message.DiscussGroup?.coverPhoto || ""}
-          />
-        )}
+      <Grid
+        item
+        xs={2}
+        sx={{ display: "flex", justifyContent: "center", mr: 1 }}
+      >
+        <DynamicAvatar user={discussion.userDiscuss} />
       </Grid>
-      <Grid item xs={10}>
+      <Grid item xs={9}>
         <Typography fontWeight={"bold"}>
-          {displayUserMessage
-            ? displayUserMessage.firstname + " " + displayUserMessage.lastname
-            : message.DiscussGroup?.groupName}
+          {"groupName" in discussion.userDiscuss
+            ? discussion.userDiscuss.groupName
+            : discussion.userDiscuss.firstname +
+              " " +
+              discussion.userDiscuss.lastname}
         </Typography>
-        <Typography sx={{ fontWeight: isNewMessage ? "bold" : "normal" }}>
-          {message.image ? uploadMessage : message.content}
-        </Typography>
+        {discussion.writters && discussion.writters.length > 0 ? (
+          <Box
+            sx={{
+              px: 1,
+              borderRadius: "20px",
+              backgroundColor: "lightgray",
+              width: "max-content",
+            }}
+          >
+            <Writting dotColor={theme.palette.primary.main} />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography
+              sx={{
+                fontWeight: discussion.newMessageNbr > 0 ? "bold" : "normal",
+              }}
+            >
+              {message.files.length > 0 ? uploadMessage : displayMessageUser}
+            </Typography>
+            {discussion.newMessageNbr > 0 && (
+              <Box
+                sx={{
+                  borderRadius: "50%",
+                  width: "10px",
+                  height: "10px",
+                  backgroundColor: theme.palette.primary.main,
+                }}
+              />
+            )}
+          </Box>
+        )}
       </Grid>
     </Grid>
   );

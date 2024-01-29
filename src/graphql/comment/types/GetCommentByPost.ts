@@ -12,15 +12,25 @@ export interface GetCommentByPost_getCommentByPost_data_User {
   firstname: string | null;
   lastname: string | null;
   photo: string | null;
+  id: number;
+  status: boolean;
+}
+
+export interface GetCommentByPost_getCommentByPost_data_files {
+  __typename: "FileExt";
+  name: string;
+  extension: string;
+  url: string;
 }
 
 export interface GetCommentByPost_getCommentByPost_data {
   __typename: "CommentWithUser";
-  image: string | null;
+  id: number;
   content: string;
   User: GetCommentByPost_getCommentByPost_data_User;
-  createdAt: any;
+  files: GetCommentByPost_getCommentByPost_data_files[];
   updatedAt: any;
+  createdAt: any;
 }
 
 export interface GetCommentByPost_getCommentByPost {
@@ -36,4 +46,5 @@ export interface GetCommentByPost {
 
 export interface GetCommentByPostVariables {
   postId: number;
+  cursor?: number | null;
 }
