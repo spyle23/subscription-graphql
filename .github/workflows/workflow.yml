@@ -26,7 +26,7 @@ jobs:
 
       - name: load env production
         run: |
-          echo "${{ secrets.ENV_PRODUCTION }}" | tr -d '\r' > .env
+          echo "${{ secrets.ENV_PRODUCTION }}" | tr -d '\r' > .env.production
 
       - name: Install dependencies, build and test app
         run: |
