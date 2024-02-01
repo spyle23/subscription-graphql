@@ -1,0 +1,1 @@
+import{j as s,B as t,d as n,n as e}from"./index-da64fe47.js";const o="/subscription-graphql/assets/page-not-found-1b2beff7.png",r=()=>s(t,{children:[n(e,{variant:"h4",sx:{textAlign:"center",my:2},children:"Cette page n'existe pas"}),n(t,{sx:{display:"flex",justifyContent:"center"},children:n(t,{component:"img",src:o,sx:{width:"50%"}})})]});export{r as default};
