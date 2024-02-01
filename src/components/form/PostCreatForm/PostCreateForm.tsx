@@ -15,7 +15,7 @@ import { useApplicationContext } from "../../../hooks";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import React, { useState, FC } from "react";
 import { Dropzone } from "../../dropzone/Dropzone";
-import { PostInput } from "../../../types/graphql-types";
+import { FileInput, PostInput } from "../../../types/graphql-types";
 import { TransitionProps } from "@mui/material/transitions";
 import { HeadCard } from "../headCard/HeadCard";
 import { DynamicAvatar } from "../../Avatar/DynamicAvatar";
@@ -152,7 +152,10 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
               />
             </Box>
           )}
-          <ContainerDisplay data={watch().files??[]} deleteFile={dropFile} />
+          <ContainerDisplay
+            data={watch().files ? (watch().files as FileInput[]) : []}
+            deleteFile={dropFile}
+          />
         </DialogContent>
         <DialogActions>
           <Button variant="contained" color="error" onClick={handleClose}>

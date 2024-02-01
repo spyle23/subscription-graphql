@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Box, IconButton, TextField } from "@mui/material";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { MessageInput } from "../../../types/graphql-types";
+import { FileInput, MessageInput } from "../../../types/graphql-types";
 import { useMutation } from "@apollo/client";
 import {
   SendMessageDiscoussGroup_sendMessageDiscoussGroup,
@@ -97,7 +97,10 @@ export const MessageForm: FC<MessageFormProps> = ({
   };
   return (
     <Box sx={{ py: 1 }}>
-      <ContainerDisplay data={watch().files??[]} deleteFile={dropFile} />
+      <ContainerDisplay
+        data={watch().files ? (watch().files as FileInput[]) : []}
+        deleteFile={dropFile}
+      />
       <form
         style={{
           display: "flex",

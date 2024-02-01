@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { CommentInput as CommentInputData } from "../../types/graphql-types";
+import { CommentInput as CommentInputData, FileInput } from "../../types/graphql-types";
 import { Box, IconButton, TextField } from "@mui/material";
 import { useApplicationContext } from "../../hooks";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
@@ -26,7 +26,7 @@ export const CommentInput: FC<CommentInputProps> = React.memo(
     };
     return (
       <Box sx={{ position: "sticky", bottom: 0, background: "white", p: 2 }}>
-        <ContainerDisplay data={watch().files??[]} deleteFile={dropFile} />
+        <ContainerDisplay data={watch().files ? (watch().files as FileInput[]) : []} deleteFile={dropFile} />
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <DynamicAvatar user={user as login_login_data } />
           <TextField

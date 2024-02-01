@@ -22,6 +22,7 @@ import { AllUser, AllUser_allUser } from "../../graphql/user/types/AllUser";
 import { useCreateGroup } from "../../hooks/group/useCreateGroup";
 import {
   DiscussGroupInput,
+  FileInput,
   MessageInput,
   UserChoose,
 } from "../../types/graphql-types";
@@ -240,7 +241,7 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
                 sx={{ width: "80%" }}
               />
             </Box>
-            <ContainerDisplay data={watch().files??[]} deleteFile={dropFile} />
+            <ContainerDisplay data={watch().files ? (watch().files as FileInput[]) : []} deleteFile={dropFile} />
           </Box>
         )}
       </DialogContent>
