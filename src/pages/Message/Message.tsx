@@ -179,6 +179,7 @@ const Message = (): JSX.Element => {
             <FirstpageMessage
               loading={loading}
               fetchMore={fetchMore}
+              sendMessage={sendMessage}
               discussions={discussions}
               onSelect={handleSelect}
               refetchMessageData={refetchMessageData}

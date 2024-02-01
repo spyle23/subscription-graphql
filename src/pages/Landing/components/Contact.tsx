@@ -134,50 +134,52 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
               <Typography>{val.firstname + " " + val.lastname}</Typography>
             </Box>
           ))}
-        {friends && friends.getFriendOfCurrentUser.length % 10 === 0 && (
-          <Box
-            onClick={() => {
-              setCursor(
-                friends.getFriendOfCurrentUser[
-                  friends.getFriendOfCurrentUser.length - 1
-                ].id
-              );
-              fetchMore({
-                variables: {
-                  userId: user?.id as number,
-                  status: true,
-                  cursor:
-                    friends.getFriendOfCurrentUser[
-                      friends.getFriendOfCurrentUser.length - 1
-                    ].id,
+        {friends &&
+          friends.getFriendOfCurrentUser.length > 0 &&
+          friends.getFriendOfCurrentUser.length % 10 === 0 && (
+            <Box
+              onClick={() => {
+                setCursor(
+                  friends.getFriendOfCurrentUser[
+                    friends.getFriendOfCurrentUser.length - 1
+                  ].id
+                );
+                fetchMore({
+                  variables: {
+                    userId: user?.id as number,
+                    status: true,
+                    cursor:
+                      friends.getFriendOfCurrentUser[
+                        friends.getFriendOfCurrentUser.length - 1
+                      ].id,
+                  },
+                  updateQuery: (previousQueryResult, { fetchMoreResult }) => {
+                    if (!fetchMoreResult) return previousQueryResult;
+                    return {
+                      getFriendOfCurrentUser: [
+                        ...previousQueryResult.getFriendOfCurrentUser,
+                        ...fetchMoreResult.getFriendOfCurrentUser,
+                      ],
+                    };
+                  },
+                });
+              }}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "10px",
+                cursor: "pointer",
+                ":hover": {
+                  backgroundColor: "lightgray",
                 },
-                updateQuery: (previousQueryResult, { fetchMoreResult }) => {
-                  if (!fetchMoreResult) return previousQueryResult;
-                  return {
-                    getFriendOfCurrentUser: [
-                      ...previousQueryResult.getFriendOfCurrentUser,
-                      ...fetchMoreResult.getFriendOfCurrentUser,
-                    ],
-                  };
-                },
-              });
-            }}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: "10px",
-              cursor: "pointer",
-              ":hover": {
-                backgroundColor: "lightgray",
-              },
-              py: 1,
-            }}
-          >
-            <Typography>Afficher plus</Typography>
-            <ExpandMoreIcon />
-          </Box>
-        )}
+                py: 1,
+              }}
+            >
+              <Typography>Afficher plus</Typography>
+              <ExpandMoreIcon />
+            </Box>
+          )}
       </Box>
       {loading && [1, 2, 3].map((val) => <CommentSkeleton key={val} />)}
     </Card>
