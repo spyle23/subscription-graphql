@@ -32,6 +32,12 @@ jobs:
         run: |
           yarn --exact
           yarn build
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with: 
+          name: build-artifact
+          path: dist
 
   deploy:
     runs-on: ubuntu-latest
@@ -49,6 +55,12 @@ jobs:
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           aws-region: ${{env.REGION}}
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with: 
+          name: build-artifact
+          path: dist
 
       - name: Copy files to the production website via aws cli
         run: |
