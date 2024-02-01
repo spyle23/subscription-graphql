@@ -8,7 +8,7 @@ import { UserAuthStateEnum } from "../../types/UserType";
 const AuthenticationRoute = () => {
   const { userAuthStatus } = useApplicationContext();
   if (userAuthStatus === UserAuthStateEnum.AUTHENTICATED) {
-    return <Navigate to="/subscription-graphql/landing" />;
+    return <Navigate to="/landing" />;
   }
   return (
     <Container

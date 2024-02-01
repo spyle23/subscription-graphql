@@ -150,7 +150,7 @@ export const DiscussionPopover: FC<DiscussionPopoverProps> = ({
             <ListItemButton
               onClick={() =>
                 navigate(
-                  `/subscription-graphql/landing/profil/${currentDiscussion.userDiscuss.id}`
+                  `/landing/profil/${currentDiscussion.userDiscuss.id}`
                 )
               }
             >

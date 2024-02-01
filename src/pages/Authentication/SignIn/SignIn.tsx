@@ -38,7 +38,7 @@ export const SignIn = (): JSX.Element => {
         severity: "success",
         message: response.message,
       });
-      navigate("/subscription-graphql/landing");
+      navigate("/landing");
     }
   };
 
@@ -141,7 +141,7 @@ export const SignIn = (): JSX.Element => {
                 </Button>
               </form>
               <Divider sx={{ my: 1 }} />
-              <NavLink to="/subscription-graphql/auth/signup">Pas encore de compte?</NavLink>
+              <NavLink to="/auth/signup">Pas encore de compte?</NavLink>
             </Grid>
           </Grid>
         </CardContent>

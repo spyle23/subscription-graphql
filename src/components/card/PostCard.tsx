@@ -98,7 +98,7 @@ export const PostCard: FC<PostCardProps> = ({
               <Typography
                 onClick={() =>
                   navigate(
-                    `/subscription-graphql/landing/profil/${post.user.id}`
+                    `/landing/profil/${post.user.id}`
                   )
                 }
                 variant="h5"

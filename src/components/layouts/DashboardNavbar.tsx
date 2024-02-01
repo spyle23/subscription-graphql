@@ -114,7 +114,7 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
             size="large"
             aria-label="home icon"
             color="inherit"
-            onClick={() => navigate("/subscription-graphql/landing")}
+            onClick={() => navigate("/landing")}
           >
             <HomeIcon />
           </IconButton>
@@ -124,7 +124,7 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
             color="inherit"
             onClick={() => {
               setNbrInvit(0);
-              navigate("/subscription-graphql/landing/friend-requests");
+              navigate("/landing/friend-requests");
             }}
           >
             <Badge badgeContent={nbrInvit} color="error">

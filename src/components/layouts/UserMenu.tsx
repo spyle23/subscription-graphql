@@ -79,7 +79,7 @@ export const UserMenu: FC = (): JSX.Element => {
             <Divider />
             <ListItemButton
               onClick={() =>
-                navigate(`/subscription-graphql/landing/profil/${user.id}`)
+                navigate(`/landing/profil/${user.id}`)
               }
             >
               <ListItemIcon>

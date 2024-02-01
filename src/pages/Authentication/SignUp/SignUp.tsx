@@ -36,7 +36,7 @@ export const SignUp = (): JSX.Element => {
         message: result.message,
         severity: "success",
       });
-      navigate("/subscription-graphql/landing");
+      navigate("/landing");
     }
   };
 

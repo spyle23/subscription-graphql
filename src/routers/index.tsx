@@ -32,12 +32,9 @@ const PrivateRouter = (): JSX.Element => {
 export const MainRouter = (): JSX.Element => {
   return (
     <Routes>
+      <Route index element={<Navigate to="landing" />} />
       <Route
-        path="/subscription-graphql/"
-        element={<Navigate to="landing" />}
-      />
-      <Route
-        path="/subscription-graphql/auth/*"
+        path="/auth/*"
         element={
           <Suspense fallback={<CircularProgress />}>
             <AuthenticationRoute />
@@ -45,7 +42,7 @@ export const MainRouter = (): JSX.Element => {
         }
       />
       <Route
-        path="/subscription-graphql/landing/*"
+        path="/landing/*"
         element={
           <PrivateRoute>
             <ContainerWithMenu>
@@ -55,7 +52,7 @@ export const MainRouter = (): JSX.Element => {
         }
       />
       <Route
-        path="/subscription-graphql/call/*"
+        path="/call/*"
         element={
           <PrivateRoute>
             <Suspense fallback={<CircularProgress />}>
@@ -64,7 +61,7 @@ export const MainRouter = (): JSX.Element => {
           </PrivateRoute>
         }
       />
-      <Route path="/subscription-graphql/*" element={<NotFound />} />
+      <Route path="/*" element={<NotFound />} />
     </Routes>
   );
 };

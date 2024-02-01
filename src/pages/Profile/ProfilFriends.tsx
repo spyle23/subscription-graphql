@@ -63,7 +63,7 @@ export const ProfilFriends: FC<ProfilFriendsProps> = ({ profilId, user }) => {
                     <Button
                       onClick={() =>
                         navigate(
-                          `/subscription-graphql/landing/profil/${val.id}`
+                          `/landing/profil/${val.id}`
                         )
                       }
                       variant="outlined"
@@ -136,7 +136,7 @@ export const ProfilFriends: FC<ProfilFriendsProps> = ({ profilId, user }) => {
                 actions={
                   <Button
                     onClick={() =>
-                      navigate(`/subscription-graphql/landing/profil/${val.id}`)
+                      navigate(`/landing/profil/${val.id}`)
                     }
                     variant="outlined"
                     sx={{ width: "100%" }}

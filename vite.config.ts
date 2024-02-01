@@ -6,7 +6,6 @@ import GlobalsPolyfills from "@esbuild-plugins/node-globals-polyfill";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "/subscription-graphql/",
   optimizeDeps: {
     esbuildOptions: {
       plugins: [

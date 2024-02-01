@@ -29,7 +29,7 @@ export const InvitationCard: FC<InvitationCardProps> = ({
     <Card elevation={1} sx={{ borderRadius: "15px", ...sx }} {...props}>
       <CardMedia
         onClick={() =>
-          navigate(`/subscription-graphql/landing/profil/${user.id}`)
+          navigate(`/landing/profil/${user.id}`)
         }
         sx={{ cursor: "pointer" }}
         component="img"

@@ -45,7 +45,7 @@ export const UserFriends: FC<UserFriendsProps> = ({
             <Grid item key={val.id} xs={4} sx={{ p: 1 }}>
               <Box
                 onClick={() =>
-                  navigate(`/subscription-graphql/landing/profil/${val.id}`)
+                  navigate(`/landing/profil/${val.id}`)
                 }
                 sx={{
                   width: "100%",

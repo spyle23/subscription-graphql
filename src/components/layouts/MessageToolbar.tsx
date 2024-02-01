@@ -82,7 +82,7 @@ export const MessageToolbar: FC<MessageToolbarProps> = ({
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     if (window.innerWidth < 900) {
-      navigate("/subscription-graphql/landing/messages");
+      navigate("/landing/messages");
       return;
     }
     setAnchorEl(event.currentTarget);
