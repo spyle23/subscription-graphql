@@ -240,7 +240,7 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
                 sx={{ width: "80%" }}
               />
             </Box>
-            <ContainerDisplay data={watch().files} deleteFile={dropFile} />
+            <ContainerDisplay data={watch().files??[]} deleteFile={dropFile} />
           </Box>
         )}
       </DialogContent>

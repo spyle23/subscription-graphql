@@ -97,7 +97,7 @@ export const MessageForm: FC<MessageFormProps> = ({
   };
   return (
     <Box sx={{ py: 1 }}>
-      <ContainerDisplay data={watch().files} deleteFile={dropFile} />
+      <ContainerDisplay data={watch().files??[]} deleteFile={dropFile} />
       <form
         style={{
           display: "flex",

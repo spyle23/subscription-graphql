@@ -152,7 +152,7 @@ export const PostCreateForm: FC<PostCreateFormProps> = ({
               />
             </Box>
           )}
-          <ContainerDisplay data={watch().files} deleteFile={dropFile} />
+          <ContainerDisplay data={watch().files??[]} deleteFile={dropFile} />
         </DialogContent>
         <DialogActions>
           <Button variant="contained" color="error" onClick={handleClose}>
