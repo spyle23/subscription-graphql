@@ -13,6 +13,7 @@ export default defineConfig({
       // see https://github.com/remorses/esbuild-plugins/blob/master/node-modules-polyfill/src/polyfills.ts
       // process and buffer are excluded because already managed
       // by node-globals-polyfill
+      buffer: 'rollup-plugin-node-polyfills/polyfills/buffer-es6',
       util: "rollup-plugin-node-polyfills/polyfills/util",
       sys: "util",
       events: "rollup-plugin-node-polyfills/polyfills/events",
