@@ -74,7 +74,7 @@ const VideoCall = () => {
   const [sendSignal] = useMutation<SendSignal, SendSignalVariables>(
     SEND_SIGNAL
   );
-  const [exec] = useMutation<LeaveCall, LeaveCallVariables>(LEAVE_CALL);
+  const [exec, { loading: leaveCallLoading }] = useMutation<LeaveCall, LeaveCallVariables>(LEAVE_CALL);
   const { data: listenLeaveCall } = useSubscription<
     LisenLeaveCall,
     LisenLeaveCallVariables
@@ -526,6 +526,7 @@ const VideoCall = () => {
           </Tooltip>
           <Tooltip title="Racrocher">
             <IconButton
+              disabled={leaveCallLoading}
               onClick={endCall}
               sx={{ backgroundColor: "red", mr: 1 }}
             >

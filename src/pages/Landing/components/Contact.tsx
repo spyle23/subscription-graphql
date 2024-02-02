@@ -180,8 +180,8 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
               <ExpandMoreIcon />
             </Box>
           )}
+        {loading && [1, 2, 3].map((val) => <CommentSkeleton key={val} />)}
       </Box>
-      {loading && [1, 2, 3].map((val) => <CommentSkeleton key={val} />)}
     </Card>
   );
 });
