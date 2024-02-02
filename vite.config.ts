@@ -14,6 +14,7 @@ export default defineConfig({
       // process and buffer are excluded because already managed
       // by node-globals-polyfill
       buffer: 'rollup-plugin-node-polyfills/polyfills/buffer-es6',
+      process: 'rollup-plugin-node-polyfills/polyfills/process-es6',
       util: "rollup-plugin-node-polyfills/polyfills/util",
       sys: "util",
       events: "rollup-plugin-node-polyfills/polyfills/events",
