@@ -15,7 +15,7 @@ import {
   SEND_SIGNAL,
 } from "../../graphql/videoCall";
 import { useApplicationContext } from "../../hooks";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import SimplePeer from "simple-peer";
 import {
   SendSignal,
@@ -66,6 +66,7 @@ const VideoCall = () => {
   const { user, dispatchSnack } = useApplicationContext();
   const [video, setVideo] = useState<boolean>(true);
   const [audio, setAudio] = useState<boolean>(true);
+  const [cameraInvalid, setCameraInvalid] = useState<boolean>(false);
   const audioRef = useRef<HTMLDivElement | null>(null);
   const peersRef = useRef<IPeer[]>([]);
   const userVideo = useRef<HTMLVideoElement | null>(null);
@@ -91,22 +92,20 @@ const VideoCall = () => {
     ReturnSignal,
     ReturnSignalVariables
   >(RETURN_SIGNAL);
-  const { data: listenSendSignal, loading: listenSendSignalLoading } =
-    useSubscription<LisenSendSignal, LisenSendSignalVariables>(
-      LISTEN_SEND_SIGNAL,
-      {
-        variables: { userId: user?.id as number },
-        skip: !user?.id,
-      }
-    );
-  const { data: listenReturnSignal, loading: listenReturnSignalLoading } =
-    useSubscription<LisenReturnSignal, LisenReturnSignalVariables>(
-      LISTEN_RETURN_SIGNAL,
-      {
-        variables: { userId: user?.id as number },
-        skip: !user?.id,
-      }
-    );
+  const { data: listenSendSignal } = useSubscription<
+    LisenSendSignal,
+    LisenSendSignalVariables
+  >(LISTEN_SEND_SIGNAL, {
+    variables: { userId: user?.id as number },
+    skip: !user?.id,
+  });
+  const { data: listenReturnSignal } = useSubscription<
+    LisenReturnSignal,
+    LisenReturnSignalVariables
+  >(LISTEN_RETURN_SIGNAL, {
+    variables: { userId: user?.id as number },
+    skip: !user?.id,
+  });
   const { data, error } = useQuery<GetVideoCall, GetVideoCallVariables>(
     GET_VIDEO_CALL,
     {
@@ -118,25 +117,11 @@ const VideoCall = () => {
     }
   );
 
-  const joinLoading = useMemo(
-    () =>
-      [
-        sendSignalLoading,
-        listenSendSignalLoading,
-        returnSignalLoading,
-        listenReturnSignalLoading,
-      ].includes(true),
-    [
-      sendSignalLoading,
-      listenSendSignalLoading,
-      returnSignalLoading,
-      listenReturnSignalLoading,
-    ]
-  );
-
   const createPeer = (
     stream: MediaStream,
     userId: number,
+    audio: boolean,
+    video: boolean,
     receiverId: number
   ): SimplePeer.Instance => {
     const peer = new SimplePeer({
@@ -182,6 +167,8 @@ const VideoCall = () => {
     signal: string,
     stream: MediaStream,
     userId: number,
+    audio: boolean,
+    video: boolean,
     receiverId: number
   ) => {
     const peer = new SimplePeer({
@@ -224,6 +211,82 @@ const VideoCall = () => {
 
     return peer;
   };
+
+  const callbackFonction = useCallback(
+    (stream: MediaStream, audioDefault: boolean, videoDefault: boolean) => {
+      if (data) {
+        if (
+          listenSendSignal &&
+          !peersRef.current.find(
+            (i) => i.user.id === listenSendSignal.lisenSendSignal.user.id
+          )
+        ) {
+          const peer = addPeer(
+            listenSendSignal.lisenSendSignal.signal,
+            stream,
+            listenSendSignal.lisenSendSignal.user.id,
+            audioDefault,
+            videoDefault,
+            listenSendSignal.lisenSendSignal.receiverId
+          );
+          peer.on("connect", () => {
+            console.log("connecté remote");
+          });
+          peersRef.current.push({
+            peer,
+            user: listenSendSignal.lisenSendSignal.user,
+            audio: listenSendSignal.lisenSendSignal.audio,
+            video: listenSendSignal.lisenSendSignal.video,
+          });
+          setCallers((val) => [
+            ...val,
+            {
+              peer,
+              user: listenSendSignal.lisenSendSignal.user,
+              audio: listenSendSignal.lisenSendSignal.audio,
+              video: listenSendSignal.lisenSendSignal.video,
+            },
+          ]);
+          dispatchSnack({
+            open: true,
+            severity: "info",
+            message: `${listenSendSignal.lisenSendSignal.user.firstname} ${listenSendSignal.lisenSendSignal.user.lastname}`,
+            subtitle: "a rejoin le call",
+            withImage: true,
+            photo: listenSendSignal.lisenSendSignal.user.photo ?? undefined,
+          });
+        } else if (
+          data.getVideoCall.members.length > 0 &&
+          user &&
+          nbrListen === 0
+        ) {
+          const peers: IPeer[] = [];
+          data.getVideoCall.members.forEach((val) => {
+            const peer = createPeer(
+              stream,
+              user.id,
+              audioDefault,
+              videoDefault,
+              val.id
+            );
+            peer.on("connect", () => {
+              console.log("connecté");
+            });
+            peers.push({ peer, user: val, audio: true, video: true });
+            peersRef.current.push({
+              peer,
+              user: val,
+              audio: true,
+              video: true,
+            });
+          });
+          setCallers(peers);
+          setNbrListen(1);
+        }
+      }
+    },
+    [listenSendSignal, user, data, nbrListen]
+  );
 
   useEffect(() => {
     const handleTabClose = async () => {
@@ -359,79 +422,29 @@ const VideoCall = () => {
           if (userVideo.current) {
             userVideo.current.srcObject = stream;
           }
-          if (
-            listenSendSignal &&
-            !peersRef.current.find(
-              (i) => i.user.id === listenSendSignal.lisenSendSignal.user.id
-            )
-          ) {
-            const peer = addPeer(
-              listenSendSignal.lisenSendSignal.signal,
-              stream,
-              listenSendSignal.lisenSendSignal.user.id,
-              listenSendSignal.lisenSendSignal.receiverId
-            );
-            peer.on("connect", () => {
-              console.log("connecté remote");
+          callbackFonction(stream, true, true);
+        })
+        .catch((err) => {
+          navigator.mediaDevices
+            .getUserMedia({ audio: true })
+            .then((stream) => {
+              callbackFonction(stream, true, false);
+              setCameraInvalid(true);
+              setVideo(false);
             });
-            peersRef.current.push({
-              peer,
-              user: listenSendSignal.lisenSendSignal.user,
-              audio: listenSendSignal.lisenSendSignal.audio,
-              video: listenSendSignal.lisenSendSignal.video,
-            });
-            setCallers((val) => [
-              ...val,
-              {
-                peer,
-                user: listenSendSignal.lisenSendSignal.user,
-                audio: listenSendSignal.lisenSendSignal.audio,
-                video: listenSendSignal.lisenSendSignal.video,
-              },
-            ]);
-            dispatchSnack({
-              open: true,
-              severity: "info",
-              message: `${listenSendSignal.lisenSendSignal.user.firstname} ${listenSendSignal.lisenSendSignal.user.lastname}`,
-              subtitle: "a rejoin le call",
-              withImage: true,
-              photo: listenSendSignal.lisenSendSignal.user.photo ?? undefined,
-            });
-          } else if (
-            data.getVideoCall.members.length > 0 &&
-            user &&
-            nbrListen === 0
-          ) {
-            const peers: IPeer[] = [];
-            data.getVideoCall.members.forEach((val) => {
-              const peer = createPeer(stream, user.id, val.id);
-              peer.on("connect", () => {
-                console.log("connecté");
-              });
-              peers.push({ peer, user: val, audio: true, video: true });
-              peersRef.current.push({
-                peer,
-                user: val,
-                audio: true,
-                video: true,
-              });
-            });
-            setCallers(peers);
-            setNbrListen(1);
-          }
         });
     }
-  }, [listenSendSignal, user, data, nbrListen]);
+  }, [data, callbackFonction]);
 
-  useEffect(() => {
-    if (video) {
-      navigator.mediaDevices.getUserMedia({ video: true }).then((str) => {
-        if (userVideo.current) {
-          userVideo.current.srcObject = str;
-        }
-      });
-    }
-  }, [video]);
+  // useEffect(() => {
+  //   if (video) {
+  //     navigator.mediaDevices.getUserMedia({ video: true }).then((str) => {
+  //       if (userVideo.current) {
+  //         userVideo.current.srcObject = str;
+  //       }
+  //     });
+  //   }
+  // }, [video]);
 
   if (!user) return null;
 
@@ -457,13 +470,15 @@ const VideoCall = () => {
   };
 
   const toogleCam = () => {
-    peersRef.current.map((val) => {
-      val.peer.send(JSON.stringify({ video: !video }));
-      val.peer.streams[0].getVideoTracks().forEach((track) => {
-        track.enabled = !video;
+    if (!cameraInvalid) {
+      peersRef.current.map((val) => {
+        val.peer.send(JSON.stringify({ video: !video }));
+        val.peer.streams[0].getVideoTracks().forEach((track) => {
+          track.enabled = !video;
+        });
       });
-    });
-    setVideo((curr) => !curr);
+      setVideo((curr) => !curr);
+    }
   };
 
   const handleScreen = () => {
@@ -498,19 +513,19 @@ const VideoCall = () => {
           md={8}
           sx={{ p: 1, display: "flex", justifyContent: "center" }}
         >
-          {video ? (
-            <Box
-              component="video"
-              ref={userVideo}
-              autoPlay
-              muted
-              playsInline
-              sx={{
-                borderRadius: "15px",
-                height: { xs: undefined, md: "100%" },
-              }}
-            />
-          ) : (
+          <Box
+            component="video"
+            ref={userVideo}
+            autoPlay
+            muted
+            playsInline
+            sx={{
+              borderRadius: "15px",
+              height: { xs: undefined, md: "100%" },
+              display: video ? "block" : "none",
+            }}
+          />
+          {!video && (
             <Box
               ref={audioRef}
               sx={{
@@ -543,7 +558,9 @@ const VideoCall = () => {
           {callers.map((val) => (
             <UserMedia key={val.user.id} val={val} />
           ))}
-          {joinLoading && <VideoCardSkeleton />}
+          {sendSignalLoading || returnSignalLoading ? (
+            <VideoCardSkeleton />
+          ) : null}
         </Grid>
       </Grid>
       <Box
@@ -578,7 +595,11 @@ const VideoCall = () => {
           <Tooltip
             title={`${video ? "désactiver la camera" : "activer la caméra"}`}
           >
-            <IconButton onClick={toogleCam} sx={{ mr: 1 }}>
+            <IconButton
+              disabled={cameraInvalid}
+              onClick={toogleCam}
+              sx={{ mr: 1 }}
+            >
               {video ? (
                 <VideocamIcon sx={{ fill: "white" }} />
               ) : (

@@ -63,7 +63,7 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val }) => {
           position: "relative",
           height: "max-content",
           width: "max-content",
-          display: video ? "block" : "none",
+          display: video && stream ? "block" : "none",
         }}
       >
         <Box

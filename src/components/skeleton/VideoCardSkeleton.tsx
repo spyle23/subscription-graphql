@@ -4,7 +4,7 @@ export const VideoCardSkeleton = () => {
   return (
     <Skeleton
       variant="rectangular"
-      sx={{ height: { xs: undefined, md: "300px" }, width: "100%" }}
+      sx={{ height: { xs: "150px", md: "300px" }, width: "100%" }}
     />
   );
 };
