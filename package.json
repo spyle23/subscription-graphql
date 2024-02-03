@@ -10,7 +10,7 @@
     "codegen": "graphql-codegen-esm --config codegen.ts",
     "generate:schema:dev": "npx apollo schema:download  --endpoint=http://localhost:4200/graphql graphql-schema.json",
     "generate:types": "npx apollo client:codegen --localSchemaFile=graphql-schema.json --target=typescript  --includes=D:/spyle/subscription-graphql/src/graphql/**/*.ts --tagName=gql --addTypename --globalTypesFile=src/types/graphql-types.ts types",
-    "build": "env-cmd -f .env.production tsc && vite build",
+    "build": "env-cmd -f .env tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
