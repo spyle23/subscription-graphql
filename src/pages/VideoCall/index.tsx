@@ -140,6 +140,11 @@ const VideoCall = () => {
             credential: "free",
             username: "free",
           },
+          {
+            urls: "turn:relay1.expressturn.com:3478",
+            credential: "1TJPNFxHKXrZfelz",
+            username: "efPU52K4SLOQ34W2QY",
+          },
         ],
       },
     });
@@ -181,6 +186,11 @@ const VideoCall = () => {
             urls: "turn:freeturn.net:3478",
             credential: "free",
             username: "free",
+          },
+          {
+            urls: "turn:relay1.expressturn.com:3478",
+            credential: "1TJPNFxHKXrZfelz",
+            username: "efPU52K4SLOQ34W2QY",
           },
         ],
       },
