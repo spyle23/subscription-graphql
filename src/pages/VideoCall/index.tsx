@@ -136,7 +136,7 @@ const VideoCall = () => {
           { urls: "stun:stun3.l.google.com:19302" },
           { urls: "stun:stun4.l.google.com:19302" },
           {
-            urls: "turn:freeturn.tel:3478",
+            urls: "turn:freeturn.net:3478",
             credential: "free",
             username: "free",
           },
@@ -178,7 +178,7 @@ const VideoCall = () => {
           { urls: "stun:stun3.l.google.com:19302" },
           { urls: "stun:stun4.l.google.com:19302" },
           {
-            urls: "turn:freeturn.tel:3478",
+            urls: "turn:freeturn.net:3478",
             credential: "free",
             username: "free",
           },
