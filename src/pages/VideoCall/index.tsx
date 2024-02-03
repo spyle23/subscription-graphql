@@ -52,6 +52,7 @@ import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import { DynamicAvatar } from "../../components/Avatar/DynamicAvatar";
 import videoGroup from "../../assets/group-video.png";
 import "./index.css";
+import { VideoCardSkeleton } from "../../components/skeleton/VideoCardSkeleton";
 
 export type IPeer = {
   user: LisenSendSignal_lisenSendSignal_user;
@@ -71,10 +72,14 @@ const VideoCall = () => {
   const token = useMemo(() => location.search.split("=")[1], [location.search]);
   const [nbrListen, setNbrListen] = useState<number>(0);
   const [callers, setCallers] = useState<IPeer[]>([]);
-  const [sendSignal] = useMutation<SendSignal, SendSignalVariables>(
-    SEND_SIGNAL
-  );
-  const [exec, { loading: leaveCallLoading }] = useMutation<LeaveCall, LeaveCallVariables>(LEAVE_CALL);
+  const [sendSignal, { loading: sendSignalLoading }] = useMutation<
+    SendSignal,
+    SendSignalVariables
+  >(SEND_SIGNAL);
+  const [exec, { loading: leaveCallLoading }] = useMutation<
+    LeaveCall,
+    LeaveCallVariables
+  >(LEAVE_CALL);
   const { data: listenLeaveCall } = useSubscription<
     LisenLeaveCall,
     LisenLeaveCallVariables
@@ -82,23 +87,26 @@ const VideoCall = () => {
     variables: { userId: user?.id as number },
     skip: !user?.id,
   });
-  const [returnSignal] = useMutation<ReturnSignal, ReturnSignalVariables>(
-    RETURN_SIGNAL
-  );
-  const { data: listenSendSignal } = useSubscription<
-    LisenSendSignal,
-    LisenSendSignalVariables
-  >(LISTEN_SEND_SIGNAL, {
-    variables: { userId: user?.id as number },
-    skip: !user?.id,
-  });
-  const { data: listenReturnSignal } = useSubscription<
-    LisenReturnSignal,
-    LisenReturnSignalVariables
-  >(LISTEN_RETURN_SIGNAL, {
-    variables: { userId: user?.id as number },
-    skip: !user?.id,
-  });
+  const [returnSignal, { loading: returnSignalLoading }] = useMutation<
+    ReturnSignal,
+    ReturnSignalVariables
+  >(RETURN_SIGNAL);
+  const { data: listenSendSignal, loading: listenSendSignalLoading } =
+    useSubscription<LisenSendSignal, LisenSendSignalVariables>(
+      LISTEN_SEND_SIGNAL,
+      {
+        variables: { userId: user?.id as number },
+        skip: !user?.id,
+      }
+    );
+  const { data: listenReturnSignal, loading: listenReturnSignalLoading } =
+    useSubscription<LisenReturnSignal, LisenReturnSignalVariables>(
+      LISTEN_RETURN_SIGNAL,
+      {
+        variables: { userId: user?.id as number },
+        skip: !user?.id,
+      }
+    );
   const { data, error } = useQuery<GetVideoCall, GetVideoCallVariables>(
     GET_VIDEO_CALL,
     {
@@ -110,6 +118,22 @@ const VideoCall = () => {
     }
   );
 
+  const joinLoading = useMemo(
+    () =>
+      [
+        sendSignalLoading,
+        listenSendSignalLoading,
+        returnSignalLoading,
+        listenReturnSignalLoading,
+      ].includes(true),
+    [
+      sendSignalLoading,
+      listenSendSignalLoading,
+      returnSignalLoading,
+      listenReturnSignalLoading,
+    ]
+  );
+
   const createPeer = (
     stream: MediaStream,
     userId: number,
@@ -119,6 +143,35 @@ const VideoCall = () => {
       initiator: true,
       trickle: false,
       stream,
+      config: {
+        iceServers: [
+          {
+            urls: "turn:numb.viagenie.ca",
+            credential: "muazkh",
+            username: "webrtc@live.com",
+          },
+          {
+            urls: "turn:192.158.29.39:3478?transport=udp",
+            credential: "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+            username: "28224511:1379330808",
+          },
+          {
+            urls: "turn:192.158.29.39:3478?transport=tcp",
+            credential: "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+            username: "28224511:1379330808",
+          },
+          {
+            urls: "turn:turn.bistri.com:80",
+            credential: "homeo",
+            username: "homeo",
+          },
+          {
+            urls: "turn:turn.anyfirewall.com:443?transport=tcp",
+            credential: "webrtc",
+            username: "webrtc",
+          },
+        ],
+      },
     });
     peer.on("signal", async (signal) => {
       await sendSignal({
@@ -141,7 +194,40 @@ const VideoCall = () => {
     userId: number,
     receiverId: number
   ) => {
-    const peer = new SimplePeer({ initiator: false, trickle: false, stream });
+    const peer = new SimplePeer({
+      initiator: false,
+      trickle: false,
+      stream,
+      config: {
+        iceServers: [
+          {
+            urls: "turn:numb.viagenie.ca",
+            credential: "muazkh",
+            username: "webrtc@live.com",
+          },
+          {
+            urls: "turn:192.158.29.39:3478?transport=udp",
+            credential: "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+            username: "28224511:1379330808",
+          },
+          {
+            urls: "turn:192.158.29.39:3478?transport=tcp",
+            credential: "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+            username: "28224511:1379330808",
+          },
+          {
+            urls: "turn:turn.bistri.com:80",
+            credential: "homeo",
+            username: "homeo",
+          },
+          {
+            urls: "turn:turn.anyfirewall.com:443?transport=tcp",
+            credential: "webrtc",
+            username: "webrtc",
+          },
+        ],
+      },
+    });
     peer.on("signal", async (signal) => {
       await returnSignal({
         variables: {
@@ -477,6 +563,7 @@ const VideoCall = () => {
           {callers.map((val) => (
             <UserMedia key={val.user.id} val={val} />
           ))}
+          {joinLoading && <VideoCardSkeleton />}
         </Grid>
       </Grid>
       <Box

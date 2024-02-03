@@ -6,7 +6,7 @@
     "predeploy": "yarn build",
     "deploy": "gh-pages -d dist",
     "test": "vitest",
-    "dev": "env-cmd -f .env.development vite",
+    "dev": "env-cmd -f .env.production vite",
     "codegen": "graphql-codegen-esm --config codegen.ts",
     "generate:schema:dev": "npx apollo schema:download  --endpoint=http://localhost:4200/graphql graphql-schema.json",
     "generate:types": "npx apollo client:codegen --localSchemaFile=graphql-schema.json --target=typescript  --includes=D:/spyle/subscription-graphql/src/graphql/**/*.ts --tagName=gql --addTypename --globalTypesFile=src/types/graphql-types.ts types",
