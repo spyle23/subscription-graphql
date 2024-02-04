@@ -26,6 +26,7 @@ import {
   HandleFriendRequestVariables,
 } from "../../../graphql/friendRequest/types/HandleFriendRequest";
 import { HANDLE_FRIEND_REQUEST } from "../../../graphql/friendRequest/mutations";
+import emptyInvitation from "../../../assets/empty_invitations.png";
 
 export const Invitations = () => {
   const { user } = useApplicationContext();
@@ -80,13 +81,13 @@ export const Invitations = () => {
     }
   };
   return (
-    <Box>
+    <Box sx={{ height: "100%" }}>
       <Typography variant="h3" textAlign="center" sx={{ my: 1 }}>
         Invitations
       </Typography>
       <Grid container>
         {data?.getRequest.map((val) => (
-          <Grid item xs={12} sm={4} md={3} key={val.id} sx={{ p: 1 }}>
+          <Grid item xs={6} sm={4} md={3} key={val.id} sx={{ p: 1 }}>
             <InvitationCard
               user={val.User}
               actions={
@@ -113,7 +114,7 @@ export const Invitations = () => {
         ))}
         {loading &&
           [1, 2, 3, 4].map((i) => (
-            <Grid item xs={12} sm={4} md={3} key={i} sx={{ p: 1 }}>
+            <Grid item xs={6} sm={4} md={3} key={i} sx={{ p: 1 }}>
               <InvitationSkeleton />
             </Grid>
           ))}
@@ -152,6 +153,20 @@ export const Invitations = () => {
           >
             <Typography variant="h5">Afficher plus</Typography>
             <ExpandMoreIcon />
+          </Grid>
+        )}
+        {data && data.getRequest.length === 0 && (
+          <Grid item xs={12}>
+            <Typography sx={{ textAlign: "center", mb: 1 }}>
+              Aucune invitation pour le moment
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Box
+                component="img"
+                src={emptyInvitation}
+                sx={{ width: "60%" }}
+              />
+            </Box>
           </Grid>
         )}
       </Grid>

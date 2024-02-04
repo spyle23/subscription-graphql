@@ -120,7 +120,7 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
   return (
     <Box {...props}>
       <HeaderMessage discussion={currentDiscussion} handleBack={handleBack} />
-      <Box ref={scrollRef} sx={{ p: 2, height: "90%", overflowY: "auto" }}>
+      <Box ref={scrollRef} sx={{ p: 2, height: "100%", overflowY: "auto" }}>
         {loading && (
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <CircularProgress color="primary" />
@@ -187,12 +187,15 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
             </Box>
           )}
       </Box>
-      <MessageForm
-        theme={currentDiscussion.theme}
-        sendMessage={redefineSendMessage}
-        discussion={currentDiscussion}
-        user={user}
-      />
+      <Box sx={{ position: "fixed", bottom: 0, background: "white" }}>
+        <MessageForm
+          theme={currentDiscussion.theme}
+          sendMessage={redefineSendMessage}
+          discussion={currentDiscussion}
+          user={user}
+          sx={{ width: "100vw" }}
+        />
+      </Box>
     </Box>
   );
 };

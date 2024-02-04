@@ -204,7 +204,7 @@ const Message = (): JSX.Element => {
               handleBack={handleBack}
               currentDiscussion={currentDiscussion}
               sendMessage={sendMessage}
-              sx={{ height: "86vh" }}
+              sx={{ height: "82vh" }}
             />
           )}
         </Grid>

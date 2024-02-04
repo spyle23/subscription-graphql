@@ -73,7 +73,8 @@ export const UserMedia: FC<UserMediaProps> = memo(({ val }) => {
           ref={ref}
           sx={{
             borderRadius: "15px",
-            height: { xs: undefined, md: "300px" },
+            height: { xs: "auto", md: "300px" },
+            width: { xs: "100%", md: "auto" },
           }}
         />
         {!audio && (

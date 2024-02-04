@@ -1,4 +1,11 @@
-import { Box, Button, SxProps, Theme, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  SxProps,
+  TextField,
+  Theme,
+  Typography,
+} from "@mui/material";
 import { ContainerMessage } from "./ContainerMessage";
 import { useState, FC } from "react";
 import AddIcon from "@mui/icons-material/Add";
@@ -17,6 +24,10 @@ import {
 import { MessageGlobalApp } from "../../../types/message";
 import { MessageInput } from "../../../types/graphql-types";
 import { SendMessageDiscoussGroup_sendMessageDiscoussGroup } from "../../../graphql/message";
+import SearchIcon from "@mui/icons-material/Search";
+import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+import MessageIcon from "@mui/icons-material/Message";
+import { SpeedDialMessage } from "./SpeedDial";
 
 type FirstpageMessageProps = {
   discussions: MessageGlobalApp[];
@@ -51,6 +62,12 @@ type FirstpageMessageProps = {
   sx?: SxProps<Theme>;
 };
 
+export type IAction = {
+  name: string;
+  icon: React.ReactNode;
+  onClick?: () => void;
+};
+
 export const FirstpageMessage: FC<FirstpageMessageProps> = ({
   discussions,
   onSelect,
@@ -62,6 +79,17 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
   sx,
 }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const actions: IAction[] = [
+    {
+      name: "Nouveau message",
+      icon: <MessageIcon />,
+      onClick: () => setOpen(true),
+    },
+    {
+      name: "Paramètres des messages",
+      icon: <SettingsApplicationsIcon />,
+    },
+  ];
   return (
     <Box>
       <Box>
@@ -69,11 +97,21 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
           Messages
         </Typography>
       </Box>
-      <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
-        <Button variant="outlined" onClick={() => setOpen(true)}>
+      <Box sx={{ my: 2, display: "flex", justifyContent: "center", px: 1 }}>
+        {/* <Button variant="outlined" onClick={() => setOpen(true)}>
           <AddIcon />
           Nouveau message
-        </Button>
+        </Button> */}
+        <TextField
+          fullWidth
+          placeholder="Recherche..."
+          InputProps={{
+            sx: {
+              borderRadius: "25px !important",
+            },
+            endAdornment: <SearchIcon />,
+          }}
+        />
       </Box>
       <ContainerMessage
         discussions={discussions}
@@ -83,6 +121,7 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
         onClose={onClose}
         sx={sx}
       />
+      <SpeedDialMessage ariaLabel="Speed dial for message" actions={actions} />
       <NewMessageModal
         open={open}
         sendMessage={sendMessage}

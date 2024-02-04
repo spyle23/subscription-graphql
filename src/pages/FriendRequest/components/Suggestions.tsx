@@ -14,6 +14,7 @@ import {
   SendFriendRequestVariables,
 } from "../../../graphql/friendRequest/types/SendFriendRequest";
 import { SEND_FRIEND_REQUEST } from "../../../graphql/friendRequest/mutations";
+import emptySuggestion from "../../../assets/empty_suggestion.png";
 
 export const Suggestions = () => {
   const { user } = useApplicationContext();
@@ -47,13 +48,13 @@ export const Suggestions = () => {
     }
   };
   return (
-    <Box>
+    <Box sx={{ height: "100%" }}>
       <Typography variant="h3" textAlign="center" sx={{ my: 1 }}>
         Suggestions
       </Typography>
       <Grid container>
         {data?.getSuggestionOfCurrentUser.map((val) => (
-          <Grid item xs={12} sm={4} md={3} key={val.id} sx={{ p: 1 }}>
+          <Grid item xs={6} sm={4} md={3} key={val.id} sx={{ p: 1 }}>
             <InvitationCard
               user={val}
               actions={
@@ -66,7 +67,7 @@ export const Suggestions = () => {
         ))}
         {loading &&
           [1, 2, 3, 4].map((i) => (
-            <Grid item xs={12} sm={4} md={3} key={i} sx={{ p: 1 }}>
+            <Grid item xs={6} sm={4} md={3} key={i} sx={{ p: 1 }}>
               <InvitationSkeleton />
             </Grid>
           ))}
@@ -108,6 +109,20 @@ export const Suggestions = () => {
           >
             <Typography variant="h5">Afficher plus</Typography>
             <ExpandMoreIcon />
+          </Grid>
+        )}
+        {data && data.getSuggestionOfCurrentUser.length === 0 && (
+          <Grid item xs={12}>
+            <Typography sx={{ textAlign: "center", mb: 1 }}>
+              Aucune suggestion pour le moment
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Box
+                component="img"
+                src={emptySuggestion}
+                sx={{ width: "60%" }}
+              />
+            </Box>
           </Grid>
         )}
       </Grid>

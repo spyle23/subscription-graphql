@@ -1,4 +1,4 @@
-import { useQuery, useSubscription } from "@apollo/client";
+import { useLazyQuery, useQuery, useSubscription } from "@apollo/client";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Badge, IconButton, Popover, Typography, Box } from "@mui/material";
 import moment from "moment";
@@ -10,15 +10,15 @@ import {
   CommentPost_commentPost,
 } from "../../graphql/notification/types/CommentPost";
 import { useApplicationContext } from "../../hooks";
-import { useCurrentUser } from "../../hooks/user/useCurrentUser";
 import addNotification from "react-push-notification";
 import { GET_NOTIFICATIONS } from "../../graphql/notification/query";
 import {
   GetNotifications,
   GetNotificationsVariables,
 } from "../../graphql/notification/types/GetNotifications";
-import { CommentSkeleton } from "../skeleton/CommentSkeleton";
 import { Waypoint } from "react-waypoint";
+import emptyNotification from "../../assets/empty_notifications.png";
+import { NotificationSkeleton } from "../skeleton/MessageSkeleton";
 
 type NotificationType = {
   nbrNotification: number;
@@ -43,15 +43,16 @@ export const Notifications = (): JSX.Element => {
     }
   );
 
-  const {
-    data: listNotifications,
-    loading,
-    fetchMore,
-  } = useQuery<GetNotifications, GetNotificationsVariables>(GET_NOTIFICATIONS, {
-    variables: { userId: user?.id as number, cursor: null },
-    skip: !user?.id,
-    notifyOnNetworkStatusChange: true,
-  });
+  const [executeQuery, { data: listNotifications, loading, fetchMore }] =
+    useLazyQuery<GetNotifications, GetNotificationsVariables>(
+      GET_NOTIFICATIONS,
+      {
+        variables: { userId: user?.id as number, cursor: null },
+        notifyOnNetworkStatusChange: true,
+      }
+    );
+
+  console.log("listNotifications", listNotifications?.getNotifications);
 
   const finaleNotifications = useMemo<NotificationType>(() => {
     if (listNotifications?.getNotifications) {
@@ -85,7 +86,11 @@ export const Notifications = (): JSX.Element => {
     }
   }, [data]);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!user) return;
+    if (!listNotifications?.getNotifications) {
+      executeQuery({ variables: { userId: user.id, cursor: null } });
+    }
     setAnchorEl(event.currentTarget);
   };
 
@@ -122,7 +127,21 @@ export const Notifications = (): JSX.Element => {
           horizontal: "center",
         }}
       >
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, width: { xs: "250px", md: "250px" } }}>
+          {!loading && finaleNotifications.notifications.length === 0 && (
+            <Box>
+              <Typography sx={{ textAlign: "center" }}>
+                Aucune notification
+              </Typography>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Box
+                  component="img"
+                  src={emptyNotification}
+                  sx={{ width: "150px" }}
+                />
+              </Box>
+            </Box>
+          )}
           {finaleNotifications.notifications.map((notification, index) => {
             return (
               <Fragment key={index}>
@@ -165,7 +184,8 @@ export const Notifications = (): JSX.Element => {
               </Fragment>
             );
           })}
-          {loading && [1, 2, 3].map((val) => <CommentSkeleton key={val} />)}
+          {loading &&
+            [1, 2, 3].map((val) => <NotificationSkeleton key={val} />)}
         </Box>
       </Popover>
     </div>

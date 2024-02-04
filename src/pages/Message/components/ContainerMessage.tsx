@@ -14,7 +14,7 @@ import {
   FetchMoreQueryOptions,
   OperationVariables,
 } from "@apollo/client";
-import { CommentSkeleton } from "../../../components/skeleton/CommentSkeleton";
+import { MessageSkeleton } from "../../../components/skeleton/MessageSkeleton";
 
 type ContainerMessageProps = {
   discussions: MessageGlobalApp[];
@@ -90,7 +90,7 @@ export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
             )}
           </Fragment>
         ))}
-        {loading && [1, 2, 3].map((val) => <CommentSkeleton key={val} />)}
+        {loading && [1, 2, 3].map((val) => <MessageSkeleton key={val} />)}
       </Box>
     );
   }

@@ -108,7 +108,7 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
             flexDirection: "column",
             width: "100%",
             background: "#f8f8f8",
-            minHeight: "90vh",
+            minHeight: "92vh",
             position: "relative",
           }}
         >

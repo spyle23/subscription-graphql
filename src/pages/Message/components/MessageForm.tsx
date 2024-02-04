@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { Box, IconButton, TextField } from "@mui/material";
+import { FC, useRef } from "react";
+import { Box, BoxProps, IconButton, TextField } from "@mui/material";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { FileInput, MessageInput } from "../../../types/graphql-types";
@@ -33,7 +33,7 @@ type MessageFormProps = {
   ) => Promise<SendMessageDiscoussGroup_sendMessageDiscoussGroup | undefined>;
   discussion: MessageGlobalApp;
   user?: login_login_data;
-};
+} & BoxProps;
 
 type StyleProps = {
   hoverColor: string;
@@ -60,6 +60,8 @@ export const MessageForm: FC<MessageFormProps> = ({
   theme,
   discussion,
   user,
+  sx,
+  ...props
 }) => {
   const { register, handleSubmit, reset, watch, onFinished, dropFile } =
     useUploadForm<MessageInput>();
@@ -71,7 +73,6 @@ export const MessageForm: FC<MessageFormProps> = ({
     focusedColor: discussion.theme,
   });
   const colorIcons = extractColorFromGradient(theme);
-
   const handleFocus = async (isWritting: boolean) => {
     await writeMessage({
       variables: {
@@ -83,6 +84,7 @@ export const MessageForm: FC<MessageFormProps> = ({
   };
 
   const submitMessage = async (data: MessageInput) => {
+    if (!data.content) return;
     const newData: MessageInput = data.files ? data : { ...data, files: [] };
     await sendMessage(
       newData,
@@ -96,7 +98,7 @@ export const MessageForm: FC<MessageFormProps> = ({
     reset({ content: "", files: [] });
   };
   return (
-    <Box sx={{ py: 1 }}>
+    <Box sx={{ py: 1, ...sx }} {...props}>
       <ContainerDisplay
         data={watch().files ? (watch().files as FileInput[]) : []}
         deleteFile={dropFile}

@@ -25,27 +25,38 @@ export const HeaderMessage: FC<HeaderMessageProps> = ({
         sx={{ backgroundColor: "inherit", svg: { fill: "inherit" } }}
       >
         <Toolbar>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton sx={{ mr: 2 }} onClick={handleBack}>
-              {colorIcons ? (
-                <CustomIcon
-                  color1={colorIcons[0]}
-                  color2={colorIcons[1]}
-                  type={theme.split("-")[0] === "linear" ? "linear" : "radial"}
-                  id={`ArrowBackIcon`}
-                >
-                  <ArrowBackIcon sx={{ fill: `url(#ArrowBackIcon)` }} />
-                </CustomIcon>
-              ) : (
-                <ArrowBackIcon sx={{ fill: theme }} />
-              )}
-            </IconButton>
-            <DynamicAvatar sx={{ mr: 2 }} user={userDiscuss} />
-            <Typography variant="h4">
-              {"groupName" in userDiscuss
-                ? userDiscuss.groupName
-                : `${userDiscuss.firstname} ${userDiscuss.lastname}`}
-            </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%"
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <IconButton sx={{ mr: 2 }} onClick={handleBack}>
+                {colorIcons ? (
+                  <CustomIcon
+                    color1={colorIcons[0]}
+                    color2={colorIcons[1]}
+                    type={
+                      theme.split("-")[0] === "linear" ? "linear" : "radial"
+                    }
+                    id={`ArrowBackIcon`}
+                  >
+                    <ArrowBackIcon sx={{ fill: `url(#ArrowBackIcon)` }} />
+                  </CustomIcon>
+                ) : (
+                  <ArrowBackIcon sx={{ fill: theme }} />
+                )}
+              </IconButton>
+              <DynamicAvatar sx={{ mr: 2 }} user={userDiscuss} />
+              <Typography variant="h4">
+                {"groupName" in userDiscuss
+                  ? userDiscuss.groupName
+                  : `${userDiscuss.firstname} ${userDiscuss.lastname}`}
+              </Typography>
+            </Box>
             <DiscussionPopover
               colorIcons={colorIcons}
               theme={theme}

@@ -521,7 +521,8 @@ const VideoCall = () => {
             playsInline
             sx={{
               borderRadius: "15px",
-              height: { xs: undefined, md: "100%" },
+              height: { xs: "auto", md: "100%" },
+              width: { xs: "100%", md: "auto" },
               display: video ? "block" : "none",
             }}
           />

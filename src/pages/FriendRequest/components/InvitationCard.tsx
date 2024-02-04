@@ -28,16 +28,13 @@ export const InvitationCard: FC<InvitationCardProps> = ({
   return (
     <Card elevation={1} sx={{ borderRadius: "15px", ...sx }} {...props}>
       <CardMedia
-        onClick={() =>
-          navigate(`/landing/profil/${user.id}`)
-        }
-        sx={{ cursor: "pointer" }}
+        onClick={() => navigate(`/landing/profil/${user.id}`)}
+        sx={{ cursor: "pointer", height: { xs: "150px", md: "209px" } }}
         component="img"
-        height="209"
         src={user.photo ? usePhotoUrl(user.photo) : defaultProfil}
       />
       <CardContent sx={{ overflow: "hidden" }}>
-        <Typography sx={{ fontSize: "1rem" }}>
+        <Typography sx={{ fontSize: { md: "1em" }, textAlign: "center" }}>
           {user.firstname + " " + user.lastname}
         </Typography>
       </CardContent>

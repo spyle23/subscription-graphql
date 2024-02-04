@@ -104,6 +104,7 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
             <SearchIcon />
           </SearchIconWrapper>
           <StyledInputBase
+            sx={{ display: { xs: "none", sm: "block" } }}
             placeholder="Search…"
             inputProps={{ "aria-label": "search" }}
           />

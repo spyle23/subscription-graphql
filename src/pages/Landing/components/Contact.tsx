@@ -19,8 +19,8 @@ import {
   GetFriendOfCurrentUserVariables,
 } from "../../../graphql/friendRequest/types/GetFriendOfCurrentUser";
 import { GET_FRIEND } from "../../../graphql/friendRequest/query";
-import { CommentSkeleton } from "../../../components/skeleton/CommentSkeleton";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { ContactSkeleton } from "../../../components/skeleton/MessageSkeleton";
 type ContactProps = {
   data?: GetStatusUser;
   user?: login_login_data;
@@ -180,7 +180,7 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
               <ExpandMoreIcon />
             </Box>
           )}
-        {loading && [1, 2, 3].map((val) => <CommentSkeleton key={val} />)}
+        {loading && [1, 2, 3].map((val) => <ContactSkeleton key={val} />)}
       </Box>
     </Card>
   );

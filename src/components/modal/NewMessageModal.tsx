@@ -154,7 +154,10 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
     <Dialog open={open} onClose={onClose}>
       <DialogTitle
         variant="h4"
-        sx={{ width: { xs: 300, md: 600 }, textAlign: "center" }}
+        sx={{
+          width: { xs: 300, md: 600 },
+          textAlign: { xs: "start", sm: "center" },
+        }}
       >
         nouveau message
         <IconButton
@@ -183,6 +186,11 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
                     onChange={() => {
                       handleSelect(a);
                     }}
+                    sx={{
+                      ml: 0,
+                      width: "100%",
+                      justifyContent: "space-between",
+                    }}
                     label={
                       <Box sx={{ display: "flex", alignItems: "center" }}>
                         <DynamicAvatar user={a} />
@@ -191,6 +199,7 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
                         </Typography>
                       </Box>
                     }
+                    labelPlacement="start"
                   />
                   {index === friends?.getFriendOfCurrentUser.length - 1 &&
                     friends?.getFriendOfCurrentUser.length === 10 && (
@@ -241,7 +250,10 @@ export const NewMessageModal: FC<NewMessageModalProps> = ({
                 sx={{ width: "80%" }}
               />
             </Box>
-            <ContainerDisplay data={watch().files ? (watch().files as FileInput[]) : []} deleteFile={dropFile} />
+            <ContainerDisplay
+              data={watch().files ? (watch().files as FileInput[]) : []}
+              deleteFile={dropFile}
+            />
           </Box>
         )}
       </DialogContent>

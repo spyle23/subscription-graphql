@@ -107,17 +107,14 @@ export const ThemeModal: FC<ThemeModalProps> = ({
           <CloseIcon color="primary" />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ display: "flex" }}>
+      <DialogContent sx={{ display: "flex", flexFlow: "row wrap" }}>
         {themes.map((i, index) => (
           <ThemeCircle
             theme={i}
             key={index}
             onClick={() => handleSelect(i, index)}
             sx={{
-              backgroundColor:
-                selected === index
-                  ? "lightgrey"
-                  : undefined,
+              backgroundColor: selected === index ? "lightgrey" : undefined,
               // boxShadow:
               //   selected === index
               //     ? "0 4px 8px rgba(76, 175, 80, 0.4)"
