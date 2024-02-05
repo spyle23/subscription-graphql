@@ -19,6 +19,7 @@ import {
 import { ListenTheme_listenTheme } from "../../../graphql/discussion/types/ListenTheme";
 import { Waypoint } from "react-waypoint";
 import { Writting } from "../../../components/animation/Writting";
+import { IChangeTheme } from "../../../components/modal/ThemeModal";
 
 type SecondpageMessageProps = {
   currentDiscussion: MessageGlobalApp;
@@ -32,11 +33,13 @@ type SecondpageMessageProps = {
     discussGroupId?: number | null
   ) => Promise<SendMessageDiscoussGroup_sendMessageDiscoussGroup | undefined>;
   handleBack: () => void;
+  changeTheme: (value: IChangeTheme) => void;
 } & BoxProps;
 
 export const SecondpageMessage: FC<SecondpageMessageProps> = ({
   currentDiscussion,
   messageToUser,
+  changeTheme,
   listenTheme,
   handleBack,
   sendMessage,
@@ -119,7 +122,11 @@ export const SecondpageMessage: FC<SecondpageMessageProps> = ({
   };
   return (
     <Box {...props}>
-      <HeaderMessage discussion={currentDiscussion} handleBack={handleBack} />
+      <HeaderMessage
+        discussion={currentDiscussion}
+        handleBack={handleBack}
+        changeTheme={changeTheme}
+      />
       <Box ref={scrollRef} sx={{ p: 2, height: "100%", overflowY: "auto" }}>
         {loading && (
           <Box sx={{ display: "flex", justifyContent: "center" }}>

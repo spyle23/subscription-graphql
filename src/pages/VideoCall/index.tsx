@@ -436,16 +436,6 @@ const VideoCall = () => {
     }
   }, [data, callbackFonction]);
 
-  // useEffect(() => {
-  //   if (video) {
-  //     navigator.mediaDevices.getUserMedia({ video: true }).then((str) => {
-  //       if (userVideo.current) {
-  //         userVideo.current.srcObject = str;
-  //       }
-  //     });
-  //   }
-  // }, [video]);
-
   if (!user) return null;
 
   const endCall = async () => {

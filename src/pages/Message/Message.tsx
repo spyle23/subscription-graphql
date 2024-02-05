@@ -4,9 +4,16 @@ import { FirstpageMessage } from "./components/FirstpageMessage";
 import { MessageContexteType, MessageGlobalApp } from "../../types/message";
 import { useMessage } from "../../hooks/message/useMessage";
 import { SecondpageMessage } from "./components/SecondpageMessage";
-import { GetDiscussionCurrentUser_getDiscussionCurrentUser } from "../../graphql/discussion/types/GetDiscussionCurrentUser";
+import {
+  GetDiscussionCurrentUser,
+  GetDiscussionCurrentUserVariables,
+  GetDiscussionCurrentUser_getDiscussionCurrentUser,
+} from "../../graphql/discussion/types/GetDiscussionCurrentUser";
 import { determineUserOrGroup } from "./components/PresenterMessage";
 import { login_login_data } from "../../graphql/user";
+import { IChangeTheme } from "../../components/modal/ThemeModal";
+import { useQuery } from "@apollo/client";
+import { DISCUSSION_CURRENT_USER } from "../../graphql/discussion";
 
 export const MessageContext = createContext<MessageContexteType>({
   currentDiscussion: undefined,
@@ -14,17 +21,20 @@ export const MessageContext = createContext<MessageContexteType>({
 } as MessageContexteType);
 
 const Message = (): JSX.Element => {
+  const { data, writting, user, sendMessage, listenTheme } = useMessage();
   const {
-    data,
-    messageData,
-    writting,
-    refetchMessageData,
-    user,
-    sendMessage,
-    listenTheme,
+    data: messageData,
+    refetch: refetchMessageData,
     loading,
     fetchMore,
-  } = useMessage();
+  } = useQuery<GetDiscussionCurrentUser, GetDiscussionCurrentUserVariables>(
+    DISCUSSION_CURRENT_USER,
+    {
+      variables: { userId: user?.id as number },
+      skip: !user?.id,
+      notifyOnNetworkStatusChange: true,
+    }
+  );
   const [currentDiscussion, setCurrentDiscussion] =
     useState<MessageGlobalApp>();
   const [discussions, setDiscussions] = useState<MessageGlobalApp[]>([]);
@@ -170,6 +180,12 @@ const Message = (): JSX.Element => {
   const handleBack = () => {
     setCurrentDiscussion(undefined);
   };
+  const handleChangeTheme = (value: IChangeTheme) => {
+    const { theme } = value;
+    if (currentDiscussion) {
+      setCurrentDiscussion({ ...currentDiscussion, theme });
+    }
+  };
 
   return (
     <Grid container>
@@ -204,6 +220,7 @@ const Message = (): JSX.Element => {
               handleBack={handleBack}
               currentDiscussion={currentDiscussion}
               sendMessage={sendMessage}
+              changeTheme={handleChangeTheme}
               sx={{ height: "82vh" }}
             />
           )}

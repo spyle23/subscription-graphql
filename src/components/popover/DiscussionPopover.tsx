@@ -13,7 +13,7 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { FC, useState } from "react";
 import { MessageGlobalApp } from "../../types/message";
-import { ThemeModal } from "../modal/ThemeModal";
+import { IChangeTheme, ThemeModal } from "../modal/ThemeModal";
 import { CustomIcon } from "../CustomIcon/CustomIcon";
 import { useMutation } from "@apollo/client";
 import {
@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 
 type DiscussionPopoverProps = {
   theme: string;
+  changeTheme: (value: IChangeTheme) => void;
   colorIcons: string[] | null;
   currentDiscussion: MessageGlobalApp;
 };
@@ -33,11 +34,12 @@ type DiscussionPopoverProps = {
 export const DiscussionPopover: FC<DiscussionPopoverProps> = ({
   theme,
   colorIcons,
+  changeTheme,
   currentDiscussion,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { user } = useApplicationContext();
-  const [changeTheme, setChangeTheme] = useState(false);
+  const [isChangeTheme, setIsChangeTheme] = useState(false);
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const id = open ? "discussion-popover" : undefined;
@@ -64,11 +66,11 @@ export const DiscussionPopover: FC<DiscussionPopoverProps> = ({
     setAnchorEl(null);
   };
   const openChangeTheme = () => {
-    setChangeTheme(true);
+    setIsChangeTheme(true);
     setAnchorEl(null);
   };
   const handleCloseTheme = () => {
-    setChangeTheme(false);
+    setIsChangeTheme(false);
   };
   return (
     <div>
@@ -149,9 +151,7 @@ export const DiscussionPopover: FC<DiscussionPopoverProps> = ({
           {"firstname" in currentDiscussion.userDiscuss && (
             <ListItemButton
               onClick={() =>
-                navigate(
-                  `/landing/profil/${currentDiscussion.userDiscuss.id}`
-                )
+                navigate(`/landing/profil/${currentDiscussion.userDiscuss.id}`)
               }
             >
               <ListItemIcon>
@@ -176,9 +176,10 @@ export const DiscussionPopover: FC<DiscussionPopoverProps> = ({
         </List>
       </Popover>
       <ThemeModal
-        open={changeTheme}
+        open={isChangeTheme}
         onClose={handleCloseTheme}
         discussion={currentDiscussion}
+        changeTheme={changeTheme}
       />
     </div>
   );

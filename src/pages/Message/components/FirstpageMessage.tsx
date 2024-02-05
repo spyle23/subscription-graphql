@@ -98,10 +98,6 @@ export const FirstpageMessage: FC<FirstpageMessageProps> = ({
         </Typography>
       </Box>
       <Box sx={{ my: 2, display: "flex", justifyContent: "center", px: 1 }}>
-        {/* <Button variant="outlined" onClick={() => setOpen(true)}>
-          <AddIcon />
-          Nouveau message
-        </Button> */}
         <TextField
           fullWidth
           placeholder="Recherche..."

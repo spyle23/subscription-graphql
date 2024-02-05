@@ -39,10 +39,9 @@ const DashboardLayoutRoot = styled("div")(() => ({
 export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
   children,
 }): JSX.Element => {
-  const options = useMessage();
   const location = useLocation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { writting, data, sendMessage, listenTheme, user } = options;
+  const { writting, data, sendMessage, listenTheme, user } = useMessage();
   const [exec] = useMutation<ChangeStatus, ChangeStatusVariables>(STATUS);
   const { data: listenCall } = useSubscription<ListenCall, ListenCallVariables>(
     LISTEN_CALL,
@@ -135,7 +134,14 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
         </Box>
       </DashboardLayoutRoot>
       <DashboardNavbar
-        message={<MessageToolbar {...options} />}
+        message={
+          <MessageToolbar
+            data={data}
+            sendMessage={sendMessage}
+            user={user}
+            writting={writting}
+          />
+        }
         notification={<Notifications />}
         utilisateur={<UserMenu />}
       />

@@ -14,6 +14,7 @@ import {
 import { ClosedDiscussion } from "../card/ClosedDiscussion";
 import { determineUserOrGroup } from "../../pages/Message/components/PresenterMessage";
 import { ListenTheme } from "../../graphql/discussion/types/ListenTheme";
+import { IChangeTheme } from "../modal/ThemeModal";
 
 type DiscussionOpenTabProps = {
   data?: MessageToUser;
@@ -88,6 +89,11 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
       });
     }
   }, [listenTheme, user]);
+
+  const handleChangeTheme = (val: IChangeTheme) => {
+    const { theme, type, value } = val;
+    dispatchDiscussion({ type, theme, value });
+  };
   return (
     <>
       <Grid
@@ -116,6 +122,7 @@ export const DiscussionOpenTab: FC<DiscussionOpenTabProps> = ({
               }
               discussion={i}
               user={user}
+              changeTheme={handleChangeTheme}
               dispatchDiscussion={dispatchDiscussion}
               sendMessage={sendMessage}
               sx={{ width: "20vw" }}

@@ -23,8 +23,15 @@ import {
 import { CHANGE_THEME } from "../../graphql/discussion";
 import { useApplicationContext } from "../../hooks";
 
+export type IChangeTheme = {
+  type: "change Theme",
+  theme: string,
+  value: MessageGlobalApp;
+}
+
 type ThemeModalProps = {
   discussion: MessageGlobalApp;
+  changeTheme: (value: IChangeTheme) => void;
 } & DialogProps;
 
 type ThemeCircleProps = {
@@ -59,19 +66,19 @@ const ThemeCircle: FC<ThemeCircleProps> = ({ theme, sx, ...props }) => {
 export const ThemeModal: FC<ThemeModalProps> = ({
   discussion,
   onClose,
+  changeTheme,
   ...props
 }) => {
   const { user } = useApplicationContext();
   const [exec] = useMutation<ChangeTheme, ChangeThemeVariables>(CHANGE_THEME);
   const [defaultTheme] = useState(discussion.theme);
-  const { dispatchDiscussion } = useContext(DiscussionContext);
   const [selected, setSelected] = useState<number>();
   const handleSelect = (val: string, index: number) => {
     setSelected(index);
-    dispatchDiscussion({ type: "change Theme", theme: val, value: discussion });
+    changeTheme({ type: "change Theme", theme: val, value: discussion });
   };
   const handleCancel = () => {
-    dispatchDiscussion({
+    changeTheme({
       type: "change Theme",
       theme: defaultTheme,
       value: discussion,

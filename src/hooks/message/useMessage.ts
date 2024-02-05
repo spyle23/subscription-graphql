@@ -1,9 +1,4 @@
-import {
-  useApolloClient,
-  useMutation,
-  useQuery,
-  useSubscription,
-} from "@apollo/client";
+import { useMutation, useSubscription } from "@apollo/client";
 import { useApplicationContext } from "../application";
 import {
   LISTEN_MESSAGE,
@@ -18,11 +13,6 @@ import {
   WriteMessage,
   WriteMessageVariables,
 } from "../../graphql/message/types/WriteMessage";
-import { DISCUSSION_CURRENT_USER } from "../../graphql/discussion";
-import {
-  GetDiscussionCurrentUser,
-  GetDiscussionCurrentUserVariables,
-} from "../../graphql/discussion/types/GetDiscussionCurrentUser";
 import { MessageInput } from "../../types/graphql-types";
 import { LISTEN_THEME } from "../../graphql/discussion/subscription";
 import {
@@ -35,20 +25,6 @@ import { usePhotoUrl } from "../application/usePhotoUrl";
 
 export const useMessage = () => {
   const { user } = useApplicationContext();
-  const apolloClient = useApolloClient();
-  const {
-    data: messageData,
-    refetch: refetchMessageData,
-    loading,
-    fetchMore,
-  } = useQuery<GetDiscussionCurrentUser, GetDiscussionCurrentUserVariables>(
-    DISCUSSION_CURRENT_USER,
-    {
-      variables: { userId: user?.id as number },
-      skip: !user?.id,
-      notifyOnNetworkStatusChange: true,
-    }
-  );
   const { data } = useSubscription<MessageToUser, MessageToUserVariables>(
     LISTEN_MESSAGE,
     {
@@ -76,26 +52,26 @@ export const useMessage = () => {
     SendMessageDiscoussGroupVariables
   >(SEND_MESSAGE, {
     onCompleted: (data) => {
-      if (messageData) {
-        const updateData = messageData.getDiscussionCurrentUser.find(
-          (i) => i.id === data.sendMessageDiscoussGroup.id
-        )
-          ? messageData.getDiscussionCurrentUser.map((i) =>
-              i.id === data.sendMessageDiscoussGroup.id
-                ? { ...i, messages: data.sendMessageDiscoussGroup.messages }
-                : i
-            )
-          : [
-              data.sendMessageDiscoussGroup,
-              ...messageData.getDiscussionCurrentUser,
-            ];
-        apolloClient.writeQuery<GetDiscussionCurrentUser>({
-          query: DISCUSSION_CURRENT_USER,
-          data: {
-            getDiscussionCurrentUser: updateData,
-          },
-        });
-      }
+      // if (messageData) {
+      //   const updateData = messageData.getDiscussionCurrentUser.find(
+      //     (i) => i.id === data.sendMessageDiscoussGroup.id
+      //   )
+      //     ? messageData.getDiscussionCurrentUser.map((i) =>
+      //         i.id === data.sendMessageDiscoussGroup.id
+      //           ? { ...i, messages: data.sendMessageDiscoussGroup.messages }
+      //           : i
+      //       )
+      //     : [
+      //         data.sendMessageDiscoussGroup,
+      //         ...messageData.getDiscussionCurrentUser,
+      //       ];
+      //   apolloClient.writeQuery<GetDiscussionCurrentUser>({
+      //     query: DISCUSSION_CURRENT_USER,
+      //     data: {
+      //       getDiscussionCurrentUser: updateData,
+      //     },
+      //   });
+      // }
     },
   });
 
@@ -133,10 +109,6 @@ export const useMessage = () => {
 
   return {
     user,
-    messageData,
-    refetchMessageData,
-    loading,
-    fetchMore,
     sendMessage,
     listenTheme,
     writting,

@@ -24,7 +24,7 @@ const FriendRequest = () => {
     },
   ];
   return (
-    <Container sx={{ height: "90vh", position: "relative" }}>
+    <Container sx={{ position: "relative" }}>
       {renders === "Invitations" ? <Invitations /> : <Suggestions />}
       <SpeedDialMessage
         ariaLabel="switch renders"

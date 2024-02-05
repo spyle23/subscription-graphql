@@ -52,8 +52,6 @@ export const Notifications = (): JSX.Element => {
       }
     );
 
-  console.log("listNotifications", listNotifications?.getNotifications);
-
   const finaleNotifications = useMemo<NotificationType>(() => {
     if (listNotifications?.getNotifications) {
       return {

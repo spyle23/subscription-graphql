@@ -35,6 +35,7 @@ import { CustomIcon } from "../CustomIcon/CustomIcon";
 import { ListenTheme_listenTheme } from "../../graphql/discussion/types/ListenTheme";
 import { Waypoint } from "react-waypoint";
 import { Writting } from "../animation/Writting";
+import { IChangeTheme } from "../modal/ThemeModal";
 
 type DiscussionCardProps = {
   discussion: MessageGlobalApp;
@@ -49,6 +50,7 @@ type DiscussionCardProps = {
     receiverId?: number | null,
     discussGroupId?: number | null
   ) => Promise<SendMessageDiscoussGroup_sendMessageDiscoussGroup | undefined>;
+  changeTheme: (value: IChangeTheme) => void;
 } & CardProps;
 
 export const DiscussionCard: FC<DiscussionCardProps> = ({
@@ -56,6 +58,7 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
   user,
   listenTheme,
   messageToUser,
+  changeTheme,
   dispatchDiscussion,
   sendMessage,
   ...cardProps
@@ -156,6 +159,7 @@ export const DiscussionCard: FC<DiscussionCardProps> = ({
               colorIcons={colorIcons}
               theme={discussion.theme}
               currentDiscussion={discussion}
+              changeTheme={changeTheme}
             />
             <IconButton
               onClick={() =>

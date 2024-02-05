@@ -113,73 +113,69 @@ export const Contact: FC<ContactProps> = React.memo(({ data, user }) => {
         Contacts
       </Typography>
       <Box sx={{ height: "78vh", overflowY: "auto" }}>
-        {friends?.getFriendOfCurrentUser
-          .filter((i) => i.status)
-          .map((val) => (
-            <Box
-              key={val.id}
-              onClick={() => handleSelect(val)}
-              sx={{
-                p: 1,
-                display: "flex",
-                alignItems: "center",
-                borderRadius: "10px",
-                cursor: "pointer",
-                ":hover": {
-                  backgroundColor: "lightgray",
+        {friends?.getFriendOfCurrentUser.map((val) => (
+          <Box
+            key={val.id}
+            onClick={() => handleSelect(val)}
+            sx={{
+              p: 1,
+              display: "flex",
+              alignItems: "center",
+              borderRadius: "10px",
+              cursor: "pointer",
+              ":hover": {
+                backgroundColor: "lightgray",
+              },
+            }}
+          >
+            <DynamicAvatar user={val} />
+            <Typography>{val.firstname + " " + val.lastname}</Typography>
+          </Box>
+        ))}
+        {friends?.getFriendOfCurrentUser.length === 10 && (
+          <Box
+            onClick={() => {
+              setCursor(
+                friends.getFriendOfCurrentUser[
+                  friends.getFriendOfCurrentUser.length - 1
+                ].id
+              );
+              fetchMore({
+                variables: {
+                  userId: user?.id as number,
+                  status: true,
+                  cursor:
+                    friends.getFriendOfCurrentUser[
+                      friends.getFriendOfCurrentUser.length - 1
+                    ].id,
                 },
-              }}
-            >
-              <DynamicAvatar user={val} />
-              <Typography>{val.firstname + " " + val.lastname}</Typography>
-            </Box>
-          ))}
-        {friends &&
-          friends.getFriendOfCurrentUser.length > 0 &&
-          friends.getFriendOfCurrentUser.length % 10 === 0 && (
-            <Box
-              onClick={() => {
-                setCursor(
-                  friends.getFriendOfCurrentUser[
-                    friends.getFriendOfCurrentUser.length - 1
-                  ].id
-                );
-                fetchMore({
-                  variables: {
-                    userId: user?.id as number,
-                    status: true,
-                    cursor:
-                      friends.getFriendOfCurrentUser[
-                        friends.getFriendOfCurrentUser.length - 1
-                      ].id,
-                  },
-                  updateQuery: (previousQueryResult, { fetchMoreResult }) => {
-                    if (!fetchMoreResult) return previousQueryResult;
-                    return {
-                      getFriendOfCurrentUser: [
-                        ...previousQueryResult.getFriendOfCurrentUser,
-                        ...fetchMoreResult.getFriendOfCurrentUser,
-                      ],
-                    };
-                  },
-                });
-              }}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "10px",
-                cursor: "pointer",
-                ":hover": {
-                  backgroundColor: "lightgray",
+                updateQuery: (previousQueryResult, { fetchMoreResult }) => {
+                  if (!fetchMoreResult) return previousQueryResult;
+                  return {
+                    getFriendOfCurrentUser: [
+                      ...previousQueryResult.getFriendOfCurrentUser,
+                      ...fetchMoreResult.getFriendOfCurrentUser,
+                    ],
+                  };
                 },
-                py: 1,
-              }}
-            >
-              <Typography>Afficher plus</Typography>
-              <ExpandMoreIcon />
-            </Box>
-          )}
+              });
+            }}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "10px",
+              cursor: "pointer",
+              ":hover": {
+                backgroundColor: "lightgray",
+              },
+              py: 1,
+            }}
+          >
+            <Typography>Afficher plus</Typography>
+            <ExpandMoreIcon />
+          </Box>
+        )}
         {loading && [1, 2, 3].map((val) => <ContactSkeleton key={val} />)}
       </Box>
     </Card>

@@ -6,14 +6,17 @@ import { extractColorFromGradient } from "../../../utils/theme";
 import { CustomIcon } from "../../../components/CustomIcon/CustomIcon";
 import { DiscussionPopover } from "../../../components/popover/DiscussionPopover";
 import { MessageGlobalApp } from "../../../types/message";
+import { IChangeTheme } from "../../../components/modal/ThemeModal";
 
 type HeaderMessageProps = {
   discussion: MessageGlobalApp;
   handleBack: () => void;
+  changeTheme: (value: IChangeTheme) => void;
 };
 
 export const HeaderMessage: FC<HeaderMessageProps> = ({
   discussion,
+  changeTheme,
   handleBack,
 }) => {
   const { theme, userDiscuss } = discussion;
@@ -30,7 +33,7 @@ export const HeaderMessage: FC<HeaderMessageProps> = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              width: "100%"
+              width: "100%",
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -61,6 +64,7 @@ export const HeaderMessage: FC<HeaderMessageProps> = ({
               colorIcons={colorIcons}
               theme={theme}
               currentDiscussion={discussion}
+              changeTheme={changeTheme}
             />
           </Box>
         </Toolbar>
