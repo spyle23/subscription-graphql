@@ -9,7 +9,7 @@ import {
   alpha,
   Badge,
 } from "@mui/material";
-import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
+// import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import GroupIcon from "@mui/icons-material/Group";
 import HomeIcon from "@mui/icons-material/Home";
@@ -21,6 +21,7 @@ import {
   SendRequestNotifVariables,
 } from "../../graphql/friendRequest/types/SendRequestNotif";
 import { useApplicationContext } from "../../hooks";
+import logo from "../../assets/logo.png";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -97,7 +98,7 @@ export const DashboardNavbar: FC<DashboardNavbarProps> = ({
         }}
       >
         <IconButton size="large" aria-label="logo" color="inherit">
-          <FacebookOutlinedIcon />
+          <Box component="img" src={logo} sx={{ width: "50px"}}/>
         </IconButton>
         <Search>
           <SearchIconWrapper>
