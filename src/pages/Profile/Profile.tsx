@@ -144,17 +144,20 @@ const Profile = (): JSX.Element => {
         }}
       >
         <Box sx={{ width: 200, height: 200, position: "relative", mr: 2 }}>
-          {loading && (
+          {loading ? (
             <Skeleton
               variant="circular"
               sx={{ width: "100%", height: "100%" }}
             />
+          ) : (
+            <Avatar
+              alt={userInfo?.user.firstname || "profile"}
+              src={
+                usePhotoUrl(userInfo?.user.photo ?? undefined) || profilImage
+              }
+              sx={{ width: "100%", height: "100%" }}
+            />
           )}
-          <Avatar
-            alt={userInfo?.user.firstname || "profile"}
-            src={usePhotoUrl(userInfo?.user.photo ?? undefined) || profilImage}
-            sx={{ width: "100%", height: "100%" }}
-          />
           {id && parseFloat(id) === user?.id && (
             <Box
               sx={{
@@ -173,13 +176,19 @@ const Profile = (): JSX.Element => {
           )}
         </Box>
       </Box>
-      <Typography
-        fontWeight="bold"
-        fontSize="1.5em"
-        sx={{ textAlign: "center" }}
-      >
-        {userInfo?.user.firstname} {userInfo?.user.lastname}
-      </Typography>
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Skeleton variant="text" sx={{ width: 150, height: 15 }} />
+        </Box>
+      ) : (
+        <Typography
+          fontWeight="bold"
+          fontSize="1.5em"
+          sx={{ textAlign: "center" }}
+        >
+          {userInfo?.user.firstname} {userInfo?.user.lastname}
+        </Typography>
+      )}
       {id && parseFloat(id) !== user?.id && (
         <Box sx={{ display: "flex", justifyContent: "center", my: 1 }}>
           <Button

@@ -1,4 +1,4 @@
-import { Box, BoxProps } from "@mui/material";
+import { Box, BoxProps, Typography } from "@mui/material";
 import React, { FC, Fragment, useEffect } from "react";
 import { useApplicationContext } from "../../../hooks";
 import { PresenterMessage } from "./PresenterMessage";
@@ -15,6 +15,7 @@ import {
   OperationVariables,
 } from "@apollo/client";
 import { MessageSkeleton } from "../../../components/skeleton/MessageSkeleton";
+import empty_discussion from "../../../assets/empty_discussion.png";
 
 type ContainerMessageProps = {
   discussions: MessageGlobalApp[];
@@ -91,6 +92,20 @@ export const ContainerMessage: FC<ContainerMessageProps> = React.memo(
           </Fragment>
         ))}
         {loading && [1, 2, 3].map((val) => <MessageSkeleton key={val} />)}
+        {discussions.length === 0 && !loading && (
+          <Box>
+            <Typography sx={{ textAlign: "center" }}>
+              Aucune discussion pour le moment
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Box
+                component="img"
+                src={empty_discussion}
+                sx={{ width: "60%" }}
+              />
+            </Box>
+          </Box>
+        )}
       </Box>
     );
   }

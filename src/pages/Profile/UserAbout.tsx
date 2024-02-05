@@ -17,10 +17,16 @@ export const UserAbout: FC<UserAboutProps> = ({ loading, userInfo, user }) => {
   return (
     <Grid container>
       <Grid item xs={12} md={5} sx={{ p: 1 }}>
-        {loading && <ProfileInfoSkeleton />}
-        <UserInfo userInfo={userInfo?.user} />
-        {loading && <FriendSkeleton />}
-        <UserFriends friends={userInfo?.friends} user={user} sx={{ my: 1 }} />
+        {loading ? (
+          <ProfileInfoSkeleton />
+        ) : (
+          <UserInfo userInfo={userInfo?.user} />
+        )}
+        {loading ? (
+          <FriendSkeleton />
+        ) : (
+          <UserFriends friends={userInfo?.friends} user={user} sx={{ my: 1 }} />
+        )}
       </Grid>
       <Grid item xs={12} md={7} sx={{ p: 1 }}>
         <ContainerPost />

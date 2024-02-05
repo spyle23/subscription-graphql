@@ -18,6 +18,7 @@ import {
 import { InvitationSkeleton } from "../../components/skeleton/InvitationSkeleton";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useNavigate } from "react-router-dom";
+import empty_friends from "../../assets/empty_friends.png";
 
 type ProfilFriendsProps = {
   profilId?: number;
@@ -49,95 +50,105 @@ export const ProfilFriends: FC<ProfilFriendsProps> = ({ profilId, user }) => {
   );
   return (
     <Box>
-      {profilId !== user?.id && (
-        <Box>
-          <Typography variant="h4" sx={{ my: 1 }}>
-            Amis en commun
-          </Typography>
-          <Grid container>
-            {commonFriends?.getCommonFriends.map((val) => (
-              <Grid item key={val.id} xs={3} sx={{ p: 1 }}>
-                <InvitationCard
-                  user={val}
-                  actions={
-                    <Button
-                      onClick={() =>
-                        navigate(
-                          `/landing/profil/${val.id}`
-                        )
-                      }
-                      variant="outlined"
-                      sx={{ width: "100%" }}
-                    >
-                      Voir profil
-                    </Button>
-                  }
-                />
-              </Grid>
-            ))}
-            {commonLoading &&
-              [1, 2, 3, 4].map((i) => (
-                <Grid item xs={12} sm={4} md={3} key={i} sx={{ p: 1 }}>
-                  <InvitationSkeleton />
+      {profilId !== user?.id &&
+        commonFriends &&
+        commonFriends.getCommonFriends.length > 0 && (
+          <Box>
+            <Typography variant="h4" sx={{ my: 1 }}>
+              Amis en commun
+            </Typography>
+            <Grid container>
+              {commonFriends?.getCommonFriends.map((val) => (
+                <Grid item key={val.id} xs={3} sx={{ p: 1 }}>
+                  <InvitationCard
+                    user={val}
+                    actions={
+                      <Button
+                        onClick={() => navigate(`/landing/profil/${val.id}`)}
+                        variant="outlined"
+                        sx={{ width: "100%" }}
+                      >
+                        Voir profil
+                      </Button>
+                    }
+                  />
                 </Grid>
               ))}
-            {commonFriends?.getCommonFriends.length === 10 && (
-              <Grid
-                item
-                xs={12}
-                onClick={() =>
-                  commonFetchMore({
-                    variables: {
-                      cursor:
-                        commonFriends?.getCommonFriends[
-                          commonFriends.getCommonFriends.length - 1
-                        ].id,
+              {commonLoading &&
+                [1, 2, 3, 4].map((i) => (
+                  <Grid item xs={12} sm={4} md={3} key={i} sx={{ p: 1 }}>
+                    <InvitationSkeleton />
+                  </Grid>
+                ))}
+              {commonFriends?.getCommonFriends.length === 10 && (
+                <Grid
+                  item
+                  xs={12}
+                  onClick={() =>
+                    commonFetchMore({
+                      variables: {
+                        cursor:
+                          commonFriends?.getCommonFriends[
+                            commonFriends.getCommonFriends.length - 1
+                          ].id,
+                      },
+                      updateQuery: (previousResult, { fetchMoreResult }) => {
+                        if (!fetchMoreResult) return previousResult;
+                        return {
+                          getCommonFriends: [
+                            ...previousResult.getCommonFriends,
+                            ...fetchMoreResult.getCommonFriends,
+                          ],
+                        };
+                      },
+                    })
+                  }
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    my: 1,
+                    py: 1,
+                    borderRadius: "15px",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    ":hover": {
+                      backgroundColor: "lightgrey",
                     },
-                    updateQuery: (previousResult, { fetchMoreResult }) => {
-                      if (!fetchMoreResult) return previousResult;
-                      return {
-                        getCommonFriends: [
-                          ...previousResult.getCommonFriends,
-                          ...fetchMoreResult.getCommonFriends,
-                        ],
-                      };
-                    },
-                  })
-                }
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  my: 1,
-                  py: 1,
-                  borderRadius: "15px",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  ":hover": {
-                    backgroundColor: "lightgrey",
-                  },
-                }}
-              >
-                <Typography variant="h5">Afficher plus</Typography>
-                <ExpandMoreIcon />
-              </Grid>
-            )}
-          </Grid>
-        </Box>
-      )}
+                  }}
+                >
+                  <Typography variant="h5">Afficher plus</Typography>
+                  <ExpandMoreIcon />
+                </Grid>
+              )}
+            </Grid>
+          </Box>
+        )}
       <Box sx={{ my: 1 }}>
         <Typography variant="h4" sx={{ my: 1 }}>
           Tous les amis
         </Typography>
         <Grid container>
+          {friends?.getFriendOfCurrentUser.length === 0 && (
+            <Box>
+              <Typography sx={{ textAlign: "center" }}>
+                La liste d'amis est vide
+              </Typography>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Box
+                  component="img"
+                  src={empty_friends}
+                  sx={{ width: "200px" }}
+                />
+              </Box>
+            </Box>
+          )}
           {friends?.getFriendOfCurrentUser.map((val) => (
             <Grid item key={val.id} xs={3} sx={{ p: 1 }}>
               <InvitationCard
                 user={val}
                 actions={
                   <Button
-                    onClick={() =>
-                      navigate(`/landing/profil/${val.id}`)
-                    }
+                    onClick={() => navigate(`/landing/profil/${val.id}`)}
                     variant="outlined"
                     sx={{ width: "100%" }}
                   >

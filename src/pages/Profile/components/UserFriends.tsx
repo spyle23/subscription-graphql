@@ -44,9 +44,7 @@ export const UserFriends: FC<UserFriendsProps> = ({
           {friends?.map((val) => (
             <Grid item key={val.id} xs={4} sx={{ p: 1 }}>
               <Box
-                onClick={() =>
-                  navigate(`/landing/profil/${val.id}`)
-                }
+                onClick={() => navigate(`/landing/profil/${val.id}`)}
                 sx={{
                   width: "100%",
                   height: "180px",
@@ -76,7 +74,9 @@ export const UserFriends: FC<UserFriendsProps> = ({
       </CardContent>
       {friends?.length === 10 && (
         <CardActions sx={{ justifyContent: "center" }}>
-          <Button sx={{ width: "100%" }}>Voir tout</Button>
+          <Button sx={{ width: "100%" }} onClick={() => navigate("friends")}>
+            Voir tout
+          </Button>
         </CardActions>
       )}
     </Card>
