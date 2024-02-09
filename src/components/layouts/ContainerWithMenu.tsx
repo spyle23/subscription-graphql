@@ -130,7 +130,12 @@ export const ContainerWithMenu: FC<ContainerWithMenuProps> = ({
               onClose={() => setOpenCaller(false)}
             />
           )}
-          <audio src={sonnerie} ref={audioRef} loop />
+          <audio
+            src={sonnerie}
+            ref={audioRef}
+            loop
+            style={{ display: "none" }}
+          />
         </Box>
       </DashboardLayoutRoot>
       <DashboardNavbar

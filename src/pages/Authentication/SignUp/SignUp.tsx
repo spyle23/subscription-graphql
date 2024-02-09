@@ -137,6 +137,7 @@ export const SignUp = (): JSX.Element => {
               <Grid item xs={12} sx={{ my: 1 }}>
                 <Button
                   type="submit"
+                  fullWidth
                   variant="contained"
                   disabled={signupLoading}
                 >

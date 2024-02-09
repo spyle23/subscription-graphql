@@ -89,18 +89,16 @@ export const PostCard: FC<PostCardProps> = ({
   };
 
   return (
-    <Box>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
       <Card elevation={1} {...cardProps} onMouseLeave={handleLeave}>
         <CardHeader
           avatar={<DynamicAvatar user={post.user} />}
           title={
             <>
               <Typography
-                onClick={() =>
-                  navigate(
-                    `/landing/profil/${post.user.id}`
-                  )
-                }
+                onClick={() => navigate(`/landing/profil/${post.user.id}`)}
                 variant="h5"
                 sx={{ cursor: "pointer" }}
               >

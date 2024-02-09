@@ -129,6 +129,7 @@ export const SignIn = (): JSX.Element => {
                 </Box>
                 <Button
                   type="submit"
+                  fullWidth
                   variant="contained"
                   disabled={signinLoading}
                 >
@@ -141,7 +142,9 @@ export const SignIn = (): JSX.Element => {
                 </Button>
               </form>
               <Divider sx={{ my: 1 }} />
-              <NavLink to="/auth/signup">Pas encore de compte?</NavLink>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <NavLink to="/auth/signup">Pas encore de compte?</NavLink>
+              </Box>
             </Grid>
           </Grid>
         </CardContent>
